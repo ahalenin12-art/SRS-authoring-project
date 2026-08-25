@@ -1,0 +1,1253 @@
+<title>PM 엔지니어링 로드맵</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+KR:wght@300;400;500;600;700&display=swap">
+
+<style>
+:root{
+  --ground:#EEF1F5; --surface:#FFFFFF; --surface-2:#F5F7FA;
+  --line:#D3DAE3; --line-soft:#E4E9EF;
+  --ink:#161C24; --ink-2:#3D4854; --ink-3:#6B7684;
+  --accent:#2F5D8C; --accent-soft:#E3EBF3; --accent-ink:#1F4165;
+  --signal:#B4552D; --signal-soft:#F7E9E1; --signal-ink:#8A3F20;
+  --safe:#3F7A5E; --safe-soft:#E2EEE8; --safe-ink:#2C5844;
+  --shadow:0 1px 2px rgba(22,28,36,.06),0 8px 24px -12px rgba(22,28,36,.18);
+  --rail:#CBD4DE;
+  --f-display:'IBM Plex Sans KR',system-ui,-apple-system,'Malgun Gothic',sans-serif;
+  --f-body:'IBM Plex Sans KR',system-ui,-apple-system,'Malgun Gothic',sans-serif;
+  --f-mono:'IBM Plex Mono','IBM Plex Sans KR',ui-monospace,Menlo,monospace;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --ground:#11161C; --surface:#192028; --surface-2:#1F2832;
+    --line:#2E3945; --line-soft:#252E38;
+    --ink:#E7ECF2; --ink-2:#B4BFCC; --ink-3:#7C8998;
+    --accent:#7FA9D4; --accent-soft:#1E2D3D; --accent-ink:#A8C6E4;
+    --signal:#D98757; --signal-soft:#33231A; --signal-ink:#E5A47C;
+    --safe:#68A98A; --safe-soft:#1B2A23; --safe-ink:#8CC4A8;
+    --shadow:0 1px 2px rgba(0,0,0,.4),0 10px 30px -14px rgba(0,0,0,.7);
+    --rail:#2E3945;
+  }
+}
+:root[data-theme="dark"]{
+  --ground:#11161C; --surface:#192028; --surface-2:#1F2832;
+  --line:#2E3945; --line-soft:#252E38;
+  --ink:#E7ECF2; --ink-2:#B4BFCC; --ink-3:#7C8998;
+  --accent:#7FA9D4; --accent-soft:#1E2D3D; --accent-ink:#A8C6E4;
+  --signal:#D98757; --signal-soft:#33231A; --signal-ink:#E5A47C;
+  --safe:#68A98A; --safe-soft:#1B2A23; --safe-ink:#8CC4A8;
+  --shadow:0 1px 2px rgba(0,0,0,.4),0 10px 30px -14px rgba(0,0,0,.7);
+  --rail:#2E3945;
+}
+
+*,*::before,*::after{box-sizing:border-box}
+body{
+  margin:0;background:var(--ground);color:var(--ink);
+  font-family:var(--f-body);font-weight:400;line-height:1.7;
+  -webkit-font-smoothing:antialiased;word-break:keep-all;
+  min-height:100vh;display:flex;flex-direction:column;
+}
+:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:3px}
+
+/* 상단 */
+.topbar{position:sticky;top:0;z-index:20;background:var(--surface);border-bottom:1px solid var(--line)}
+.rail{height:2px;background:var(--rail)}
+.rail-fill{height:100%;width:0;background:var(--accent);transition:width .35s cubic-bezier(.4,0,.2,1)}
+.topbar-inner{max-width:1080px;margin:0 auto;padding:10px 20px;display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.brand{display:flex;align-items:baseline;gap:9px;margin-right:auto;min-width:0}
+.brand b{font-family:var(--f-display);font-weight:600;font-size:15px;letter-spacing:-.01em;white-space:nowrap}
+.brand span{font-family:var(--f-mono);font-size:11px;color:var(--ink-3);white-space:nowrap}
+.prog{font-family:var(--f-mono);font-size:11.5px;color:var(--ink-3);white-space:nowrap;
+  background:var(--surface-2);border:1px solid var(--line);border-radius:20px;padding:4px 11px}
+.prog b{color:var(--safe-ink);font-weight:600}
+.counter{font-family:var(--f-mono);font-size:12px;color:var(--ink-3);font-variant-numeric:tabular-nums;white-space:nowrap}
+
+/* 슬라이드 */
+main{flex:1;display:flex;flex-direction:column;padding:36px 20px 24px}
+.slide{max-width:880px;width:100%;margin:0 auto;display:none;animation:rise .34s cubic-bezier(.16,1,.3,1)}
+.slide.on{display:block}
+@keyframes rise{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){.slide{animation:none}.rail-fill{transition:none}}
+
+.eyebrow{font-family:var(--f-mono);font-size:11px;font-weight:500;letter-spacing:.11em;text-transform:uppercase;color:var(--accent);margin:0 0 12px}
+h1{font-family:var(--f-display);font-weight:700;font-size:clamp(28px,4.6vw,42px);line-height:1.22;letter-spacing:-.025em;margin:0 0 16px;text-wrap:balance}
+h2{font-family:var(--f-display);font-weight:600;font-size:clamp(22px,3.2vw,29px);line-height:1.3;letter-spacing:-.02em;margin:0 0 14px;text-wrap:balance}
+h3{font-family:var(--f-display);font-weight:600;font-size:16px;letter-spacing:-.01em;margin:0 0 8px}
+.lede{font-size:17px;color:var(--ink-2);margin:0 0 26px;max-width:62ch;line-height:1.72}
+p{margin:0 0 14px;max-width:66ch}
+strong{font-weight:600;color:var(--ink)}
+code{font-family:var(--f-mono);font-size:.88em;background:var(--surface-2);border:1px solid var(--line-soft);border-radius:4px;padding:.1em .38em;color:var(--accent-ink)}
+
+/* 키워드 카드 */
+.kw{background:var(--surface);border:1px solid var(--line);border-radius:10px;box-shadow:var(--shadow);overflow:hidden;margin:0 0 16px}
+.kw-head{display:flex;align-items:center;gap:11px;flex-wrap:wrap;padding:15px 20px;border-bottom:1px solid var(--line-soft);background:var(--surface-2)}
+.kw-id{font-family:var(--f-mono);font-size:12px;font-weight:600;color:var(--accent);letter-spacing:.04em}
+.kw-head b{font-family:var(--f-display);font-weight:600;font-size:17px;letter-spacing:-.015em}
+.kw-head em{font-family:var(--f-mono);font-style:normal;font-size:11.5px;color:var(--ink-3)}
+.kw-body{padding:16px 20px}
+.kw-body>section{margin-bottom:15px}
+.kw-body>section:last-child{margin-bottom:0}
+.lab{font-family:var(--f-mono);font-size:10.5px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3);display:block;margin-bottom:6px}
+.kw-body p{font-size:14.5px;line-height:1.68;color:var(--ink-2);margin:0}
+.kw-body p+p{margin-top:8px}
+.kw-body ul{margin:0;padding-left:18px;font-size:14.5px}
+.kw-body li{margin-bottom:5px;color:var(--ink-2)}
+
+/* 레벨 칩 */
+.lv{font-family:var(--f-mono);font-size:10px;font-weight:600;letter-spacing:.06em;padding:3px 9px;border-radius:20px;white-space:nowrap;margin-left:auto}
+.lv1{background:transparent;color:var(--ink-3);border:1px solid var(--line)}
+.lv2{background:var(--accent-soft);color:var(--accent-ink)}
+.lv3{background:var(--signal-soft);color:var(--signal-ink)}
+
+/* 찾는 법 */
+.find{background:var(--surface-2);border:1px solid var(--line-soft);border-radius:8px;padding:13px 15px}
+.find dl{margin:0;display:grid;gap:8px}
+.find dt{font-family:var(--f-mono);font-size:10px;font-weight:500;letter-spacing:.07em;text-transform:uppercase;color:var(--ink-3)}
+.find dd{margin:0;font-size:14px;line-height:1.6;color:var(--ink-2)}
+.q{font-family:var(--f-mono);font-size:12.5px;background:var(--surface);border:1px solid var(--line);border-radius:5px;padding:2px 7px;display:inline-block;margin:2px 4px 2px 0;color:var(--accent-ink)}
+
+/* 통과 판정 */
+.pass{border-left:3px solid var(--safe);background:var(--safe-soft);border-radius:0 7px 7px 0;padding:12px 15px}
+.pass p{color:var(--ink);font-size:14.5px}
+.pass .lab{color:var(--safe-ink)}
+
+/* 완료 체크 */
+.done{display:flex;align-items:center;gap:9px;padding:11px 20px;border-top:1px solid var(--line-soft);background:var(--surface)}
+.done label{display:flex;align-items:center;gap:9px;cursor:pointer;font-size:13px;color:var(--ink-3);font-family:var(--f-mono);letter-spacing:.03em}
+.done input{width:16px;height:16px;accent-color:var(--safe);cursor:pointer;margin:0}
+.done input:checked+span{color:var(--safe-ink);font-weight:500}
+
+/* 일반 */
+.card{background:var(--surface);border:1px solid var(--line);border-radius:9px;padding:18px 20px;box-shadow:var(--shadow);margin:0 0 14px}
+.card p:last-child{margin-bottom:0}
+.grid2{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(250px,1fr))}
+.note{border-left:3px solid var(--accent);background:var(--accent-soft);border-radius:0 8px 8px 0;padding:14px 18px;margin:0 0 16px}
+.note p{margin:0;font-size:14.5px;color:var(--ink-2)}
+.note p+p{margin-top:8px}
+.note b{color:var(--ink)}
+.warn{border-left-color:var(--signal);background:var(--signal-soft)}
+.good{border-left-color:var(--safe);background:var(--safe-soft)}
+
+.chip{display:inline-block;font-family:var(--f-mono);font-size:10.5px;font-weight:500;letter-spacing:.05em;padding:3px 8px;border-radius:20px;white-space:nowrap;background:var(--accent-soft);color:var(--accent-ink)}
+.chip.sig{background:var(--signal-soft);color:var(--signal-ink)}
+.chip.ok{background:var(--safe-soft);color:var(--safe-ink)}
+
+.tw{overflow-x:auto;margin:0 0 16px;border:1px solid var(--line);border-radius:9px;background:var(--surface)}
+table{border-collapse:collapse;width:100%;font-size:14px;min-width:520px}
+th,td{text-align:left;padding:10px 14px;border-bottom:1px solid var(--line-soft);vertical-align:top}
+th{font-family:var(--f-mono);font-size:10.5px;font-weight:500;letter-spacing:.07em;text-transform:uppercase;color:var(--ink-3);background:var(--surface-2);white-space:nowrap}
+tr:last-child td{border-bottom:0}
+.num{font-variant-numeric:tabular-nums;white-space:nowrap}
+
+ul,ol{margin:0 0 14px;padding-left:20px;max-width:66ch}
+li{margin-bottom:7px;color:var(--ink-2)}
+li strong{color:var(--ink)}
+li::marker{color:var(--ink-3)}
+
+/* 지도 */
+.mapgrid{display:grid;gap:16px;margin:0 0 16px}
+.trk{background:var(--surface);border:1px solid var(--line);border-radius:9px;padding:15px 17px;box-shadow:var(--shadow)}
+.trk-h{display:flex;align-items:baseline;gap:10px;margin-bottom:11px;flex-wrap:wrap}
+.trk-h b{font-family:var(--f-display);font-weight:600;font-size:15px}
+.trk-h em{font-style:normal;font-size:13px;color:var(--ink-3)}
+.trk-h .cnt{margin-left:auto;font-family:var(--f-mono);font-size:11px;color:var(--ink-3)}
+.pills{display:flex;flex-wrap:wrap;gap:6px}
+.pill{font-family:var(--f-mono);font-size:11.5px;padding:5px 10px;border-radius:6px;border:1px solid var(--line);
+  background:var(--surface-2);color:var(--ink-2);cursor:pointer;transition:.15s}
+.pill:hover{border-color:var(--accent);color:var(--ink)}
+.pill.hit{background:var(--safe-soft);border-color:var(--safe);color:var(--safe-ink);font-weight:500}
+.pill.hit::before{content:"✓ ";}
+
+/* 네비 */
+.nav{position:sticky;bottom:0;background:var(--surface);border-top:1px solid var(--line);padding:11px 20px;display:flex;align-items:center;gap:14px;justify-content:center}
+.nav button{font:500 13px/1 var(--f-body);color:var(--ink-2);background:var(--surface-2);border:1px solid var(--line);border-radius:7px;padding:9px 16px;cursor:pointer;transition:.15s}
+.nav button:hover:not(:disabled){background:var(--accent);color:#fff;border-color:var(--accent)}
+.nav button:disabled{opacity:.35;cursor:default}
+.hint{font-family:var(--f-mono);font-size:11px;color:var(--ink-3);text-align:center}
+.hint kbd{font-family:var(--f-mono);font-size:10.5px;background:var(--surface-2);border:1px solid var(--line);border-bottom-width:2px;border-radius:4px;padding:1px 5px;color:var(--ink-2)}
+@media (max-width:600px){.hint{display:none}}
+
+.cover{text-align:left;padding:14px 0}
+.cover .rule{height:3px;width:56px;background:var(--accent);margin:0 0 22px;border-radius:2px}
+.meta{display:grid;gap:5px;margin:24px 0 0;font-family:var(--f-mono);font-size:12px;color:var(--ink-3)}
+.meta div{display:flex;gap:10px}
+.meta span:first-child{color:var(--ink-2);min-width:88px}
+
+.toc{display:grid;gap:7px;margin:0 0 8px}
+.toc a{display:flex;gap:12px;align-items:baseline;text-decoration:none;color:var(--ink-2);padding:9px 13px;border:1px solid var(--line);border-radius:7px;background:var(--surface);font-size:14px;transition:.15s}
+.toc a:hover{border-color:var(--accent);color:var(--ink)}
+.toc em{font-family:var(--f-mono);font-style:normal;font-size:11px;color:var(--accent);min-width:30px}
+</style>
+
+<div class="topbar">
+  <div class="rail"><div class="rail-fill" id="rail"></div></div>
+  <div class="topbar-inner">
+    <div class="brand"><b>PM 엔지니어링 로드맵</b><span>SRS-002 기반 · 17키워드</span></div>
+    <div class="prog">학습 완료 <b id="pdone">0</b>/17</div>
+    <div class="counter"><span id="cur">1</span> / <span id="tot">30</span></div>
+  </div>
+</div>
+
+<main id="stage">
+
+<!-- 01 -->
+<section class="slide on">
+  <div class="cover">
+    <div class="rule"></div>
+    <p class="eyebrow">학습 자료집 · 30장</p>
+    <h1>일정을 지키게 만들고<br>완성도를 판정하는 공부</h1>
+    <p class="lede">개발자가 되기 위한 로드맵이 아닙니다. <strong>일정이 왜 밀리는지 구조적으로 읽어내고, "다 됐습니다"라는 보고를 근거로 검증하는</strong> 데 필요한 것만 골랐습니다. 이 프로젝트의 SRS-002를 실습 대상으로 씁니다.</p>
+
+    <div class="note">
+      <p><b>키워드마다 네 가지가 붙습니다.</b></p>
+      <p><b>왜</b> — 이 프로젝트의 어느 지점에서 필요한가<br>
+      <b>어디까지</b> — PM은 여기서 멈춰도 된다는 상한<br>
+      <b>찾는 법</b> — 검색어·1차 출처·정전(定本)<br>
+      <b>통과 판정</b> — 이걸 할 수 있으면 끝난 것</p>
+    </div>
+
+    <div class="note good">
+      <p><b>"어디까지"가 이 자료집의 핵심입니다.</b> 대부분의 학습 로드맵은 시작점만 알려주고 끝을 안 알려줍니다. 그러면 끝없이 파거나 아예 시작을 못 합니다. 여기서는 <b>멈춰도 되는 지점</b>을 키워드마다 명시했습니다.</p>
+    </div>
+
+    <div class="meta">
+      <div><span>실습 대상</span><span>SRS-002 · PRD v3.1 · 설계 문서 8종</span></div>
+      <div><span>구성</span><span>3트랙 17키워드 · 12주 실행 계획</span></div>
+      <div><span>선행</span><span>「SRS 독해 가이드」 (별도 자료)</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- 02 -->
+<section class="slide">
+  <p class="eyebrow">설계 원리</p>
+  <h2>왜 이 17개인가</h2>
+  <p class="lede">"소프트웨어 공학"의 범위는 넓습니다. 그중 <strong>PM이 안 배우면 프로젝트가 실제로 망가지는 것</strong>만 남겼습니다. 선별 기준은 두 가지였습니다.</p>
+
+  <div class="grid2">
+    <div class="card">
+      <h3>기준 1 — 모르면 잘못된 결정을 내린다</h3>
+      <p style="font-size:14.5px;margin-bottom:0">추정을 모르면 "2주"라는 답을 그대로 믿고 일정을 짭니다. 커버리지를 모르면 80%라는 숫자를 품질로 오해합니다. <strong>몰라서 생기는 손실이 큰 것</strong>을 먼저 넣었습니다.</p>
+    </div>
+    <div class="card">
+      <h3>기준 2 — 알면 팀에 요구할 수 있다</h3>
+      <p style="font-size:14.5px;margin-bottom:0">관측 가능성을 알면 "장애 났을 때 언제부터인지 알 수 있게 해주세요"를 요구사항으로 쓸 수 있습니다. <strong>배움이 곧 요구 능력이 되는 것</strong>을 골랐습니다.</p>
+    </div>
+  </div>
+
+  <div class="note warn">
+    <p><b>일부러 뺀 것들.</b> 프로그래밍 언어 문법, 알고리즘·자료구조, 프레임워크 사용법, 디자인 패턴, 리팩터링 기법.</p>
+    <p>이것들은 <b>직접 코드를 쓸 때</b> 필요합니다. 일정을 관리하고 완성도를 검토하는 데는 쓰이지 않습니다. 배우고 싶다면 별개의 목표로 세우세요 — 이 로드맵과 섞으면 둘 다 흐려집니다.</p>
+  </div>
+
+  <h3 style="margin-top:22px">레벨의 뜻</h3>
+  <div class="tw">
+    <table>
+      <tr><th>레벨</th><th>도달 상태</th><th>투입</th></tr>
+      <tr><td><span class="lv lv1" style="margin:0">L1 이해</span></td><td>용어와 목적을 알고 회의에서 오해 없이 듣는다</td><td class="num">3~5시간</td></tr>
+      <tr><td><span class="lv lv2" style="margin:0">L2 판단</span></td><td>산출물을 읽고 되묻고 합격/불합격을 판정한다</td><td class="num">10~15시간</td></tr>
+      <tr><td><span class="lv lv3" style="margin:0">L3 설계</span></td><td>기준 자체를 만들고 팀에 요구·합의한다</td><td class="num">25시간+</td></tr>
+    </table>
+  </div>
+  <p style="font-size:14px;color:var(--ink-3)">17개 중 L3가 필요한 건 5개뿐입니다. 나머지는 L1·L2에서 멈춰도 됩니다.</p>
+</section>
+
+<!-- 03 지도 -->
+<section class="slide">
+  <p class="eyebrow">전체 지도</p>
+  <h2>3트랙 17키워드</h2>
+  <p class="lede">각 항목을 눌러 해당 장으로 이동합니다. 학습을 마치면 그 장에서 완료 표시를 하세요 — 여기에 반영됩니다.</p>
+
+  <div class="mapgrid">
+    <div class="trk">
+      <div class="trk-h"><b>트랙 A</b><em>일정을 관리한다</em><span class="cnt" id="cA">0/6</span></div>
+      <div class="pills">
+        <span class="pill" data-kw="A1" data-go="7">A1 작업 분해</span>
+        <span class="pill" data-kw="A2" data-go="8">A2 의존성·임계경로</span>
+        <span class="pill" data-kw="A3" data-go="9">A3 추정</span>
+        <span class="pill" data-kw="A4" data-go="10">A4 반복 개발·속도</span>
+        <span class="pill" data-kw="A5" data-go="11">A5 통합·배포 리듬</span>
+        <span class="pill" data-kw="A6" data-go="12">A6 변경 관리</span>
+      </div>
+    </div>
+    <div class="trk">
+      <div class="trk-h"><b>트랙 B</b><em>완성도를 검토한다</em><span class="cnt" id="cB">0/6</span></div>
+      <div class="pills">
+        <span class="pill" data-kw="B1" data-go="14">B1 DoD·인수기준</span>
+        <span class="pill" data-kw="B2" data-go="15">B2 테스트 레벨</span>
+        <span class="pill" data-kw="B3" data-go="16">B3 커버리지 해석</span>
+        <span class="pill" data-kw="B4" data-go="17">B4 비기능 검증</span>
+        <span class="pill" data-kw="B5" data-go="18">B5 관측 가능성</span>
+        <span class="pill" data-kw="B6" data-go="19">B6 결함 관리</span>
+      </div>
+    </div>
+    <div class="trk">
+      <div class="trk-h"><b>트랙 C</b><em>이 도메인을 검증한다</em><span class="cnt" id="cC">0/5</span></div>
+      <div class="pills">
+        <span class="pill" data-kw="C1" data-go="21">C1 상태 머신</span>
+        <span class="pill" data-kw="C2" data-go="22">C2 멱등성·동시성</span>
+        <span class="pill" data-kw="C3" data-go="23">C3 데이터 무결성</span>
+        <span class="pill" data-kw="C4" data-go="24">C4 서버리스·시간</span>
+        <span class="pill" data-kw="C5" data-go="25">C5 보안·컴플라이언스</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="note">
+    <p><b>순서 권장.</b> A → B → C가 아닙니다. <b>B1(DoD·인수기준)을 가장 먼저</b> 하세요. 완료의 정의가 없으면 일정 관리(A)도 의미가 없고, 나머지 검증(B2~B6)도 기준점이 없습니다. 27장의 12주 계획이 이 순서를 반영합니다.</p>
+  </div>
+</section>
+
+<!-- 04 자료 찾는 법 -->
+<section class="slide">
+  <p class="eyebrow">학습 자료를 찾는 법 ①</p>
+  <h2>네 겹으로 파고든다</h2>
+  <p class="lede">키워드 하나를 공부할 때 <strong>항상 같은 순서</strong>를 씁니다. 순서를 지키면 시간이 절반으로 줍니다.</p>
+
+  <div class="card">
+    <h3><span class="chip">1층</span> 정식 명칭을 확보한다 <span style="color:var(--ink-3);font-weight:400;font-size:14px">— 30분</span></h3>
+    <p style="margin-bottom:0">한글 용어로는 좋은 자료가 안 나옵니다. <strong>영문 정식 명칭을 먼저 확보</strong>하세요. "완료의 정의" → <code>Definition of Done</code>, "임계 경로" → <code>critical path</code>. 위키피디아 한국어판에서 영문 링크를 타는 게 가장 빠릅니다. <strong>이 단계를 건너뛰면 나머지 세 층이 전부 얕아집니다.</strong></p>
+  </div>
+
+  <div class="card">
+    <h3><span class="chip">2층</span> 1차 출처를 읽는다 <span style="color:var(--ink-3);font-weight:400;font-size:14px">— 2~3시간</span></h3>
+    <p style="margin-bottom:0">공식 문서·표준·원저자의 글입니다. 블로그 요약본보다 <strong>대개 더 짧고 정확합니다.</strong> 기술이면 공식 docs, 방법론이면 원저자 사이트(예: martinfowler.com), 표준이면 원문. 요약본은 원저자가 왜 그렇게 말했는지를 빼먹습니다.</p>
+  </div>
+
+  <div class="card">
+    <h3><span class="chip">3층</span> 정전(定本) 한 권의 해당 장만 <span style="color:var(--ink-3);font-weight:400;font-size:14px">— 3~5시간</span></h3>
+    <p style="margin-bottom:0">책 전체를 읽지 마세요. <strong>목차에서 해당 장만 골라</strong> 읽습니다. 정전은 1차 출처가 생략한 <strong>맥락과 실패 사례</strong>를 줍니다. 키워드마다 어떤 책의 어느 부분인지 이 자료집에 적어뒀습니다.</p>
+  </div>
+
+  <div class="card">
+    <h3><span class="chip">4층</span> 우리 프로젝트에 대조한다 <span style="color:var(--ink-3);font-weight:400;font-size:14px">— 1~2시간</span></h3>
+    <p style="margin-bottom:0"><strong>이 층이 없으면 앞의 세 층은 다 휘발됩니다.</strong> 배운 것을 SRS-002·PRD의 실제 조항에 대조해서, <strong>맞는지 · 빠졌는지 · 다른지</strong>를 문장으로 적으세요. 각 키워드의 "통과 판정"이 정확히 이 작업입니다.</p>
+  </div>
+
+  <div class="note good">
+    <p><b>한 키워드당 6~10시간.</b> 17개면 약 120~150시간, 주 10시간이면 12~15주입니다. 27장의 계획표가 이 계산을 따릅니다.</p>
+  </div>
+</section>
+
+<!-- 05 자료 판별 -->
+<section class="slide">
+  <p class="eyebrow">학습 자료를 찾는 법 ②</p>
+  <h2>시간을 낭비하는 자료 걸러내기</h2>
+  <p class="lede">검색하면 자료는 넘칩니다. 문제는 대부분이 <strong>같은 요약을 서로 베낀 것</strong>이라는 점입니다.</p>
+
+  <div class="tw">
+    <table>
+      <tr><th></th><th>쓸 만한 자료</th><th>거르는 자료</th></tr>
+      <tr><td><b>실패 사례</b></td><td>안 되는 경우·한계를 같이 말함</td><td>장점만 나열</td></tr>
+      <tr><td><b>숫자</b></td><td>측정 조건이 같이 적혀 있음</td><td>"성능이 향상됩니다"</td></tr>
+      <tr><td><b>출처</b></td><td>원저자·원문을 링크함</td><td>출처 없이 단정</td></tr>
+      <tr><td><b>맥락</b></td><td>"언제 쓰고 언제 안 쓰나"가 있음</td><td>정의 → 장점 → 끝</td></tr>
+      <tr><td><b>깊이</b></td><td>같은 주제를 두 번 이상 다룸</td><td>모든 주제를 한 편씩</td></tr>
+    </table>
+  </div>
+
+  <div class="note">
+    <p><b>가장 빠른 판별법 하나.</b> 그 글이 <b>"이 방법이 안 맞는 경우"</b>를 말하는지 보세요. 안 말하면 저자가 실제로 써보지 않았을 가능성이 큽니다. 실제로 써 본 사람은 <b>반드시 아팠던 곳을 압니다.</b></p>
+  </div>
+
+  <div class="note warn">
+    <p><b>생성형 AI로 학습할 때.</b> 개념 설명과 용어 정리에는 아주 유용하지만 <b>1차 출처를 대체하지 못합니다.</b> 쓸 때는 이렇게 하세요 —</p>
+    <p>① 개념을 물어 <b>이해의 뼈대</b>를 잡는다 → ② <b>"이 내용의 원 출처가 어디인가"</b>를 물어 1차 출처를 확보한다 → ③ <b>그 출처를 직접 확인한다.</b> 특히 표준 조항 번호·수치·법령은 반드시 원문 대조가 필요합니다.</p>
+  </div>
+</section>
+
+<!-- 06 검색어 -->
+<section class="slide">
+  <p class="eyebrow">학습 자료를 찾는 법 ③</p>
+  <h2>검색어를 만드는 네 가지 형태</h2>
+  <p class="lede">같은 주제라도 <strong>어떤 형태로 묻느냐</strong>에 따라 나오는 자료의 층위가 달라집니다.</p>
+
+  <div class="card">
+    <h3>① 정의형 — 개념을 처음 잡을 때</h3>
+    <p style="margin-bottom:6px"><span class="q">definition of done vs acceptance criteria</span> <span class="q">critical path method 설명</span></p>
+    <p style="margin-bottom:0;font-size:14px;color:var(--ink-3)"><strong>vs</strong>를 넣으면 혼동되는 개념의 경계가 나옵니다. 가장 효율이 높은 형태입니다.</p>
+  </div>
+
+  <div class="card">
+    <h3>② 실패형 — 한계와 함정을 알 때</h3>
+    <p style="margin-bottom:6px"><span class="q">code coverage misleading</span> <span class="q">why story points fail</span> <span class="q">serverless cold start problem</span></p>
+    <p style="margin-bottom:0;font-size:14px;color:var(--ink-3)">가장 값나가는 형태입니다. <strong>남이 이미 다친 곳</strong>이 나옵니다.</p>
+  </div>
+
+  <div class="card">
+    <h3>③ 현장형 — 실제 어떻게 쓰는지 볼 때</h3>
+    <p style="margin-bottom:6px"><span class="q">토스 기술블로그 멱등성</span> <span class="q">우아한형제들 테스트 전략</span> <span class="q">카카오페이 정산 배치</span></p>
+    <p style="margin-bottom:0;font-size:14px;color:var(--ink-3)">국내 핀테크·커머스 기술 블로그가 특히 좋습니다. <strong>같은 규제·같은 도메인</strong>이라 그대로 대조됩니다.</p>
+  </div>
+
+  <div class="card">
+    <h3>④ 표준형 — 근거가 필요할 때</h3>
+    <p style="margin-bottom:6px"><span class="q">ISTQB foundation syllabus test levels</span> <span class="q">ISO 25010 quality model</span></p>
+    <p style="margin-bottom:0;font-size:14px;color:var(--ink-3)">팀과 합의할 때 <strong>"제 생각"이 아니라 "표준"</strong>으로 말할 수 있게 됩니다. 협상력이 달라집니다.</p>
+  </div>
+
+  <div class="note good">
+    <p><b>영상 자료를 찾는다면 컨퍼런스 발표부터.</b> SLASH(토스) · if(kakao) · DEVIEW(네이버) · 우아콘(배민)은 전 회차가 유튜브에 무료로 있고, <b>실제 겪은 문제와 선택의 근거</b>를 다룹니다. 입문 강의보다 밀도가 높습니다.</p>
+  </div>
+</section>
+
+<!-- 07 트랙 A 개요 → index 6 -->
+<section class="slide">
+  <p class="eyebrow">트랙 A · 일정을 관리한다</p>
+  <h2>일정은 왜 밀리는가</h2>
+  <p class="lede">일정이 밀리는 이유는 대개 개발자가 게을러서가 아니라 <strong>구조적으로 밀릴 수밖에 없게 짜였기 때문</strong>입니다. 트랙 A는 그 구조를 보는 눈입니다.</p>
+
+  <div class="tw">
+    <table>
+      <tr><th>밀리는 원인</th><th>대응 키워드</th><th>목표 레벨</th></tr>
+      <tr><td>작업을 너무 크게 잡아 진척이 안 보임</td><td>A1 작업 분해</td><td><span class="lv lv3" style="margin:0">L3</span></td></tr>
+      <tr><td>막힌 작업 하나가 전체를 세움</td><td>A2 의존성·임계 경로</td><td><span class="lv lv2" style="margin:0">L2</span></td></tr>
+      <tr><td>추정을 확정으로 오해함</td><td>A3 추정</td><td><span class="lv lv3" style="margin:0">L3</span></td></tr>
+      <tr><td>실제 속도를 모른 채 계획을 유지함</td><td>A4 반복 개발·속도</td><td><span class="lv lv2" style="margin:0">L2</span></td></tr>
+      <tr><td>마지막에 몰아서 합치다 터짐</td><td>A5 통합·배포 리듬</td><td><span class="lv lv2" style="margin:0">L2</span></td></tr>
+      <tr><td>범위가 조용히 늘어남</td><td>A6 변경 관리</td><td><span class="lv lv3" style="margin:0">L3</span></td></tr>
+    </table>
+  </div>
+
+  <div class="note warn">
+    <p><b>이 프로젝트의 구체적 위험.</b> SRS-002는 <b>개발 차단 2건</b>(전문 수신 경로, 본인 인증 수단)을 안고 있습니다. 이걸 모르고 전체 일정을 짜면, 답이 오는 시점부터 전 일정이 통째로 밀립니다.</p>
+    <p>반대로 A2를 알면 <b>차단과 무관하게 지금 착수 가능한 작업</b>을 분리해 앞당길 수 있습니다. 같은 상황에서 결과가 달라집니다.</p>
+  </div>
+</section>
+
+<!-- 08 A1 -->
+<section class="slide">
+  <p class="eyebrow">트랙 A · 키워드 1</p>
+  <div class="kw">
+    <div class="kw-head"><span class="kw-id">A1</span><b>작업 분해</b><em>Work Breakdown · Story Splitting</em><span class="lv lv3">L3 설계</span></div>
+    <div class="kw-body">
+      <section>
+        <span class="lab">왜 — 이 프로젝트의 어디에서</span>
+        <p>SRS-002에는 라우트 <strong>19개</strong>, Server Action <strong>7개</strong>, Prisma 모델 <strong>16개</strong>, 기술 규약 <strong>51건</strong>이 있습니다. 이걸 "기능1 개발 6주"로 묶으면 <strong>5주째까지 진척률을 알 수 없습니다.</strong> 6주째에 "2주 더 필요합니다"를 듣게 됩니다.</p>
+        <p>PRD의 FR 83건과 GWT 76건은 이미 잘게 나뉘어 있습니다. 문제는 <strong>그것이 곧 작업 단위는 아니라는 것</strong>입니다. 요구사항 1건이 작업 3개일 수도, 작업 1개가 요구사항 4건을 덮을 수도 있습니다.</p>
+      </section>
+      <section>
+        <span class="lab">어디까지 — PM의 상한</span>
+        <p>작업을 <strong>직접 쪼개는 건 개발자의 일</strong>입니다. PM은 <strong>"이 분해가 좋은 분해인지 판정하는 기준"</strong>까지만 알면 됩니다. 좋은 분해의 조건은 세 가지입니다 — <strong>완료 여부를 겉에서 판정 가능</strong>할 것, <strong>2~3일 안에 끝날 크기</strong>일 것, <strong>혼자 완결</strong>될 것(다른 사람을 기다리지 않을 것).</p>
+      </section>
+      <section>
+        <span class="lab">찾는 법</span>
+        <div class="find"><dl>
+          <dt>검색어</dt><dd><span class="q">work breakdown structure 100% rule</span><span class="q">user story splitting patterns</span><span class="q">vertical slice vs horizontal slice</span></dd>
+          <dt>1차 출처</dt><dd>Richard Lawrence의 <strong>Story Splitting Flowchart</strong> — 한 장짜리 도식인데 실무에서 가장 많이 쓰입니다. <strong>PMBOK</strong>의 WBS 100% 규칙(하위 작업의 합 = 상위 작업, 초과도 미달도 없음).</dd>
+          <dt>정전</dt><dd>Jeff Patton 《<strong>User Story Mapping</strong>》 1~4장 — 요구사항 목록을 <strong>사용자 여정 축으로 재배열</strong>하는 방법. 이 프로젝트처럼 화면이 12개인 경우에 특히 잘 맞습니다.</dd>
+          <dt>현장 자료</dt><dd><span class="q">스토리 분할 수직 슬라이스</span> — 국내 기술 블로그에 사례가 많습니다.</dd>
+        </dl></div>
+      </section>
+      <section class="pass">
+        <span class="lab">통과 판정</span>
+        <p>SRS-002 §3의 라우트 19개 중 <strong>임의로 3개를 골라</strong>, 각각이 몇 개의 작업으로 쪼개져야 하는지 개발자와 합의한 목록을 만든다. 그 목록의 <strong>모든 항목이 "2~3일 · 겉에서 완료 판정 가능 · 혼자 완결" 세 조건을 만족</strong>하면 통과.</p>
+      </section>
+    </div>
+    <div class="done"><label><input type="checkbox" data-kw="A1"><span>학습 완료</span></label></div>
+  </div>
+</section>
+
+<!-- 09 A2 -->
+<section class="slide">
+  <p class="eyebrow">트랙 A · 키워드 2</p>
+  <div class="kw">
+    <div class="kw-head"><span class="kw-id">A2</span><b>의존성과 임계 경로</b><em>Dependency · Critical Path</em><span class="lv lv2">L2 판단</span></div>
+    <div class="kw-body">
+      <section>
+        <span class="lab">왜 — 이 프로젝트의 어디에서</span>
+        <p>SRS-002 §11에 미해결 7건이 있고, 그중 <strong>2건이 개발을 막습니다.</strong> 여기서 흔한 실수가 <strong>"막힌 게 있으니 전체를 세우는"</strong> 것입니다. 실제로는 밴드 계산·한도 계산·화면·상태 전이 대부분이 그 2건과 무관합니다.</p>
+        <p>반대의 실수도 있습니다. <strong>병렬로 보이지만 실은 줄줄이 걸린</strong> 경우입니다. 이 프로젝트에서는 <strong>Prisma 스키마(§5)</strong>가 그렇습니다. 스키마가 안 정해지면 Server Action도 화면도 시험도 전부 대기합니다. <strong>가장 먼저 끝나야 하는 작업</strong>입니다.</p>
+      </section>
+      <section>
+        <span class="lab">어디까지 — PM의 상한</span>
+        <p>임계 경로를 <strong>계산하는 법은 몰라도 됩니다.</strong> 필요한 건 세 가지입니다 — <strong>①</strong> 어떤 작업이 어떤 작업을 막는지 그릴 수 있을 것, <strong>②</strong> 그중 가장 긴 사슬(= 임계 경로)이 곧 최소 기간임을 알 것, <strong>③</strong> 그 사슬 위의 작업이 하루 늦으면 <strong>전체가 하루 늦는다</strong>는 것을 알 것. 사슬 밖의 지연은 흡수됩니다.</p>
+      </section>
+      <section>
+        <span class="lab">찾는 법</span>
+        <div class="find"><dl>
+          <dt>검색어</dt><dd><span class="q">critical path method 예제</span><span class="q">dependency mapping software project</span><span class="q">theory of constraints bottleneck</span></dd>
+          <dt>1차 출처</dt><dd>PMBOK의 <strong>Precedence Diagramming Method</strong> — 4가지 의존 유형(FS·SS·FF·SF)만 알면 충분합니다.</dd>
+          <dt>정전</dt><dd>Eliyahu Goldratt 《<strong>The Goal</strong>》 — 소설 형식이라 부담 없이 읽히면서 <strong>"전체 처리량은 병목이 결정한다"</strong>가 몸에 남습니다. 소프트웨어 책이 아닌데 소프트웨어에 가장 잘 맞습니다.</dd>
+          <dt>도구</dt><dd>도구부터 배우지 마세요. <strong>종이에 화살표로 그리는 것</strong>이 먼저입니다. 20개 넘어가면 그때 Jira·Linear의 의존성 기능을 씁니다.</dd>
+        </dl></div>
+      </section>
+      <section class="pass">
+        <span class="lab">통과 판정</span>
+        <p>SRS-002의 <strong>개발 차단 2건이 해결되지 않은 상태</strong>를 가정하고, ① 지금 착수 가능한 작업 ② 대기해야 하는 작업 ③ 대기 중에도 준비 가능한 부분(예: 인터페이스 규격 합의)을 <strong>세 목록으로 분리</strong>한다. 개발자가 그 분류에 동의하면 통과.</p>
+      </section>
+    </div>
+    <div class="done"><label><input type="checkbox" data-kw="A2"><span>학습 완료</span></label></div>
+  </div>
+</section>
+
+<!-- 10 A3 -->
+<section class="slide">
+  <p class="eyebrow">트랙 A · 키워드 3</p>
+  <div class="kw">
+    <div class="kw-head"><span class="kw-id">A3</span><b>추정과 불확실성</b><em>Estimation · Cone of Uncertainty</em><span class="lv lv3">L3 설계</span></div>
+    <div class="kw-body">
+      <section>
+        <span class="lab">왜 — 이 프로젝트의 어디에서</span>
+        <p>일정 사고의 최대 원인입니다. <strong>"2주 걸립니다"를 "2주에 끝납니다"로 옮겨 적는 순간</strong> 사고가 예약됩니다. 개발자의 2주는 대개 <strong>"모든 게 잘 풀리면 2주"</strong>입니다.</p>
+        <p>이 프로젝트에는 <strong>추정이 특히 위험한 자리</strong>가 있습니다 — <strong>충돌 01(콜드 스타트)</strong>은 "얼마나 걸릴지"를 <strong>실측하기 전에는 알 수 없습니다.</strong> 완화가 한 번에 될 수도, 아키텍처를 바꿔야 할 수도 있습니다. 이런 항목을 다른 작업과 같은 정밀도로 추정하면 계획 전체가 거짓이 됩니다.</p>
+      </section>
+      <section>
+        <span class="lab">어디까지 — PM의 상한</span>
+        <p>추정 기법을 <strong>직접 운영</strong>하는 수준까지 필요합니다. 핵심 개념 세 가지 — <strong>불확실성의 원뿔</strong>(프로젝트 초기 추정은 구조적으로 최대 4배까지 틀린다), <strong>상대 추정</strong>(절대 시간 대신 이미 끝난 작업 대비 몇 배인지로 매긴다), <strong>참조 클래스 예측</strong>(비슷한 과거 작업의 실제 소요를 근거로 삼는다).</p>
+      </section>
+      <section>
+        <span class="lab">찾는 법</span>
+        <div class="find"><dl>
+          <dt>검색어</dt><dd><span class="q">cone of uncertainty software estimation</span><span class="q">reference class forecasting</span><span class="q">why story points not hours</span><span class="q">why software estimates fail</span></dd>
+          <dt>정전</dt><dd>Steve McConnell 《<strong>Software Estimation: Demystifying the Black Art</strong>》 — 이 주제의 결정판입니다. <strong>1~4장과 부록의 체크리스트</strong>만 봐도 값을 합니다. Mike Cohn 《<strong>Agile Estimating and Planning</strong>》는 상대 추정 실무편.</dd>
+          <dt>고전</dt><dd>Fred Brooks 《<strong>The Mythical Man-Month</strong>》 — 50년 전 책인데 <strong>"늦은 프로젝트에 인력을 더하면 더 늦어진다"</strong>는 여전히 유효합니다. 이 로드맵 전체에서 가장 짧은 시간에 가장 크게 남는 독서입니다.</dd>
+          <dt>현장</dt><dd><span class="q">개발 일정 추정 회고</span> — 국내 개발 블로그의 <strong>실패 회고</strong>가 특히 유용합니다.</dd>
+        </dl></div>
+      </section>
+      <section class="pass">
+        <span class="lab">통과 판정</span>
+        <p><strong>①</strong> "2주 걸립니다"라는 답에 <strong>"어떤 조건이 틀어지면 4주가 되나요"</strong>를 물어 범위와 전제를 얻어낸다. <strong>②</strong> SRS-002의 작업을 <strong>"추정 가능"과 "실측 전에는 추정 불가"</strong> 두 무리로 나누고, 후자에는 <strong>기간이 아니라 조사 시한(타임박스)</strong>을 배정한다. 둘 다 되면 통과.</p>
+      </section>
+    </div>
+    <div class="done"><label><input type="checkbox" data-kw="A3"><span>학습 완료</span></label></div>
+  </div>
+</section>
+
+<!-- 11 A4 -->
+<section class="slide">
+  <p class="eyebrow">트랙 A · 키워드 4</p>
+  <div class="kw">
+    <div class="kw-head"><span class="kw-id">A4</span><b>반복 개발과 속도</b><em>Iteration · Velocity · WIP</em><span class="lv lv2">L2 판단</span></div>
+    <div class="kw-body">
+      <section>
+        <span class="lab">왜 — 이 프로젝트의 어디에서</span>
+        <p>추정이 틀린다는 걸 인정하면, 남는 방법은 <strong>짧게 끊어서 실제 속도를 측정하고 계획을 고치는 것</strong>뿐입니다. 반복 개발의 목적은 <strong>빨리 만드는 게 아니라 빨리 틀린 걸 아는 것</strong>입니다.</p>
+        <p>이 프로젝트는 <strong>기능1과 기능2가 분리 출시 가능</strong>합니다(기능2는 법무 판정 대기). 즉 <strong>반복의 단위를 나눌 구조가 이미 마련돼 있습니다.</strong> 이걸 살리려면 속도 측정이 전제입니다.</p>
+      </section>
+      <section>
+        <span class="lab">어디까지 — PM의 상한</span>
+        <p>스크럼 의식(데일리·회고·플래닝)의 형식은 <strong>팀에 맞게 바꾸면 되는 것</strong>이라 깊이 팔 필요 없습니다. 대신 세 가지는 정확히 알아야 합니다 — <strong>속도(velocity)는 예측용이지 평가용이 아니다</strong>(팀 간 비교나 인사 평가에 쓰는 순간 숫자가 조작됩니다), <strong>WIP를 줄이면 처리량이 는다</strong>, <strong>3회 이상 반복해야 속도가 의미를 갖는다.</strong></p>
+      </section>
+      <section>
+        <span class="lab">찾는 법</span>
+        <div class="find"><dl>
+          <dt>검색어</dt><dd><span class="q">velocity is not a productivity metric</span><span class="q">little's law kanban WIP</span><span class="q">sprint burndown 해석</span></dd>
+          <dt>1차 출처</dt><dd><strong>Scrum Guide</strong> — 공식 문서인데 20쪽이 채 안 되고 한국어판이 있습니다. <strong>1시간이면 읽습니다.</strong> 시중의 스크럼 강의 대부분이 이 문서의 확장판입니다.</dd>
+          <dt>정전</dt><dd>Donald Reinertsen 《<strong>The Principles of Product Development Flow</strong>》 — 어렵지만 <strong>대기 행렬과 WIP</strong> 부분만 봐도 관점이 바뀝니다. 가볍게 가려면 《<strong>Kanban</strong>》(David Anderson).</dd>
+          <dt>주의</dt><dd><span class="q">agile certification</span> 류의 자격 과정은 <strong>이 목적에는 비효율</strong>입니다. 형식을 외우게 하지, 숫자를 읽는 법을 가르치지 않습니다.</dd>
+        </dl></div>
+      </section>
+      <section class="pass">
+        <span class="lab">통과 판정</span>
+        <p>3회 반복(스프린트)의 실제 완료량을 보고, <strong>남은 작업이 언제 끝날지를 단일 날짜가 아니라 범위로</strong> 말한다. 그리고 <strong>그 범위가 왜 그만큼 넓은지</strong>를 편차 근거로 설명한다. — 이 프로젝트가 완료일을 밴드로 표시하는 것과 <strong>정확히 같은 사고방식</strong>입니다.</p>
+      </section>
+    </div>
+    <div class="done"><label><input type="checkbox" data-kw="A4"><span>학습 완료</span></label></div>
+  </div>
+</section>
+
+<!-- 12 A5 -->
+<section class="slide">
+  <p class="eyebrow">트랙 A · 키워드 5</p>
+  <div class="kw">
+    <div class="kw-head"><span class="kw-id">A5</span><b>통합과 배포 리듬</b><em>CI/CD · DORA Metrics</em><span class="lv lv2">L2 판단</span></div>
+    <div class="kw-body">
+      <section>
+        <span class="lab">왜 — 이 프로젝트의 어디에서</span>
+        <p>일정이 가장 크게 무너지는 자리는 <strong>"각자 만든 걸 마지막에 합칠 때"</strong>입니다. 따로 3주 개발하고 합치기 시작하면, 합치는 데만 1주가 더 듭니다. 그리고 그 1주는 <strong>계획에 없습니다.</strong></p>
+        <p>이 프로젝트는 유리한 조건입니다. Vercel이 <strong>Git에 올리면 자동 배포</strong>하고, <strong>브랜치마다 미리보기 환경</strong>이 생깁니다(C-TEC-007). 즉 <strong>매일 합치고 매일 확인하는 리듬이 기본값</strong>입니다. PM이 이걸 활용하지 않으면 그냥 버려집니다.</p>
+      </section>
+      <section>
+        <span class="lab">어디까지 — PM의 상한</span>
+        <p>파이프라인을 <strong>직접 구성할 필요는 없습니다.</strong> 대신 <strong>DORA 4지표</strong>를 읽을 수 있어야 합니다 — <strong>배포 빈도</strong>(얼마나 자주 내보내나) · <strong>변경 리드타임</strong>(코드를 쓴 뒤 사용자에게 닿기까지) · <strong>변경 실패율</strong>(배포 중 사고를 낸 비율) · <strong>복구 시간</strong>(사고 후 정상화까지). 이 4개가 <strong>팀의 실제 상태를 가장 정직하게 보여주는 숫자</strong>입니다.</p>
+      </section>
+      <section>
+        <span class="lab">찾는 법</span>
+        <div class="find"><dl>
+          <dt>검색어</dt><dd><span class="q">DORA four keys metrics</span><span class="q">trunk based development vs git flow</span><span class="q">preview deployment 활용</span></dd>
+          <dt>1차 출처</dt><dd><strong>dora.dev</strong> — 4지표의 정의와 연도별 State of DevOps 보고서가 무료입니다. <strong>Vercel 공식 문서</strong>의 Preview Deployments 항목(우리가 실제 쓰는 기능).</dd>
+          <dt>정전</dt><dd>《<strong>Accelerate</strong>》(Forsgren·Humble·Kim) — DORA 연구의 원전으로, <strong>배포를 자주 하는 팀이 더 안정적이다</strong>라는 반직관적 결론을 데이터로 증명합니다. 얇습니다. 심화는 《<strong>Continuous Delivery</strong>》.</dd>
+          <dt>현장</dt><dd>Martin Fowler의 <strong>Continuous Integration</strong> · <strong>Feature Toggles</strong> 글. 원문이 짧고 정확합니다.</dd>
+        </dl></div>
+      </section>
+      <section class="pass">
+        <span class="lab">통과 판정</span>
+        <p>팀에서 <strong>DORA 4지표를 실제 숫자로 받아</strong>, 그중 <strong>가장 나쁜 하나를 지목</strong>하고 그것이 <strong>일정에 어떻게 나타나고 있는지</strong>를 설명한다. (예: 복구 시간이 길면 → 사고마다 개발이 통째로 멈춰 계획이 밀린다.)</p>
+      </section>
+    </div>
+    <div class="done"><label><input type="checkbox" data-kw="A5"><span>학습 완료</span></label></div>
+  </div>
+</section>
+
+<!-- 13 A6 -->
+<section class="slide">
+  <p class="eyebrow">트랙 A · 키워드 6</p>
+  <div class="kw">
+    <div class="kw-head"><span class="kw-id">A6</span><b>변경 관리와 범위</b><em>Change Control · Scope Creep</em><span class="lv lv3">L3 설계</span></div>
+    <div class="kw-body">
+      <section>
+        <span class="lab">왜 — 이 프로젝트의 어디에서</span>
+        <p>일정은 큰 사건 하나가 아니라 <strong>작은 추가 스무 개</strong>로 밀립니다. 각각은 "반나절이면 됩니다"인데 합치면 3주입니다.</p>
+        <p>이 프로젝트에는 변경 압력이 구조적으로 존재합니다. <strong>미해결 7건</strong>의 답이 오면서 요구사항이 바뀔 수 있고, <strong>충돌 01·02</strong>는 실측 결과에 따라 <strong>PRD를 고쳐야 할 수도</strong> 있습니다. 변경이 없는 게 아니라 <strong>변경이 예정되어 있는</strong> 프로젝트입니다.</p>
+      </section>
+      <section>
+        <span class="lab">어디까지 — PM의 상한</span>
+        <p>변경을 <strong>막는 게 아니라 보이게 만드는 것</strong>이 목표입니다. 세 가지를 갖춰야 합니다 — <strong>①</strong> 변경 요청이 어느 산출물까지 파급되는지 짚는 능력(PRD → SRS → 스키마 → 시험 케이스), <strong>②</strong> 변경의 비용이 <strong>단계가 갈수록 급격히 커진다</strong>는 감각, <strong>③</strong> 무엇이 <strong>기준선(baseline)</strong>이고 그걸 바꾸려면 무엇이 필요한지에 대한 팀 합의.</p>
+      </section>
+      <section>
+        <span class="lab">찾는 법</span>
+        <div class="find"><dl>
+          <dt>검색어</dt><dd><span class="q">cost of change curve software</span><span class="q">scope creep prevention</span><span class="q">requirements baseline change control</span><span class="q">requirements traceability matrix</span></dd>
+          <dt>1차 출처</dt><dd><strong>ISO/IEC/IEEE 29148</strong>의 요구사항 변경 관리 절 — 이 프로젝트의 SRS가 이미 이 표준을 따르고 있어 <strong>바로 대조됩니다.</strong></dd>
+          <dt>정전</dt><dd>Karl Wiegers 《<strong>Software Requirements</strong>》 — 요구사항 관리의 표준 교과서. <strong>변경 관리와 추적 매트릭스 장</strong>만 읽으면 됩니다.</dd>
+          <dt>실습 대상</dt><dd>이 프로젝트에는 이미 <strong>RTM(추적 매트릭스)</strong>이 있습니다. 변경 1건이 그 표에서 몇 줄을 건드리는지 세어 보는 게 가장 좋은 연습입니다.</dd>
+        </dl></div>
+      </section>
+      <section class="pass">
+        <span class="lab">통과 판정</span>
+        <p>가상의 변경 요청 하나(예: "완료 알림을 60초에서 5분으로 완화")를 받아, <strong>PRD 몇 조항 · SRS 몇 요구사항 · 스키마 · 시험 케이스 · 화면</strong> 중 무엇이 바뀌는지 목록으로 뽑는다. 그리고 <strong>그 변경이 착수 전이 아니라 개발 중반에 왔다면 비용이 왜 달라지는지</strong>를 설명한다.</p>
+      </section>
+    </div>
+    <div class="done"><label><input type="checkbox" data-kw="A6"><span>학습 완료</span></label></div>
+  </div>
+</section>
+
+<!-- 14 트랙 B 개요 → index 13 -->
+<section class="slide">
+  <p class="eyebrow">트랙 B · 완성도를 검토한다</p>
+  <h2>"다 됐습니다"를 검증하는 법</h2>
+  <p class="lede">완성도 검토에서 PM이 가장 자주 지는 지점은 <strong>반박할 근거가 없어서</strong>입니다. 트랙 B는 그 근거를 만드는 도구입니다.</p>
+
+  <div class="tw">
+    <table>
+      <tr><th>흔한 보고</th><th>필요한 되물음</th><th>키워드</th></tr>
+      <tr><td>"기능 개발 완료했습니다"</td><td>완료의 정의가 뭐였죠?</td><td>B1</td></tr>
+      <tr><td>"테스트 다 했습니다"</td><td>어느 레벨에서 몇 건이요?</td><td>B2</td></tr>
+      <tr><td>"커버리지 82%입니다"</td><td>그게 뭘 보장하지 않나요?</td><td>B3</td></tr>
+      <tr><td>"성능 문제없습니다"</td><td>어떤 부하에서 며칠간 측정했죠?</td><td>B4</td></tr>
+      <tr><td>"장애는 없었습니다"</td><td>없었나요, 못 봤나요?</td><td>B5</td></tr>
+      <tr><td>"사소한 버그만 남았습니다"</td><td>사소함의 기준이 뭐죠?</td><td>B6</td></tr>
+    </table>
+  </div>
+
+  <div class="note good">
+    <p><b>이 프로젝트가 유리한 점.</b> PRD에 <b>GWT 형식 인수 기준 76건</b>이 이미 있습니다. 대부분의 프로젝트는 이게 없어서 완료 판정이 말싸움이 됩니다. <b>여기서는 판정 기준이 문서로 존재합니다.</b></p>
+    <p>트랙 B의 실질적 목표는 <b>그 76건을 실제 검증 증거와 연결하는 것</b>입니다. 기준이 있는데 증거가 없으면 기준이 없는 것과 같습니다.</p>
+  </div>
+</section>
+
+<!-- 15 B1 -->
+<section class="slide">
+  <p class="eyebrow">트랙 B · 키워드 1</p>
+  <div class="kw">
+    <div class="kw-head"><span class="kw-id">B1</span><b>완료의 정의와 인수 기준</b><em>Definition of Done · Acceptance Criteria</em><span class="lv lv3">L3 설계</span></div>
+    <div class="kw-body">
+      <section>
+        <span class="lab">왜 — 가장 먼저 해야 하는 하나</span>
+        <p>둘은 다른 것입니다. <strong>인수 기준(AC)</strong>은 <strong>기능마다 다른</strong> "이 기능이 옳게 동작하는가"이고, <strong>완료의 정의(DoD)</strong>는 <strong>모든 기능에 공통인</strong> "이 작업이 끝났다고 부를 조건"입니다. 시험을 썼는가, 코드 리뷰를 받았는가, 문서를 갱신했는가, 배포 가능한 상태인가.</p>
+        <p>DoD가 없으면 <strong>"기능은 되는데 시험이 없는" 상태가 완료로 집계</strong>되고, 그 부채가 뒤에서 일정을 무너뜨립니다. 이 프로젝트에는 AC 76건이 있지만 <strong>DoD는 아직 없습니다.</strong> PM이 만들어야 합니다.</p>
+      </section>
+      <section>
+        <span class="lab">어디까지 — PM의 상한</span>
+        <p>여기는 <strong>PM이 주도해야 하는 영역</strong>입니다. DoD를 팀과 합의해 문서화하고, <strong>모든 완료 보고가 그 목록을 통과했는지 확인</strong>하는 것까지. 좋은 AC의 조건도 알아야 합니다 — <strong>측정 가능</strong>할 것, <strong>구현 방법이 아니라 관찰 가능한 결과</strong>를 말할 것, <strong>판정자가 누구든 같은 답</strong>이 나올 것.</p>
+      </section>
+      <section>
+        <span class="lab">찾는 법</span>
+        <div class="find"><dl>
+          <dt>검색어</dt><dd><span class="q">definition of done vs acceptance criteria</span><span class="q">given when then best practices</span><span class="q">INVEST criteria user story</span><span class="q">definition of done checklist example</span></dd>
+          <dt>1차 출처</dt><dd><strong>Scrum Guide</strong>의 Definition of Done 절(짧습니다). <strong>Cucumber 공식 문서</strong>의 Gherkin 작성 지침 — GWT를 애매하지 않게 쓰는 규칙이 정리돼 있습니다.</dd>
+          <dt>정전</dt><dd>Gojko Adzic 《<strong>Specification by Example</strong>》 — <strong>인수 기준을 그대로 자동 시험으로 바꾸는</strong> 방법. 이 프로젝트의 GWT 76건을 살리는 데 직접 쓰입니다.</dd>
+          <dt>실습 대상</dt><dd>PRD의 GWT 76건. 이미 있는 좋은 예제 묶음이라 <strong>남의 예제를 찾을 필요가 없습니다.</strong></dd>
+        </dl></div>
+      </section>
+      <section class="pass">
+        <span class="lab">통과 판정</span>
+        <p><strong>①</strong> 팀과 합의한 <strong>DoD 체크리스트</strong>를 문서로 만든다. <strong>②</strong> PRD의 GWT 76건 중 임의의 5건을 골라, 각각이 통과했다는 <strong>증거로 무엇을 받아야 하는지</strong>(자동 시험 결과 / 화면 캡처 / 로그 / 성능 측정치)를 지정한다. <strong>③</strong> 그 5건 중 <strong>애매해서 판정이 갈릴 것</strong>을 하나라도 찾아내 문구를 고친다.</p>
+      </section>
+    </div>
+    <div class="done"><label><input type="checkbox" data-kw="B1"><span>학습 완료</span></label></div>
+  </div>
+</section>
+
+<!-- 16 B2 -->
+<section class="slide">
+  <p class="eyebrow">트랙 B · 키워드 2</p>
+  <div class="kw">
+    <div class="kw-head"><span class="kw-id">B2</span><b>테스트 레벨</b><em>Test Levels · Test Pyramid</em><span class="lv lv2">L2 판단</span></div>
+    <div class="kw-body">
+      <section>
+        <span class="lab">왜 — 이 프로젝트의 어디에서</span>
+        <p>"테스트했습니다"는 <strong>정보량이 0인 문장</strong>입니다. 레벨이 다르면 보장하는 것이 완전히 다르기 때문입니다.</p>
+        <ul>
+          <li><strong>단위</strong> — 함수 하나가 옳은가. 이 프로젝트의 <strong>한도·세액 계산</strong>이 여기입니다. 순수 모듈로 격리돼 있어 <strong>DB 없이도 검증 데이터셋을 돌릴 수 있습니다.</strong></li>
+          <li><strong>통합</strong> — 부품끼리 잘 붙는가. <strong>Server Action + DB 트랜잭션 + 감사 로그</strong>가 한 묶음으로 도는지.</li>
+          <li><strong>E2E</strong> — 사용자 여정이 실제로 되는가. <strong>사전 조회 → 신청 → 상태 확인</strong> 전 과정.</li>
+        </ul>
+        <p><strong>단위 시험만 100% 통과해도 서비스가 안 될 수 있습니다.</strong> 부품은 다 멀쩡한데 조립이 틀린 경우입니다.</p>
+      </section>
+      <section>
+        <span class="lab">어디까지 — PM의 상한</span>
+        <p>시험 코드를 쓸 필요는 없습니다. <strong>어떤 요구사항이 어떤 레벨에서 검증되어야 하는지 판정</strong>하는 것까지입니다. 원칙은 <strong>테스트 피라미드</strong> — 단위가 가장 많고, 통합이 중간, E2E는 소수. E2E는 느리고 자주 깨져서, 많아지면 팀이 결국 <strong>시험을 꺼버립니다.</strong></p>
+      </section>
+      <section>
+        <span class="lab">찾는 법</span>
+        <div class="find"><dl>
+          <dt>검색어</dt><dd><span class="q">test pyramid martin fowler</span><span class="q">ISTQB test levels</span><span class="q">flaky test 원인</span><span class="q">unit vs integration vs e2e 차이</span></dd>
+          <dt>1차 출처</dt><dd>Martin Fowler <strong>TestPyramid</strong> · <strong>UnitTest</strong> 글. <strong>ISTQB Foundation Level 실러버스</strong>는 공식 사이트에서 무료이고 한국어판이 있습니다 — <strong>2장(테스트 레벨·유형)만</strong> 읽으면 충분합니다. 용어를 표준어로 맞출 수 있어 팀과의 대화가 정확해집니다.</dd>
+          <dt>정전</dt><dd>《<strong>Software Engineering at Google</strong>》 11~14장 — 구글의 시험 규모 분류(Small·Medium·Large)와 <strong>왜 큰 시험이 팀을 망가뜨리는지</strong>가 실전 사례로 나옵니다. 온라인 무료 공개판이 있습니다.</dd>
+          <dt>도구 맥락</dt><dd>이 스택이면 단위·통합은 <strong>Vitest</strong>, E2E는 <strong>Playwright</strong>가 표준 조합입니다. 각 공식 문서의 첫 페이지만 봐도 <strong>무엇을 자동화할 수 있는지</strong>의 감이 잡힙니다.</dd>
+        </dl></div>
+      </section>
+      <section class="pass">
+        <span class="lab">통과 판정</span>
+        <p>PRD의 검증 데이터셋(평가액 84,000,000원 · 57세 · 이연퇴직소득 28,000,000원 등)이 <strong>어느 레벨의 시험으로 자동 검증되고 있는지</strong> 확인하고, 만약 자동화돼 있지 않다면 <strong>"이건 단위 시험으로 매 배포마다 돌아야 한다"</strong>를 근거와 함께 요구한다.</p>
+      </section>
+    </div>
+    <div class="done"><label><input type="checkbox" data-kw="B2"><span>학습 완료</span></label></div>
+  </div>
+</section>
+
+<!-- 17 B3 -->
+<section class="slide">
+  <p class="eyebrow">트랙 B · 키워드 3</p>
+  <div class="kw">
+    <div class="kw-head"><span class="kw-id">B3</span><b>커버리지 해석</b><em>Code Coverage · Mutation Testing</em><span class="lv lv1">L1 이해</span></div>
+    <div class="kw-body">
+      <section>
+        <span class="lab">왜 — 가장 자주 오해되는 숫자</span>
+        <p>커버리지는 <strong>"시험이 실행한 코드의 비율"</strong>입니다. <strong>"옳게 검증한 비율"이 아닙니다.</strong> 코드를 실행만 하고 결과를 아무것도 확인하지 않아도 커버리지는 올라갑니다.</p>
+        <p>그래서 <strong>커버리지 90%인데 계산이 틀린</strong> 상황이 실제로 가능합니다. 이 프로젝트처럼 <strong>세액이 원 단위로 맞아야 하는</strong> 도메인에서는 특히 위험합니다.</p>
+      </section>
+      <section>
+        <span class="lab">어디까지 — PM의 상한</span>
+        <p><strong>L1이면 충분합니다.</strong> 세 가지만 알면 됩니다 — <strong>①</strong> 커버리지는 <strong>하한선을 지키는 용도</strong>지 품질 목표가 아니다, <strong>②</strong> 목표치를 높게 걸면 <strong>숫자만 채우는 시험</strong>이 생긴다, <strong>③</strong> 중요한 건 전체 비율이 아니라 <strong>핵심 로직이 덮였는가</strong>이다.</p>
+        <p>물어야 할 것은 "커버리지 몇 %인가요"가 아니라 <strong>"한도 계산과 상태 전이는 덮여 있나요"</strong>입니다.</p>
+      </section>
+      <section>
+        <span class="lab">찾는 법</span>
+        <div class="find"><dl>
+          <dt>검색어</dt><dd><span class="q">code coverage misleading metric</span><span class="q">assertion free test</span><span class="q">mutation testing 개념</span><span class="q">goodhart's law software metrics</span></dd>
+          <dt>1차 출처</dt><dd>Martin Fowler <strong>TestCoverage</strong> — 짧고 결론이 분명합니다. <strong>"커버리지는 덮이지 않은 곳을 찾는 데 쓰라"</strong>가 요지입니다.</dd>
+          <dt>더 볼 것</dt><dd><strong>변이 시험(mutation testing)</strong> — 코드를 일부러 망가뜨렸을 때 시험이 잡아내는지 보는 기법입니다. <strong>커버리지가 못 하는 걸 하는</strong> 방법으로, 개념만 알아도 시험 품질을 보는 눈이 생깁니다.</dd>
+          <dt>맥락</dt><dd>Goodhart의 법칙 — <strong>"지표가 목표가 되면 좋은 지표이기를 그친다."</strong> 커버리지·속도·결함 수 전부에 해당합니다.</dd>
+        </dl></div>
+      </section>
+      <section class="pass">
+        <span class="lab">통과 판정</span>
+        <p>"커버리지 80% 달성했습니다"라는 보고를 받았을 때, <strong>그 숫자가 보장하지 않는 것 세 가지</strong>를 즉시 말하고, <strong>대신 확인할 것</strong>(핵심 계산 로직과 상태 전이의 덮임 여부)을 지목한다.</p>
+      </section>
+    </div>
+    <div class="done"><label><input type="checkbox" data-kw="B3"><span>학습 완료</span></label></div>
+  </div>
+</section>
+
+<!-- 18 B4 -->
+<section class="slide">
+  <p class="eyebrow">트랙 B · 키워드 4</p>
+  <div class="kw">
+    <div class="kw-head"><span class="kw-id">B4</span><b>비기능 검증</b><em>Performance · Load Testing · SLO</em><span class="lv lv2">L2 판단</span></div>
+    <div class="kw-body">
+      <section>
+        <span class="lab">왜 — 이 프로젝트의 어디에서</span>
+        <p>기능 요구사항은 되는지 안 되는지가 명확합니다. <strong>비기능은 "어떤 조건에서 쟀는가"가 없으면 판정 자체가 불가능</strong>합니다. "빠릅니다"는 검증할 수 없습니다.</p>
+        <p>이 프로젝트에는 <strong>p95 목표가 5개</strong> 있고, 그중 <strong>매매창 판정 ≤ 0.5초</strong>는 <strong>충돌 01의 핵심</strong>입니다. 이 숫자가 실측으로 확인되지 않으면 출시 판정을 내릴 수 없습니다. <strong>비기능 검증이 곧 출시 게이트인 프로젝트</strong>입니다.</p>
+      </section>
+      <section>
+        <span class="lab">어디까지 — PM의 상한</span>
+        <p>부하 시험을 직접 돌릴 필요는 없습니다. 대신 <strong>측정 결과를 받을 때 반드시 확인할 조건</strong>을 알아야 합니다 — <strong>어떤 부하</strong>(동시 사용자 수·요청률), <strong>어떤 환경</strong>(운영과 같은 사양인가), <strong>얼마 동안</strong>(순간 측정인가 지속인가), <strong>어떤 상태</strong>(콜드 스타트 포함인가 제외인가). <strong>이 네 가지 없는 성능 숫자는 근거가 되지 않습니다.</strong></p>
+        <p>그리고 <strong>SLO와 알람 임계치는 다르다</strong>는 것 — SRS-002가 둘을 분리한 이유입니다.</p>
+      </section>
+      <section>
+        <span class="lab">찾는 법</span>
+        <div class="find"><dl>
+          <dt>검색어</dt><dd><span class="q">SLI SLO error budget</span><span class="q">load test vs stress test vs soak test</span><span class="q">percentile latency p50 p95 p99</span><span class="q">tail latency 문제</span></dd>
+          <dt>1차 출처</dt><dd><strong>Google SRE Book</strong>과 <strong>SRE Workbook</strong> — <strong>sre.google/books에서 전문 무료</strong>입니다. SLO·오류 예산 장이 이 주제의 표준입니다. 이 로드맵에서 <strong>가장 비용 대비 효과가 큰 자료</strong>입니다.</dd>
+          <dt>정전</dt><dd>Michael Nygard 《<strong>Release It!</strong>》 — <strong>실제 운영에서 터지는 방식</strong>(타임아웃 연쇄, 회로 차단기, 병목)을 사례로 다룹니다. 서버리스·외부 연동이 많은 이 프로젝트에 직접 적용됩니다.</dd>
+          <dt>도구 맥락</dt><dd>부하 시험 도구는 <strong>k6</strong>·<strong>Artillery</strong>가 흔합니다. 공식 문서의 예제 하나만 봐도 <strong>"부하를 어떻게 정의하는가"</strong>가 감이 잡힙니다.</dd>
+        </dl></div>
+      </section>
+      <section class="pass">
+        <span class="lab">통과 판정</span>
+        <p>"매매창 판정 p95 ≤ 0.5초를 만족합니다"라는 보고를 받았을 때, <strong>부하·환경·기간·콜드스타트 포함 여부 네 조건을 특정해 되묻고</strong>, 그 답을 근거로 <strong>충돌 01이 실제로 완화되었는지 판정</strong>한다.</p>
+      </section>
+    </div>
+    <div class="done"><label><input type="checkbox" data-kw="B4"><span>학습 완료</span></label></div>
+  </div>
+</section>
+
+<!-- 19 B5 -->
+<section class="slide">
+  <p class="eyebrow">트랙 B · 키워드 5</p>
+  <div class="kw">
+    <div class="kw-head"><span class="kw-id">B5</span><b>관측 가능성</b><em>Observability · Logs, Metrics, Traces</em><span class="lv lv2">L2 판단</span></div>
+    <div class="kw-body">
+      <section>
+        <span class="lab">왜 — 이 프로젝트의 어디에서</span>
+        <p>"장애 없었습니다"와 "장애를 못 봤습니다"는 구별되지 않습니다. <strong>보는 장치가 없으면 둘은 같은 보고</strong>입니다.</p>
+        <p>이 프로젝트는 관측이 특히 중요합니다. <strong>가드레일 지표</strong>(화면이 가능하다고 했는데 거부된 주문 = 일간 0.1% 초과 시 즉시 롤백)가 있는데, <strong>이걸 세는 장치가 없으면 롤백 규칙 자체가 작동하지 않습니다.</strong> 그리고 이건 <strong>PM이 정의해야 할 요구사항</strong>입니다.</p>
+      </section>
+      <section>
+        <span class="lab">어디까지 — PM의 상한</span>
+        <p>세 축의 역할 구분까지입니다 — <strong>로그</strong>는 개별 사건의 기록(무슨 일이 있었나), <strong>메트릭</strong>은 시간에 따른 숫자(얼마나 자주·얼마나 오래), <strong>트레이스</strong>는 요청 하나가 거쳐간 경로(어디서 느려졌나).</p>
+        <p>그리고 <strong>알람 설계의 원칙</strong> — 알람은 <strong>사람이 지금 조치할 수 있는 것</strong>에만 겁니다. 조치할 수 없는 알람은 무시하는 습관을 만들고, 그 습관이 진짜 알람도 무시하게 만듭니다.</p>
+      </section>
+      <section>
+        <span class="lab">찾는 법</span>
+        <div class="find"><dl>
+          <dt>검색어</dt><dd><span class="q">observability three pillars</span><span class="q">structured logging 이유</span><span class="q">alert fatigue 방지</span><span class="q">symptom based alerting</span></dd>
+          <dt>1차 출처</dt><dd><strong>OpenTelemetry 공식 문서</strong>의 개념 페이지 — 세 축의 정의가 표준으로 정리돼 있습니다. <strong>Google SRE Book</strong>의 Monitoring·Alerting 장(무료).</dd>
+          <dt>정전</dt><dd>《<strong>Observability Engineering</strong>》(Charity Majors 외) — <strong>모니터링과 관측 가능성의 차이</strong>(알고 있는 문제를 보는 것 vs 모르는 문제를 물어볼 수 있는 것)를 명확히 합니다.</dd>
+          <dt>현장</dt><dd><span class="q">토스 장애 대응</span> <span class="q">if(kakao) 모니터링</span> — 국내 컨퍼런스 발표에 <strong>실제 사고 사례</strong>가 많습니다.</dd>
+        </dl></div>
+      </section>
+      <section class="pass">
+        <span class="lab">통과 판정</span>
+        <p>이 프로젝트의 <strong>가드레일 지표와 KPI 각각에 대해</strong>, ① 어떤 사건을 세야 하는지 ② 그 사건이 로그에 남고 있는지 ③ 대시보드에서 볼 수 있는지를 대조해 <strong>구멍 목록</strong>을 만든다. 그 목록이 곧 개발팀에 낼 요구사항이 되면 통과.</p>
+      </section>
+    </div>
+    <div class="done"><label><input type="checkbox" data-kw="B5"><span>학습 완료</span></label></div>
+  </div>
+</section>
+
+<!-- 20 B6 -->
+<section class="slide">
+  <p class="eyebrow">트랙 B · 키워드 6</p>
+  <div class="kw">
+    <div class="kw-head"><span class="kw-id">B6</span><b>결함 관리</b><em>Defect Triage · Severity vs Priority</em><span class="lv lv2">L2 판단</span></div>
+    <div class="kw-body">
+      <section>
+        <span class="lab">왜 — 출시 직전에 반드시 옵니다</span>
+        <p>출시 전에는 항상 결함이 남습니다. 문제는 <strong>"이 정도면 나가도 되나"</strong>를 그때그때 감으로 정하는 것입니다. 감으로 정하면 <strong>일정 압박이 센 날에는 기준이 느슨해집니다.</strong></p>
+        <p>이 프로젝트에는 <strong>등급을 가르는 명확한 축</strong>이 이미 있습니다 — <strong>돈이 잘못 움직이는가</strong>, <strong>고객에게 잘못된 값을 보여줬는가</strong>, <strong>기록이 남지 않았는가</strong>. 이 세 가지에 걸리면 사소한 결함이 아닙니다.</p>
+      </section>
+      <section>
+        <span class="lab">어디까지 — PM의 상한</span>
+        <p>여기도 <strong>PM이 기준을 정하는 영역</strong>입니다. 반드시 구분해야 할 두 가지 — <strong>심각도(severity)</strong>는 <strong>고장의 크기</strong>(기술적 영향), <strong>우선순위(priority)</strong>는 <strong>고치는 순서</strong>(사업적 판단)입니다. 심각도는 개발자가, <strong>우선순위는 PM이</strong> 정합니다. 이걸 섞으면 "심각한데 우선순위가 낮은" 정당한 결정을 내릴 수 없게 됩니다.</p>
+        <p>그리고 <strong>좋은 결함 보고서의 조건</strong> — 재현 조건·기대 결과·실제 결과. 이 셋이 없으면 개발자가 고칠 수 없습니다.</p>
+      </section>
+      <section>
+        <span class="lab">찾는 법</span>
+        <div class="find"><dl>
+          <dt>검색어</dt><dd><span class="q">severity vs priority defect</span><span class="q">bug triage process</span><span class="q">release criteria known issues</span><span class="q">regression test selection</span></dd>
+          <dt>1차 출처</dt><dd><strong>ISTQB Foundation</strong> 실러버스의 결함 관리 절 — 심각도/우선순위 정의가 표준으로 나옵니다. 팀과 <strong>표준 용어로 합의</strong>할 때 근거가 됩니다.</dd>
+          <dt>정전</dt><dd>《<strong>Software Engineering at Google</strong>》의 시험·코드 상태 관련 장 — <strong>대규모에서 결함을 어떻게 흘려보내는가</strong>가 실전으로 나옵니다.</dd>
+          <dt>실습 대상</dt><dd>이 프로젝트의 <strong>미해결 항목 분류(개발 차단 / 출시 차단 / 판정 필요)</strong>가 이미 좋은 등급 체계입니다. <strong>결함에도 같은 축을 적용</strong>해 보세요.</dd>
+        </dl></div>
+      </section>
+      <section class="pass">
+        <span class="lab">통과 판정</span>
+        <p><strong>출시 차단 기준</strong>을 문서로 만든다 — 어떤 결함이 남아 있으면 못 나가고, 어떤 건 알려진 이슈로 안고 나갈 수 있는지. 그리고 가상의 결함 3건(예: 세액이 1원 다름 / 밴드가 단일 날짜로 표시됨 / 화면 로딩이 2초)에 <strong>그 기준을 적용해 판정하고 근거를 댄다.</strong></p>
+      </section>
+    </div>
+    <div class="done"><label><input type="checkbox" data-kw="B6"><span>학습 완료</span></label></div>
+  </div>
+</section>
+
+<!-- 21 트랙 C 개요 → index 20 -->
+<section class="slide">
+  <p class="eyebrow">트랙 C · 이 도메인을 검증한다</p>
+  <h2>이 프로젝트에만 필요한 다섯</h2>
+  <p class="lede">A·B는 어떤 소프트웨어 프로젝트에나 쓰입니다. C는 <strong>돈이 움직이고 · 상태가 여러 단계를 지나고 · 외부 시스템과 붙는</strong> 이 프로젝트에 특화된 것들입니다.</p>
+
+  <div class="tw">
+    <table>
+      <tr><th>키워드</th><th>이게 깨지면 생기는 일</th><th>목표 레벨</th></tr>
+      <tr><td>C1 상태 머신</td><td>있을 수 없는 상태로 빠져 되돌릴 수 없음</td><td><span class="lv lv2" style="margin:0">L2</span></td></tr>
+      <tr><td>C2 멱등성·동시성</td><td>이체가 두 번 나감</td><td><span class="lv lv2" style="margin:0">L2</span></td></tr>
+      <tr><td>C3 데이터 무결성</td><td>기록과 실제가 어긋나 분쟁에서 짐</td><td><span class="lv lv1" style="margin:0">L1</span></td></tr>
+      <tr><td>C4 서버리스·시간</td><td>알림이 늦고 배치가 공휴일에 돎</td><td><span class="lv lv1" style="margin:0">L1</span></td></tr>
+      <tr><td>C5 보안·컴플라이언스</td><td>규제 위반으로 출시가 막힘</td><td><span class="lv lv2" style="margin:0">L2</span></td></tr>
+    </table>
+  </div>
+
+  <div class="note good">
+    <p><b>이 트랙이 다른 프로젝트로 옮겨갈 때.</b> C의 다섯 개는 <b>핀테크·이커머스·물류처럼 상태와 돈이 있는 모든 도메인에 그대로 적용</b>됩니다. 이 프로젝트에서 한 번 제대로 익히면 재사용 범위가 넓습니다.</p>
+  </div>
+</section>
+
+<!-- 22 C1 -->
+<section class="slide">
+  <p class="eyebrow">트랙 C · 키워드 1</p>
+  <div class="kw">
+    <div class="kw-head"><span class="kw-id">C1</span><b>상태 머신</b><em>State Machine · Statechart</em><span class="lv lv2">L2 판단</span></div>
+    <div class="kw-body">
+      <section>
+        <span class="lab">왜 — 이 제품의 심장</span>
+        <p>이 제품의 본질은 <strong>"지금 어느 단계인가"를 정확히 말해주는 것</strong>입니다. PRD §8에는 상태 <strong>12종</strong>, 허용 전이 <strong>16종(T-01~T-16)</strong>, <strong>금지 전이 5종</strong>이 정의돼 있습니다.</p>
+        <p>금지 전이가 명시돼 있다는 게 중요합니다. 예를 들어 <strong>완료된 건이 다시 진행 중으로 돌아가면</strong> 고객에게 이미 "끝났습니다"라고 알린 뒤입니다. <strong>되돌릴 수 없는 종류의 사고</strong>입니다.</p>
+      </section>
+      <section>
+        <span class="lab">어디까지 — PM의 상한</span>
+        <p>상태 머신을 <strong>설계하는 것은 이미 끝났습니다</strong>(PRD에 있음). PM에게 필요한 건 <strong>검증 관점</strong>입니다 — <strong>①</strong> 모든 허용 전이에 시험 케이스가 있는가, <strong>②</strong> <strong>모든 금지 전이에도</strong> "시도하면 거부되는지" 시험이 있는가, <strong>③</strong> 이상 경로(순서 뒤바뀜·누락·중복 수신)에 정의된 동작이 있는가.</p>
+        <p><strong>②를 빠뜨리는 팀이 많습니다.</strong> 되는 것만 시험하고 안 되어야 하는 것은 시험하지 않습니다.</p>
+      </section>
+      <section>
+        <span class="lab">찾는 법</span>
+        <div class="find"><dl>
+          <dt>검색어</dt><dd><span class="q">finite state machine 개념</span><span class="q">state transition testing technique</span><span class="q">statechart harel</span><span class="q">invalid state unrepresentable</span></dd>
+          <dt>1차 출처</dt><dd><strong>statecharts.dev</strong> — 상태 차트 개념이 그림으로 잘 정리돼 있습니다. <strong>ISTQB</strong>의 <strong>상태 전이 시험 기법</strong> 절 — 전이 커버리지(0-switch·1-switch)의 표준 정의입니다.</dd>
+          <dt>정전</dt><dd>David Harel의 <strong>Statecharts 원 논문</strong>(1987) — 어렵지만 앞부분만 봐도 <strong>왜 상태를 그림으로 그려야 하는지</strong>가 납득됩니다. 실용서로는 XState 공식 문서의 개념 페이지가 읽기 쉽습니다.</dd>
+          <dt>실습 대상</dt><dd>PRD §8.6의 전이 매트릭스. <strong>이미 표로 있어서 시험 케이스와 1:1 대조가 바로 됩니다.</strong></dd>
+        </dl></div>
+      </section>
+      <section class="pass">
+        <span class="lab">통과 판정</span>
+        <p>PRD §8.6의 <strong>허용 전이 16종 + 금지 전이 5종, 총 21건 전부에 대응하는 시험 케이스가 있는지 대조표</strong>를 만든다. <strong>빠진 것이 하나라도 있으면 그것이 곧 요구사항</strong>이 됩니다.</p>
+      </section>
+    </div>
+    <div class="done"><label><input type="checkbox" data-kw="C1"><span>학습 완료</span></label></div>
+  </div>
+</section>
+
+<!-- 23 C2 -->
+<section class="slide">
+  <p class="eyebrow">트랙 C · 키워드 2</p>
+  <div class="kw">
+    <div class="kw-head"><span class="kw-id">C2</span><b>멱등성과 동시성</b><em>Idempotency · Concurrency Control</em><span class="lv lv2">L2 판단</span></div>
+    <div class="kw-body">
+      <section>
+        <span class="lab">왜 — 금융에서 가장 비싼 실수</span>
+        <p>PRD §8.7에 예외 <strong>E-01~E-12</strong>, 멱등 규칙 <strong>ID-1~5</strong>, 정합성 규칙 <strong>RC-1~5</strong>가 정의돼 있습니다. 이만큼 정의했다는 건 <strong>이 영역에서 사고가 난다는 걸 알고 있다</strong>는 뜻입니다.</p>
+        <p>동시성은 별개의 문제입니다. <strong>고객이 취소를 누르는 순간 배치가 상태를 바꾸고 있으면</strong> 어느 쪽이 이겨야 하는가 — 정하지 않으면 <strong>실행할 때마다 다른 결과</strong>가 나옵니다.</p>
+      </section>
+      <section>
+        <span class="lab">어디까지 — PM의 상한</span>
+        <p>구현 기법(낙관적 잠금·비관적 잠금)은 <strong>이름과 차이만</strong> 알면 됩니다. 정확히 알아야 할 것은 <strong>질문 목록</strong>입니다 — 상태를 바꾸는 모든 기능에 대해 <strong>"두 번 오면?"</strong>, <strong>"순서가 뒤바뀌어 오면?"</strong>, <strong>"동시에 오면 누가 이기나?"</strong>, <strong>"안 오면 언제까지 기다리나?"</strong> 네 가지.</p>
+        <p>이 네 질문에 <strong>문서화된 답이 없는 기능</strong>은 언젠가 사고를 냅니다.</p>
+      </section>
+      <section>
+        <span class="lab">찾는 법</span>
+        <div class="find"><dl>
+          <dt>검색어</dt><dd><span class="q">idempotency key API design</span><span class="q">optimistic vs pessimistic locking</span><span class="q">exactly once delivery 불가능</span><span class="q">race condition 예시</span></dd>
+          <dt>1차 출처</dt><dd><strong>Stripe API 문서의 Idempotent Requests</strong> 절 — 결제 도메인에서 멱등 키를 어떻게 쓰는지에 대한 <strong>사실상의 표준 참고 자료</strong>입니다. 짧고 이 프로젝트와 도메인이 거의 같습니다. <strong>여기부터 보세요.</strong></dd>
+          <dt>정전</dt><dd>Martin Kleppmann 《<strong>Designing Data-Intensive Applications</strong>》 — 7장(트랜잭션)·<strong>11장(스트림 처리)</strong>. 어렵지만 <strong>"정확히 한 번 전달"이 왜 불가능하고 대신 무엇을 하는지</strong>가 여기 있습니다.</dd>
+          <dt>현장</dt><dd><span class="q">토스 멱등성</span> <span class="q">결제 중복 방지 설계</span> — 국내 핀테크 기술 블로그에 <strong>같은 문제의 실제 해법</strong>이 여러 편 있습니다.</dd>
+        </dl></div>
+      </section>
+      <section class="pass">
+        <span class="lab">통과 판정</span>
+        <p>SRS-002의 <strong>Server Action 7개 + Route Handler 7개, 총 14개 각각에 대해</strong> 위 네 질문(두 번 / 순서 바뀜 / 동시 / 미도착)의 답이 문서에 있는지 대조한다. <strong>답이 없는 칸이 곧 시험 케이스이자 요구사항</strong>입니다.</p>
+      </section>
+    </div>
+    <div class="done"><label><input type="checkbox" data-kw="C2"><span>학습 완료</span></label></div>
+  </div>
+</section>
+
+<!-- 24 C3 -->
+<section class="slide">
+  <p class="eyebrow">트랙 C · 키워드 3</p>
+  <div class="kw">
+    <div class="kw-head"><span class="kw-id">C3</span><b>데이터 무결성</b><em>Constraints · Transactions · Audit Trail</em><span class="lv lv1">L1 이해</span></div>
+    <div class="kw-body">
+      <section>
+        <span class="lab">왜 — 분쟁에서 이기는 근거</span>
+        <p>이 제품은 <strong>고객에게 완료 시점을 약속</strong>합니다. 늦어지면 분쟁이 생기고, 그때 필요한 건 <strong>"그 시점에 화면에 무엇이 표시됐는가"의 기록</strong>입니다.</p>
+        <p>SRS-002는 그 기록을 <strong>고칠 수도 지울 수도 없게(WORM)</strong> 만들었고, <strong>기록 실패 시 전송 자체를 취소</strong>하도록 묶었습니다. 이건 기술 선택이 아니라 <strong>법적 방어 설계</strong>입니다.</p>
+      </section>
+      <section>
+        <span class="lab">어디까지 — PM의 상한</span>
+        <p><strong>L1이면 충분합니다.</strong> SQL을 쓸 필요도, 트랜잭션 격리 수준을 외울 필요도 없습니다. 알아야 할 것은 세 가지 — <strong>①</strong> 트랜잭션은 <strong>"전부 되거나 전부 안 되거나"</strong>를 보장한다, <strong>②</strong> 규칙을 <strong>DB 제약으로 걸면 코드 실수와 무관하게 지켜진다</strong>, <strong>③</strong> 감사 기록은 <strong>수정 불가여야 증거가 된다.</strong></p>
+        <p>PM의 역할은 <strong>"어떤 기록이 분쟁 시 필요한가"를 정의하는 것</strong>입니다. 이건 기술 판단이 아니라 사업·법무 판단이라 <strong>PM이 해야 합니다.</strong></p>
+      </section>
+      <section>
+        <span class="lab">찾는 법</span>
+        <div class="find"><dl>
+          <dt>검색어</dt><dd><span class="q">ACID transaction 쉽게</span><span class="q">database constraint vs application validation</span><span class="q">audit log immutability WORM</span><span class="q">event sourcing 개념</span></dd>
+          <dt>1차 출처</dt><dd><strong>PostgreSQL 공식 문서</strong>의 Constraints 장 — 제약의 종류가 예제와 함께 나옵니다. 읽으면 <strong>"규칙을 DB에 새긴다"</strong>가 구체적으로 무엇인지 보입니다.</dd>
+          <dt>정전</dt><dd>《<strong>Designing Data-Intensive Applications</strong>》 <strong>7장(트랜잭션)</strong> — 이 주제의 최고 설명입니다. 앞 절반만 봐도 충분합니다.</dd>
+          <dt>맥락</dt><dd>금융 도메인의 기록 보존 요건은 <strong>법령이 정합니다.</strong> 기술 자료보다 <strong>사내 법무·정보보호 정책 문서</strong>를 먼저 확인하세요. SRS-002에도 이 보존 기간이 <strong>미확정 항목</strong>으로 남아 있습니다.</dd>
+        </dl></div>
+      </section>
+      <section class="pass">
+        <span class="lab">통과 판정</span>
+        <p><strong>"이 서비스에서 분쟁이 생긴다면 어떤 장면인가"</strong>를 3가지 시나리오로 적고, 각 시나리오에서 <strong>회사를 방어해줄 기록이 무엇인지</strong> 지목한다. 그 기록이 <strong>실제로 남고 있는지, 수정 불가한지</strong>를 개발팀에 확인한다.</p>
+      </section>
+    </div>
+    <div class="done"><label><input type="checkbox" data-kw="C3"><span>학습 완료</span></label></div>
+  </div>
+</section>
+
+<!-- 25 C4 -->
+<section class="slide">
+  <p class="eyebrow">트랙 C · 키워드 4</p>
+  <div class="kw">
+    <div class="kw-head"><span class="kw-id">C4</span><b>서버리스와 시간 처리</b><em>Serverless · Batch · Business Calendar</em><span class="lv lv1">L1 이해</span></div>
+    <div class="kw-body">
+      <section>
+        <span class="lab">왜 — 조용히 틀리는 영역</span>
+        <p>시간 관련 버그는 <strong>즉시 드러나지 않습니다.</strong> 공휴일에 배치가 돌아 밴드가 틀려도, 다음 영업일에 덮어써지면 아무도 모릅니다. <strong>고객만 잘못된 날짜를 봅니다.</strong></p>
+        <p>이 프로젝트는 시간 규칙이 무겁습니다 — <strong>영업일 계산(BD-1~12)</strong>, <strong>Cut-off 15:30</strong>, <strong>Asia/Seoul 고정</strong>. 그런데 <strong>Vercel Cron은 UTC 기준</strong>이고 <strong>공휴일을 모릅니다.</strong> 이 간극이 §9의 충돌 중 하나입니다.</p>
+      </section>
+      <section>
+        <span class="lab">어디까지 — PM의 상한</span>
+        <p><strong>L1으로 충분</strong>하지만 <strong>질문 목록은 정확해야</strong> 합니다 — 배치가 <strong>공휴일에 도는가</strong>, <strong>실패하면 재실행되는가</strong>, <strong>두 번 돌면 결과가 같은가</strong>, <strong>Cut-off 직전 요청은 오늘로 처리되는가 내일로 처리되는가</strong>, <strong>영업일 달력의 출처는 어디이고 언제 갱신되는가</strong>.</p>
+        <p>마지막 질문이 특히 중요합니다. <strong>공휴일 정보가 어디서 오는지 정해지지 않은 채 개발되는</strong> 경우가 흔합니다.</p>
+      </section>
+      <section>
+        <span class="lab">찾는 법</span>
+        <div class="find"><dl>
+          <dt>검색어</dt><dd><span class="q">serverless cold start 원인</span><span class="q">cron job idempotency</span><span class="q">timezone bug 사례</span><span class="q">business day calculation 설계</span></dd>
+          <dt>1차 출처</dt><dd><strong>Vercel 공식 문서</strong>의 Functions·Cron Jobs 항목 — 실행 시간 한도와 <strong>UTC 스케줄</strong>이 명시돼 있습니다. 우리가 실제로 부딪히는 제약이라 <strong>반드시 원문으로</strong> 확인하세요.</dd>
+          <dt>정전</dt><dd>《<strong>Release It!</strong>》의 안정성 패턴 장 — 재시도·타임아웃·회로 차단기. 배치와 외부 연동이 많은 이 프로젝트에 직접 적용됩니다.</dd>
+          <dt>맥락</dt><dd>한국 금융 영업일은 <strong>공휴일 + 증시 휴장일</strong>이 겹칩니다. 일반 공휴일 API로는 부족합니다. <strong>달력 데이터의 출처를 확정하는 것 자체가 PM의 과제</strong>입니다.</dd>
+        </dl></div>
+      </section>
+      <section class="pass">
+        <span class="lab">통과 판정</span>
+        <p>배치 4종 각각에 대해 위 다섯 질문의 답을 받아 <strong>표로 정리</strong>하고, <strong>답이 없는 칸을 미해결 항목으로 등록</strong>한다. 특히 <strong>영업일 달력의 출처와 갱신 주기</strong>가 확정되지 않았다면 그것을 <strong>착수 전 확인 항목</strong>으로 올린다.</p>
+      </section>
+    </div>
+    <div class="done"><label><input type="checkbox" data-kw="C4"><span>학습 완료</span></label></div>
+  </div>
+</section>
+
+<!-- 26 C5 -->
+<section class="slide">
+  <p class="eyebrow">트랙 C · 키워드 5</p>
+  <div class="kw">
+    <div class="kw-head"><span class="kw-id">C5</span><b>보안·컴플라이언스 검증</b><em>Security Verification · Regulatory Evidence</em><span class="lv lv2">L2 판단</span></div>
+    <div class="kw-body">
+      <section>
+        <span class="lab">왜 — 출시를 실제로 막는 것</span>
+        <p>이 프로젝트에는 <strong>컴플라이언스 요구 11건</strong>이 있고, <strong>기능2 전체가 법무 판정(투자자문업 해당 여부)에 걸려</strong> 있습니다. 그리고 <strong>퍼블릭 클라우드 사용</strong>이 별도 검토 대상입니다(충돌 07).</p>
+        <p>컴플라이언스가 다른 요구사항과 다른 점은 <strong>"지켰다"가 아니라 "지켰음을 증명할 수 있다"가 요구된다</strong>는 것입니다. 화면에 문구를 넣은 것으로는 부족하고, <strong>그 문구를 고객이 봤다는 기록</strong>이 필요합니다.</p>
+      </section>
+      <section>
+        <span class="lab">어디까지 — PM의 상한</span>
+        <p>법령 해석은 <strong>법무의 일</strong>입니다. PM의 일은 <strong>번역</strong>입니다 — 법무가 준 판단을 <strong>검증 가능한 요구사항으로 바꾸고, 그 증거가 시스템에 남게 만드는 것</strong>.</p>
+        <p>보안 쪽에서는 <strong>기본 위협 유형</strong>(권한 없는 접근·데이터 노출·입력 조작)과 <strong>이 프로젝트의 방어 장치</strong>(본인 계좌만 조회·계좌번호 마스킹·서버 재검증·감사 로그)가 대응되는지 확인하는 수준까지입니다.</p>
+      </section>
+      <section>
+        <span class="lab">찾는 법</span>
+        <div class="find"><dl>
+          <dt>검색어</dt><dd><span class="q">OWASP top 10 한국어</span><span class="q">broken access control</span><span class="q">개인정보 마스킹 기준</span><span class="q">금융권 클라우드 이용 가이드</span></dd>
+          <dt>1차 출처</dt><dd><strong>OWASP Top 10</strong> — 무료·한국어판 있음. 10개 중 이 프로젝트에 직접 걸리는 건 <strong>접근 통제 실패</strong>가 압도적입니다. <strong>OWASP ASVS</strong>는 <strong>검증 항목 체크리스트</strong> 형태라 인수 기준으로 바로 옮겨 쓸 수 있습니다.</dd>
+          <dt>규제</dt><dd>금융 클라우드·전자금융 관련은 <strong>금융보안원·금융위 발간 자료</strong>가 1차 출처입니다. 블로그 요약은 <strong>개정 반영이 늦어 위험합니다.</strong></dd>
+          <dt>실습 대상</dt><dd>PRD §11의 컴플라이언스 11건. 각각에 대해 <strong>"어떤 화면·로그가 증거인가"</strong>를 채우는 게 그대로 실습이 됩니다.</dd>
+        </dl></div>
+      </section>
+      <section class="pass">
+        <span class="lab">통과 판정</span>
+        <p>컴플라이언스 11건 각각에 대해 <strong>① 어떤 화면 요소가 이를 충족하는가 ② 충족했다는 증거가 어디에 남는가 ③ 그 증거를 언제까지 보관하는가</strong>를 채운 표를 만든다. <strong>빈 칸이 곧 출시 위험</strong>입니다.</p>
+      </section>
+    </div>
+    <div class="done"><label><input type="checkbox" data-kw="C5"><span>학습 완료</span></label></div>
+  </div>
+</section>
+
+<!-- 27 12주 계획 → index 26 -->
+<section class="slide">
+  <p class="eyebrow">실행</p>
+  <h2>12주 계획</h2>
+  <p class="lede">주당 10시간 기준입니다. <strong>순서가 중요합니다</strong> — 앞 주차가 뒤 주차의 판정 기준을 만듭니다.</p>
+
+  <div class="tw">
+    <table>
+      <tr><th>주차</th><th>키워드</th><th>이 주가 끝나면</th></tr>
+      <tr><td class="num"><b>1–2</b></td><td>B1 DoD·인수기준</td><td>완료의 정의가 문서로 존재한다. <b>모든 뒤 작업의 기준점</b></td></tr>
+      <tr><td class="num"><b>3</b></td><td>A1 작업 분해</td><td>SRS 산출물이 2~3일 단위 작업 목록이 된다</td></tr>
+      <tr><td class="num"><b>4</b></td><td>A2 의존성·임계경로</td><td>차단 항목과 무관하게 착수할 작업이 분리된다</td></tr>
+      <tr><td class="num"><b>5–6</b></td><td>A3 추정</td><td>일정을 범위로 말하게 된다. <b>가장 크게 남는 2주</b></td></tr>
+      <tr><td class="num"><b>7</b></td><td>B2 테스트 레벨 + B3 커버리지</td><td>"테스트했습니다"를 검증할 수 있다</td></tr>
+      <tr><td class="num"><b>8</b></td><td>C1 상태 머신 + C2 멱등성</td><td>이 도메인의 사고 지점을 시험 케이스로 요구한다</td></tr>
+      <tr><td class="num"><b>9</b></td><td>B4 비기능 검증</td><td>충돌 01·02의 완화 여부를 판정할 수 있다</td></tr>
+      <tr><td class="num"><b>10</b></td><td>A4 속도 + A5 배포 리듬</td><td>팀의 실제 상태를 숫자로 읽는다</td></tr>
+      <tr><td class="num"><b>11</b></td><td>B5 관측 + B6 결함 관리</td><td>출시 차단 기준과 대시보드 요구사항이 생긴다</td></tr>
+      <tr><td class="num"><b>12</b></td><td>A6 변경 관리 + C3·C4·C5</td><td>마무리. 나머지는 필요할 때 꺼내 본다</td></tr>
+    </table>
+  </div>
+
+  <div class="note warn">
+    <p><b>이 계획의 가장 흔한 실패 방식.</b> 1~2주차(DoD)를 <b>"당연한 얘기 같아서" 건너뛰는</b> 것입니다. 그러면 나머지 10주 동안 배운 걸 <b>어디에 적용할지 모르게</b> 됩니다.</p>
+    <p>DoD는 개념이 쉬운 대신 <b>합의가 어렵습니다.</b> 2주를 쓰는 이유는 읽는 데가 아니라 <b>팀과 합의하는 데</b> 시간이 들기 때문입니다.</p>
+  </div>
+</section>
+
+<!-- 28 붙이는 법 -->
+<section class="slide">
+  <p class="eyebrow">실행</p>
+  <h2>배운 것이 휘발되지 않게</h2>
+  <p class="lede">기술 학습이 실패하는 이유는 어려워서가 아니라 <strong>쓸 자리가 없어서</strong>입니다. 매주 반드시 산출물을 하나 남기세요.</p>
+
+  <div class="card">
+    <h3>매주 같은 형식으로</h3>
+    <ul style="margin-bottom:0">
+      <li><strong>발견</strong> — 이번 주 키워드로 봤을 때 우리 문서에서 <strong>빠졌거나 애매한 것</strong> 3개</li>
+      <li><strong>질문</strong> — 개발팀에 물을 것 2개 (각 키워드의 "통과 판정"에서 나옵니다)</li>
+      <li><strong>산출</strong> — 표·체크리스트·기준 문서 중 <strong>하나</strong></li>
+    </ul>
+  </div>
+
+  <div class="note good">
+    <p><b>이 형식이 왜 강한가.</b> 12주가 지나면 <b>발견 36개 · 질문 24개 · 산출물 12개</b>가 남습니다. 그중 산출물 12개는 <b>이 프로젝트에 실제로 쓰이는 문서</b>입니다 — DoD 체크리스트, 출시 차단 기준, 상태 전이 대조표, 컴플라이언스 증거표.</p>
+    <p>공부한 흔적이 아니라 <b>프로젝트 자산</b>이 남습니다.</p>
+  </div>
+
+  <div class="note">
+    <p><b>개발팀과의 관계에 대해.</b> 이 학습의 목표는 개발자를 감시하는 게 아닙니다. <b>같은 언어로 말하는 것</b>입니다.</p>
+    <p>"커버리지 몇 %예요?"는 감시로 들리지만, <b>"핵심 계산 로직이 덮여 있는지가 궁금한데 어떻게 확인할 수 있을까요?"</b>는 협업으로 들립니다. 차이는 태도가 아니라 <b>질문의 정확도</b>에서 나옵니다.</p>
+  </div>
+</section>
+
+<!-- 29 자기 점검 -->
+<section class="slide">
+  <p class="eyebrow">실행</p>
+  <h2>스스로 판정하기</h2>
+  <p class="lede">아래를 <strong>막힘 없이 답할 수 있으면</strong> 그 레벨에 도달한 것입니다. 남에게 설명해 보는 게 가장 정확한 확인법입니다.</p>
+
+  <div class="card">
+    <h3><span class="lv lv1" style="margin:0">L1</span> 이해 — 회의에서 오해 없이 듣는다</h3>
+    <ul style="margin-bottom:0;font-size:14.5px">
+      <li>커버리지 82%가 <strong>보장하지 않는 것</strong>을 세 가지 말할 수 있다</li>
+      <li>p95와 평균의 차이를 <strong>예시 숫자로</strong> 설명할 수 있다</li>
+      <li>트랜잭션이 왜 감사 로그와 묶여야 하는지 말할 수 있다</li>
+      <li>서버리스가 이 프로젝트에서 <strong>어떤 대가를 치르는지</strong> 두 가지 든다</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h3><span class="lv lv2" style="margin:0">L2</span> 판단 — 산출물을 읽고 합격을 정한다</h3>
+    <ul style="margin-bottom:0;font-size:14.5px">
+      <li>성능 측정 결과를 받고 <strong>네 가지 조건</strong>을 특정해 되물을 수 있다</li>
+      <li>상태 전이 21건과 시험 케이스를 <strong>대조해 빠진 것을 찾는다</strong></li>
+      <li>미해결 항목을 <strong>개발 차단 / 출시 차단</strong>으로 분류할 수 있다</li>
+      <li>DORA 4지표를 받아 <strong>가장 나쁜 것과 그 영향</strong>을 지목한다</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h3><span class="lv lv3" style="margin:0">L3</span> 설계 — 기준을 만들고 요구한다</h3>
+    <ul style="margin-bottom:0;font-size:14.5px">
+      <li>팀이 실제로 지키는 <strong>DoD 체크리스트</strong>를 합의해 문서화했다</li>
+      <li><strong>출시 차단 기준</strong>을 만들고 실제 결함에 적용해 판정했다</li>
+      <li>일정을 <strong>단일 날짜가 아니라 범위</strong>로 보고하고 근거를 댄다</li>
+      <li>변경 요청의 <strong>파급 범위</strong>를 산출물 단위로 짚는다</li>
+    </ul>
+  </div>
+
+  <div class="note warn">
+    <p><b>L3 항목에 "만들었다"가 들어가는 이유.</b> L1·L2는 알면 되지만 <b>L3는 팀과 합의해서 실제로 쓰이게 만들어야</b> 도달한 것입니다. 혼자 문서를 쓴 것으로는 통과가 아닙니다.</p>
+  </div>
+</section>
+
+<!-- 30 -->
+<section class="slide">
+  <div class="cover">
+    <div class="rule"></div>
+    <p class="eyebrow">마무리</p>
+    <h1>모르는 걸 없애는 게<br>목표가 아닙니다</h1>
+    <p class="lede">엔지니어링을 전부 알 필요는 없습니다. <strong>결정에 영향을 주는 것만 정확히 알고, 나머지는 정확히 물을 수 있으면</strong> 됩니다. 이 로드맵의 17개는 그 경계선을 그어 놓은 것입니다.</p>
+
+    <div class="card">
+      <h3>이 자료집을 다시 열게 되는 순간</h3>
+      <ul style="margin-bottom:0">
+        <li>일정을 처음 짤 때 → <strong>A1·A2·A3</strong></li>
+        <li>"다 됐습니다"를 받았을 때 → <strong>B1·B2·B6</strong></li>
+        <li>출시 판정 회의 전 → <strong>B4·B5·C5</strong></li>
+        <li>사고가 났을 때 → <strong>C1·C2·C4</strong></li>
+        <li>변경 요청이 왔을 때 → <strong>A6</strong></li>
+      </ul>
+    </div>
+
+    <div class="note good">
+      <p><b>다음 프로젝트로 가져갈 것.</b> 17개 중 <b>A 전부와 B 전부(12개)는 도메인과 무관</b>합니다. 어떤 소프트웨어 프로젝트에서도 그대로 씁니다. C의 5개도 <b>돈과 상태가 있는 도메인</b>이면 재사용됩니다.</p>
+      <p>즉 여기서 쓰는 12~15주는 <b>이 프로젝트 한 번을 위한 투자가 아닙니다.</b></p>
+    </div>
+
+    <div class="meta">
+      <div><span>실습 대상</span><span>SRS/srs-002-pension-plus-nextjs-v1_0.md</span></div>
+      <div><span>함께 볼 것</span><span>「SRS 독해 가이드」 · PRD v3.1 · 설계 문서 8종</span></div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<div class="nav">
+  <button id="prev" aria-label="이전 장">← 이전</button>
+  <div class="hint"><kbd>←</kbd> <kbd>→</kbd> 방향키로 넘기기 · <kbd>Home</kbd> 처음 · <kbd>End</kbd> 끝</div>
+  <button id="next" aria-label="다음 장">다음 →</button>
+</div>
+
+<script>
+(function(){
+  var slides = Array.prototype.slice.call(document.querySelectorAll('.slide'));
+  var i = 0, n = slides.length;
+  var rail = document.getElementById('rail');
+  var cur = document.getElementById('cur'), tot = document.getElementById('tot');
+  var prev = document.getElementById('prev'), next = document.getElementById('next');
+  tot.textContent = n;
+
+  function show(k){
+    i = Math.max(0, Math.min(n - 1, k));
+    slides.forEach(function(s, idx){ s.classList.toggle('on', idx === i); });
+    cur.textContent = i + 1;
+    rail.style.width = ((i + 1) / n * 100) + '%';
+    prev.disabled = i === 0;
+    next.disabled = i === n - 1;
+    window.scrollTo({ top: 0, behavior: 'auto' });
+  }
+
+  prev.addEventListener('click', function(){ show(i - 1); });
+  next.addEventListener('click', function(){ show(i + 1); });
+
+  document.addEventListener('keydown', function(e){
+    var t = e.target;
+    if (t && /^(INPUT|TEXTAREA|SELECT)$/.test(t.tagName)) return;
+    if (e.key === 'ArrowRight' || e.key === 'PageDown'){ e.preventDefault(); show(i + 1); }
+    else if (e.key === 'ArrowLeft' || e.key === 'PageUp'){ e.preventDefault(); show(i - 1); }
+    else if (e.key === 'Home'){ e.preventDefault(); show(0); }
+    else if (e.key === 'End'){ e.preventDefault(); show(n - 1); }
+  });
+
+  document.querySelectorAll('[data-go]').forEach(function(el){
+    el.addEventListener('click', function(e){
+      e.preventDefault();
+      show(parseInt(el.getAttribute('data-go'), 10));
+    });
+  });
+
+  // 터치 스와이프
+  var x0 = null;
+  document.addEventListener('touchstart', function(e){ x0 = e.changedTouches[0].clientX; }, {passive:true});
+  document.addEventListener('touchend', function(e){
+    if (x0 === null) return;
+    var dx = e.changedTouches[0].clientX - x0;
+    if (Math.abs(dx) > 60) show(dx < 0 ? i + 1 : i - 1);
+    x0 = null;
+  }, {passive:true});
+
+  // 학습 진행 저장
+  var KEY = 'srs-roadmap-progress';
+  var boxes = Array.prototype.slice.call(document.querySelectorAll('.done input[data-kw]'));
+  var pills = Array.prototype.slice.call(document.querySelectorAll('.pill[data-kw]'));
+  var state = {};
+  try { state = JSON.parse(localStorage.getItem(KEY) || '{}') || {}; } catch(err){ state = {}; }
+
+  function render(){
+    var t = {A:0, B:0, C:0}, all = 0;
+    Object.keys(state).forEach(function(k){
+      if (!state[k]) return;
+      all++; if (t[k.charAt(0)] !== undefined) t[k.charAt(0)]++;
+    });
+    document.getElementById('pdone').textContent = all;
+    document.getElementById('cA').textContent = t.A + '/6';
+    document.getElementById('cB').textContent = t.B + '/6';
+    document.getElementById('cC').textContent = t.C + '/5';
+    pills.forEach(function(p){ p.classList.toggle('hit', !!state[p.getAttribute('data-kw')]); });
+    boxes.forEach(function(b){ b.checked = !!state[b.getAttribute('data-kw')]; });
+  }
+
+  boxes.forEach(function(b){
+    b.addEventListener('change', function(){
+      state[b.getAttribute('data-kw')] = b.checked;
+      try { localStorage.setItem(KEY, JSON.stringify(state)); } catch(err){}
+      render();
+    });
+  });
+
+  render();
+  show(0);
+})();
+</script>
