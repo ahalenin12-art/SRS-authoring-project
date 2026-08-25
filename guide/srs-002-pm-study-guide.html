@@ -1,0 +1,1234 @@
+<title>연금플러스 SRS 독해 가이드</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+KR:wght@300;400;500;600;700&display=swap">
+
+<style>
+/* ── 토큰: 라이트가 기본 ───────────────────────────── */
+:root{
+  --ground:#EEF1F5;
+  --surface:#FFFFFF;
+  --surface-2:#F5F7FA;
+  --line:#D3DAE3;
+  --line-soft:#E4E9EF;
+  --ink:#161C24;
+  --ink-2:#3D4854;
+  --ink-3:#6B7684;
+  --accent:#2F5D8C;
+  --accent-soft:#E3EBF3;
+  --accent-ink:#1F4165;
+  --signal:#B4552D;
+  --signal-soft:#F7E9E1;
+  --signal-ink:#8A3F20;
+  --safe:#3F7A5E;
+  --safe-soft:#E2EEE8;
+  --safe-ink:#2C5844;
+  --shadow:0 1px 2px rgba(22,28,36,.06),0 8px 24px -12px rgba(22,28,36,.18);
+  --rail:#CBD4DE;
+
+  --f-display:'IBM Plex Sans KR',system-ui,-apple-system,'Malgun Gothic',sans-serif;
+  --f-body:'IBM Plex Sans KR',system-ui,-apple-system,'Malgun Gothic',sans-serif;
+  --f-mono:'IBM Plex Mono','IBM Plex Sans KR',ui-monospace,Menlo,monospace;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --ground:#11161C;
+    --surface:#192028;
+    --surface-2:#1F2832;
+    --line:#2E3945;
+    --line-soft:#252E38;
+    --ink:#E7ECF2;
+    --ink-2:#B4BFCC;
+    --ink-3:#7C8998;
+    --accent:#7FA9D4;
+    --accent-soft:#1E2D3D;
+    --accent-ink:#A8C6E4;
+    --signal:#D98757;
+    --signal-soft:#33231A;
+    --signal-ink:#E5A47C;
+    --safe:#68A98A;
+    --safe-soft:#1B2A23;
+    --safe-ink:#8CC4A8;
+    --shadow:0 1px 2px rgba(0,0,0,.4),0 10px 30px -14px rgba(0,0,0,.7);
+    --rail:#2E3945;
+  }
+}
+:root[data-theme="dark"]{
+  --ground:#11161C;
+  --surface:#192028;
+  --surface-2:#1F2832;
+  --line:#2E3945;
+  --line-soft:#252E38;
+  --ink:#E7ECF2;
+  --ink-2:#B4BFCC;
+  --ink-3:#7C8998;
+  --accent:#7FA9D4;
+  --accent-soft:#1E2D3D;
+  --accent-ink:#A8C6E4;
+  --signal:#D98757;
+  --signal-soft:#33231A;
+  --signal-ink:#E5A47C;
+  --safe:#68A98A;
+  --safe-soft:#1B2A23;
+  --safe-ink:#8CC4A8;
+  --shadow:0 1px 2px rgba(0,0,0,.4),0 10px 30px -14px rgba(0,0,0,.7);
+  --rail:#2E3945;
+}
+
+*,*::before,*::after{box-sizing:border-box}
+body{
+  margin:0;background:var(--ground);color:var(--ink);
+  font-family:var(--f-body);font-weight:400;line-height:1.7;
+  -webkit-font-smoothing:antialiased;word-break:keep-all;
+  min-height:100vh;display:flex;flex-direction:column;
+}
+:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:3px}
+
+/* ── 상단 바 ──────────────────────────────────────── */
+.topbar{
+  position:sticky;top:0;z-index:20;background:var(--surface);
+  border-bottom:1px solid var(--line);
+}
+.rail{height:2px;background:var(--rail)}
+.rail-fill{height:100%;width:0;background:var(--accent);transition:width .35s cubic-bezier(.4,0,.2,1)}
+.topbar-inner{
+  max-width:1080px;margin:0 auto;padding:10px 20px;
+  display:flex;align-items:center;gap:16px;flex-wrap:wrap;
+}
+.brand{display:flex;align-items:baseline;gap:9px;margin-right:auto;min-width:0}
+.brand b{font-family:var(--f-display);font-weight:600;font-size:15px;letter-spacing:-.01em;white-space:nowrap}
+.brand span{font-family:var(--f-mono);font-size:11px;color:var(--ink-3);white-space:nowrap}
+
+.track{display:flex;gap:2px;background:var(--surface-2);border:1px solid var(--line);border-radius:7px;padding:2px}
+.track button{
+  font:500 12px/1 var(--f-body);color:var(--ink-3);background:none;border:0;
+  padding:7px 13px;border-radius:5px;cursor:pointer;white-space:nowrap;transition:.15s;
+}
+.track button[aria-pressed="true"]{background:var(--accent);color:#fff}
+.track button:hover:not([aria-pressed="true"]){color:var(--ink)}
+
+.counter{font-family:var(--f-mono);font-size:12px;color:var(--ink-3);font-variant-numeric:tabular-nums;white-space:nowrap}
+
+/* ── 슬라이드 ─────────────────────────────────────── */
+main{flex:1;display:flex;flex-direction:column;padding:36px 20px 24px}
+.slide{
+  max-width:880px;width:100%;margin:0 auto;display:none;
+  animation:rise .34s cubic-bezier(.16,1,.3,1);
+}
+.slide.on{display:block}
+@keyframes rise{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){
+  .slide{animation:none}.rail-fill{transition:none}
+}
+
+.eyebrow{
+  font-family:var(--f-mono);font-size:11px;font-weight:500;letter-spacing:.11em;
+  text-transform:uppercase;color:var(--accent);margin:0 0 12px;
+}
+h1{font-family:var(--f-display);font-weight:700;font-size:clamp(28px,4.6vw,42px);line-height:1.22;letter-spacing:-.025em;margin:0 0 16px;text-wrap:balance}
+h2{font-family:var(--f-display);font-weight:600;font-size:clamp(22px,3.2vw,29px);line-height:1.3;letter-spacing:-.02em;margin:0 0 14px;text-wrap:balance}
+h3{font-family:var(--f-display);font-weight:600;font-size:16px;letter-spacing:-.01em;margin:0 0 8px}
+.lede{font-size:17px;color:var(--ink-2);margin:0 0 26px;max-width:62ch;line-height:1.72}
+p{margin:0 0 14px;max-width:66ch}
+strong{font-weight:600;color:var(--ink)}
+code{font-family:var(--f-mono);font-size:.88em;background:var(--surface-2);border:1px solid var(--line-soft);border-radius:4px;padding:.1em .38em;color:var(--accent-ink)}
+
+/* ── 용어 카드 ────────────────────────────────────── */
+.terms{display:grid;gap:12px}
+.term{
+  background:var(--surface);border:1px solid var(--line);border-radius:9px;
+  padding:16px 18px;box-shadow:var(--shadow);
+}
+.term-h{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;margin-bottom:9px}
+.term-h b{font-family:var(--f-display);font-weight:600;font-size:16px;letter-spacing:-.01em}
+.term-h em{font-family:var(--f-mono);font-style:normal;font-size:11.5px;color:var(--ink-3)}
+.term dl{margin:0;display:grid;gap:7px}
+.term dt{
+  font-family:var(--f-mono);font-size:10.5px;font-weight:500;letter-spacing:.07em;
+  text-transform:uppercase;color:var(--ink-3);
+}
+.term dd{margin:0 0 2px;font-size:14.5px;line-height:1.65;color:var(--ink-2)}
+.term dd strong{color:var(--ink)}
+
+/* ── 일반 카드 ────────────────────────────────────── */
+.card{
+  background:var(--surface);border:1px solid var(--line);border-radius:9px;
+  padding:18px 20px;box-shadow:var(--shadow);margin:0 0 14px;
+}
+.card p:last-child{margin-bottom:0}
+.grid2{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(260px,1fr))}
+
+.note{
+  border-left:3px solid var(--accent);background:var(--accent-soft);
+  border-radius:0 8px 8px 0;padding:14px 18px;margin:0 0 16px;
+}
+.note p{margin:0;font-size:14.5px;color:var(--ink-2)}
+.note p+p{margin-top:8px}
+.note b{color:var(--ink)}
+
+.warn{border-left-color:var(--signal);background:var(--signal-soft)}
+.good{border-left-color:var(--safe);background:var(--safe-soft)}
+
+/* ── 칩 ───────────────────────────────────────────── */
+.chip{
+  display:inline-block;font-family:var(--f-mono);font-size:10.5px;font-weight:500;
+  letter-spacing:.05em;padding:3px 8px;border-radius:20px;white-space:nowrap;
+  background:var(--accent-soft);color:var(--accent-ink);border:1px solid transparent;
+}
+.chip.sig{background:var(--signal-soft);color:var(--signal-ink)}
+.chip.ok{background:var(--safe-soft);color:var(--safe-ink)}
+.chip.deep{background:transparent;color:var(--ink-3);border-color:var(--line)}
+
+/* ── 표 ───────────────────────────────────────────── */
+.tw{overflow-x:auto;margin:0 0 16px;border:1px solid var(--line);border-radius:9px;background:var(--surface)}
+table{border-collapse:collapse;width:100%;font-size:14px;min-width:520px}
+th,td{text-align:left;padding:10px 14px;border-bottom:1px solid var(--line-soft);vertical-align:top}
+th{
+  font-family:var(--f-mono);font-size:10.5px;font-weight:500;letter-spacing:.07em;
+  text-transform:uppercase;color:var(--ink-3);background:var(--surface-2);white-space:nowrap;
+}
+tr:last-child td{border-bottom:0}
+td b{font-weight:600}
+.num{font-variant-numeric:tabular-nums;white-space:nowrap}
+
+/* ── 심화(엔지니어 트랙) ──────────────────────────── */
+[data-track="eng"]{display:none}
+body.eng [data-track="eng"]{display:block}
+body.eng .terms [data-track="eng"]{display:grid}
+.deep{
+  border:1px dashed var(--line);border-radius:9px;padding:15px 18px;
+  background:var(--surface-2);margin:0 0 14px;
+}
+.deep>.chip{margin-bottom:9px}
+.deep p:last-child{margin-bottom:0}
+.deep pre{
+  margin:10px 0 0;padding:12px 14px;background:var(--surface);border:1px solid var(--line);
+  border-radius:7px;overflow-x:auto;font-family:var(--f-mono);font-size:12.5px;line-height:1.6;color:var(--ink-2);
+}
+
+/* ── 목록 ─────────────────────────────────────────── */
+ul,ol{margin:0 0 14px;padding-left:20px;max-width:66ch}
+li{margin-bottom:7px;color:var(--ink-2)}
+li strong{color:var(--ink)}
+li::marker{color:var(--ink-3)}
+
+.qlist{list-style:none;padding:0;counter-reset:q;max-width:none}
+.qlist li{
+  counter-increment:q;position:relative;padding:13px 16px 13px 46px;margin-bottom:8px;
+  background:var(--surface);border:1px solid var(--line);border-radius:8px;font-size:14.5px;
+}
+.qlist li::before{
+  content:counter(q,decimal-leading-zero);position:absolute;left:16px;top:13px;
+  font-family:var(--f-mono);font-size:11.5px;color:var(--accent);font-weight:600;
+}
+
+/* ── 충돌 지도 ────────────────────────────────────── */
+.cmap{display:grid;gap:9px;margin:0 0 16px}
+.crow{
+  display:grid;grid-template-columns:34px 1fr auto;gap:13px;align-items:center;
+  background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:12px 15px;
+}
+.cnum{font-family:var(--f-mono);font-size:12px;font-weight:600;color:var(--ink-3);text-align:center}
+.ctext{font-size:14.5px;line-height:1.5;min-width:0}
+.crow.hi{border-color:var(--signal);background:var(--signal-soft)}
+.crow.hi .cnum{color:var(--signal-ink)}
+
+/* ── 하단 네비 ────────────────────────────────────── */
+.nav{
+  position:sticky;bottom:0;background:var(--surface);border-top:1px solid var(--line);
+  padding:11px 20px;display:flex;align-items:center;gap:14px;justify-content:center;
+}
+.nav button{
+  font:500 13px/1 var(--f-body);color:var(--ink-2);background:var(--surface-2);
+  border:1px solid var(--line);border-radius:7px;padding:9px 16px;cursor:pointer;transition:.15s;
+}
+.nav button:hover:not(:disabled){background:var(--accent);color:#fff;border-color:var(--accent)}
+.nav button:disabled{opacity:.35;cursor:default}
+.hint{font-family:var(--f-mono);font-size:11px;color:var(--ink-3);text-align:center}
+.hint kbd{
+  font-family:var(--f-mono);font-size:10.5px;background:var(--surface-2);
+  border:1px solid var(--line);border-bottom-width:2px;border-radius:4px;padding:1px 5px;color:var(--ink-2);
+}
+@media (max-width:560px){.hint{display:none}}
+
+/* ── 표지 ─────────────────────────────────────────── */
+.cover{text-align:left;padding:14px 0}
+.cover .rule{height:3px;width:56px;background:var(--accent);margin:0 0 22px;border-radius:2px}
+.meta{display:grid;gap:5px;margin:24px 0 0;font-family:var(--f-mono);font-size:12px;color:var(--ink-3)}
+.meta div{display:flex;gap:10px}
+.meta span:first-child{color:var(--ink-2);min-width:82px}
+
+.toc{display:grid;gap:7px;margin:0 0 8px}
+.toc a{
+  display:flex;gap:12px;align-items:baseline;text-decoration:none;color:var(--ink-2);
+  padding:9px 13px;border:1px solid var(--line);border-radius:7px;background:var(--surface);
+  font-size:14px;transition:.15s;
+}
+.toc a:hover{border-color:var(--accent);color:var(--ink)}
+.toc em{font-family:var(--f-mono);font-style:normal;font-size:11px;color:var(--accent);min-width:26px}
+</style>
+
+<div class="topbar">
+  <div class="rail"><div class="rail-fill" id="rail"></div></div>
+  <div class="topbar-inner">
+    <div class="brand"><b>SRS 독해 가이드</b><span>PENSION-PLUS-SRS-002</span></div>
+    <div class="track" role="group" aria-label="학습 트랙 선택">
+      <button id="t-pm" aria-pressed="true">PM 트랙</button>
+      <button id="t-eng" aria-pressed="false">엔지니어 트랙</button>
+    </div>
+    <div class="counter"><span id="cur">1</span> / <span id="tot">24</span></div>
+  </div>
+</div>
+
+<main id="stage">
+
+<!-- 01 표지 -->
+<section class="slide on">
+  <div class="cover">
+    <div class="rule"></div>
+    <p class="eyebrow">학습 가이드 · 24장</p>
+    <h1>기술 문서를 못 읽는 PM은<br>없다. 안 배운 PM만 있다.</h1>
+    <p class="lede">연금플러스 SRS-002는 1,124줄짜리 기술 명세입니다. 이 가이드는 그 문서를 처음부터 끝까지 스스로 읽어낼 수 있게 만드는 것이 목표입니다. 프로그래밍 경험이 없어도 됩니다.</p>
+
+    <div class="note">
+      <p><b>두 개의 트랙이 있습니다.</b> 상단에서 언제든 바꿀 수 있습니다.</p>
+      <p><b>PM 트랙</b> — 프로젝트를 운영하는 데 필요한 만큼만. 개념의 목적과 판단 기준에 집중합니다.<br>
+      <b>엔지니어 트랙</b> — 여기에 <span class="chip deep">심화</span> 표시가 붙은 블록이 추가됩니다. 코드와 동작 원리까지 들어갑니다.</p>
+    </div>
+
+    <div class="meta">
+      <div><span>대상 문서</span><span>SRS-002 · Next.js 단일 풀스택 구현</span></div>
+      <div><span>원본 PRD</span><span>PENSION-PLUS-PRD v3.1</span></div>
+      <div><span>다루는 것</span><span>용어 42개 · 핵심 개념 7 · 제약 충돌 7</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- 02 목차 -->
+<section class="slide">
+  <p class="eyebrow">이 가이드의 구성</p>
+  <h2>네 부분으로 나눠 읽습니다</h2>
+  <p class="lede">용어를 먼저 깔고, 개념을 세우고, 실제 판단 지점으로 갑니다. 순서대로 읽는 것을 권합니다.</p>
+
+  <div class="toc">
+    <a href="#" data-go="2"><em>1부</em><span><b>용어 해설집</b> — 앱 구조 · 서버 실행 · 데이터 · 화면 · 배포 · 품질 (6장)</span></a>
+    <a href="#" data-go="8"><em>2부</em><span><b>핵심 개념 해설</b> — 이 문서를 지배하는 7가지 생각 (7장)</span></a>
+    <a href="#" data-go="15"><em>3부</em><span><b>제약 충돌 7건</b> — PM이 실제로 결정해야 하는 것 (4장)</span></a>
+    <a href="#" data-go="19"><em>4부</em><span><b>운영 관점</b> — Gate 관리 · 질문 목록 · 독해 체크리스트 (5장)</span></a>
+  </div>
+
+  <div class="note good">
+    <p><b>먼저 알아둘 것.</b> SRS-002는 "무엇을 만들 것인가"를 정하는 문서가 아닙니다. 그건 PRD와 앞선 SRS가 이미 했습니다. 이 문서는 <b>"정해진 기술로 그걸 어떻게 만족시키는가"</b>만 다룹니다. 그래서 읽다가 "왜 이 기능이 필요하지?"라는 의문이 들면, 답은 이 문서가 아니라 PRD에 있습니다.</p>
+  </div>
+</section>
+
+<!-- 03 용어 1 -->
+<section class="slide">
+  <p class="eyebrow">1부 · 용어 해설집 ①</p>
+  <h2>앱은 어떻게 생겼나</h2>
+  <p class="lede">가장 먼저 걷어야 할 안개입니다. "프론트엔드", "백엔드", "풀스택"은 서로 다른 물건이 아니라 <strong>같은 앱의 다른 위치</strong>를 부르는 말입니다.</p>
+
+  <div class="terms">
+    <div class="term">
+      <div class="term-h"><b>프론트엔드</b><em>frontend</em></div>
+      <dl>
+        <dt>쉽게 말하면</dt><dd>사용자의 <strong>기기 안에서</strong> 도는 부분. 화면, 버튼, 입력창.</dd>
+        <dt>이 문서에서는</dt><dd>화면 12종(F1-01 ~ F2-06)이 여기에 해당합니다.</dd>
+      </dl>
+    </div>
+    <div class="term">
+      <div class="term-h"><b>백엔드</b><em>backend</em></div>
+      <dl>
+        <dt>쉽게 말하면</dt><dd>회사 <strong>서버에서</strong> 도는 부분. 계산하고, 데이터를 꺼내고, 저장합니다. 사용자는 볼 수 없습니다.</dd>
+        <dt>이 문서에서는</dt><dd>한도 계산, 세액 산출, 상태 전이가 여기입니다.</dd>
+      </dl>
+    </div>
+    <div class="term">
+      <div class="term-h"><b>풀스택</b><em>full-stack</em></div>
+      <dl>
+        <dt>쉽게 말하면</dt><dd>프론트엔드와 백엔드를 <strong>한 덩어리로</strong> 만드는 것.</dd>
+        <dt>왜 중요한가</dt><dd>보통은 둘을 따로 만듭니다. 팀도 나뉘고 배포도 따로 합니다. 이 프로젝트는 <strong>일부러 합쳤습니다</strong>(C-TEC-001). 규모가 작을 때 훨씬 빠르기 때문입니다.</dd>
+      </dl>
+    </div>
+    <div class="term">
+      <div class="term-h"><b>프레임워크</b><em>framework</em></div>
+      <dl>
+        <dt>쉽게 말하면</dt><dd>앱을 만들 때 쓰는 <strong>뼈대이자 규칙집</strong>. 매번 바닥부터 만들지 않게 해줍니다.</dd>
+        <dt>비유하자면</dt><dd>아파트를 지을 때의 골조. 벽 위치는 내가 정하지만 기둥 간격은 골조가 정합니다.</dd>
+      </dl>
+    </div>
+    <div class="term">
+      <div class="term-h"><b>Next.js</b><em>넥스트제이에스</em></div>
+      <dl>
+        <dt>쉽게 말하면</dt><dd>프론트엔드와 백엔드를 <strong>한 프로젝트 안에서</strong> 만들 수 있게 해주는 프레임워크.</dd>
+        <dt>이 문서에서는</dt><dd>C-TEC-001이 이걸 쓰라고 못박았습니다. 그래서 별도의 백엔드 서버가 없습니다.</dd>
+      </dl>
+    </div>
+    <div class="term">
+      <div class="term-h"><b>App Router</b><em>앱 라우터</em></div>
+      <dl>
+        <dt>쉽게 말하면</dt><dd>Next.js가 <strong>주소와 화면을 연결하는 방식</strong>. 폴더 구조가 곧 URL이 됩니다.</dd>
+        <dt>이 문서에서는</dt><dd>§3 라우트 맵에서 <code>/transfer/[transferId]</code> 같은 경로 19개를 확정했습니다.</dd>
+      </dl>
+    </div>
+  </div>
+
+  <div class="deep" data-track="eng">
+    <span class="chip deep">심화</span>
+    <p><strong>왜 "App" Router인가.</strong> Next.js에는 두 가지 라우팅 방식이 있습니다. 예전 방식인 Pages Router와 지금의 App Router입니다. App Router는 <strong>서버 컴포넌트</strong>를 기본으로 삼는다는 점이 결정적으로 다릅니다. 즉 화면을 구성하는 코드가 기본적으로 서버에서 실행되고, 필요한 부분만 골라서 브라우저로 내려보냅니다.</p>
+    <p>이 프로젝트에서 이게 왜 중요하냐면 — 밴드 계산이나 병목 종목 지목 같은 로직이 <strong>브라우저에 노출되면 안 되기 때문</strong>입니다. SRS-002의 <code>SRS-FR-019</code>는 "병목 종목은 서버가 지정한다"를 요구사항으로 못박았습니다.</p>
+  </div>
+</section>
+
+<!-- 04 용어 2 -->
+<section class="slide">
+  <p class="eyebrow">1부 · 용어 해설집 ②</p>
+  <h2>서버에서 코드가 도는 방식</h2>
+  <p class="lede">SRS-002 §4 전체가 이 이야기입니다. "Server Action이냐 Route Handler냐"를 판정하는 표가 나오는데, 그 표를 읽으려면 아래가 필요합니다.</p>
+
+  <div class="terms">
+    <div class="term">
+      <div class="term-h"><b>API</b><em>Application Programming Interface</em></div>
+      <dl>
+        <dt>쉽게 말하면</dt><dd>프로그램끼리 <strong>대화하는 창구</strong>. 사람이 쓰는 화면이 아니라 기계가 쓰는 입구입니다.</dd>
+        <dt>비유하자면</dt><dd>은행 창구. 정해진 양식으로 요청하면 정해진 형태로 답이 옵니다.</dd>
+      </dl>
+    </div>
+    <div class="term">
+      <div class="term-h"><b>엔드포인트</b><em>endpoint</em></div>
+      <dl>
+        <dt>쉽게 말하면</dt><dd>API의 <strong>주소 하나하나</strong>. <code>/api/internal/trading-window</code> 같은 것.</dd>
+        <dt>이 문서에서는</dt><dd>§3.2에 시스템 연동용 3개, §3.3에 배치용 4개가 있습니다.</dd>
+      </dl>
+    </div>
+    <div class="term">
+      <div class="term-h"><b>Server Action</b><em>서버 액션</em></div>
+      <dl>
+        <dt>쉽게 말하면</dt><dd>화면에서 버튼을 눌렀을 때 <strong>서버에서 실행되는 함수</strong>. 별도 API 주소를 만들지 않아도 됩니다.</dd>
+        <dt>언제 쓰나</dt><dd><strong>고객이</strong> 화면에서 뭔가를 할 때. 예약 저장, 전송, 취소.</dd>
+      </dl>
+    </div>
+    <div class="term">
+      <div class="term-h"><b>Route Handler</b><em>라우트 핸들러</em></div>
+      <dl>
+        <dt>쉽게 말하면</dt><dd><strong>주소가 있는</strong> API. 외부에서 호출할 수 있습니다.</dd>
+        <dt>언제 쓰나</dt><dd><strong>다른 시스템이</strong> 호출할 때. 주문 시스템의 판정 요청, 예탁결제원의 전문 수신.</dd>
+      </dl>
+    </div>
+    <div class="term">
+      <div class="term-h"><b>서버 컴포넌트 / 클라이언트 컴포넌트</b><em>server / client component</em></div>
+      <dl>
+        <dt>쉽게 말하면</dt><dd>화면 조각이 <strong>서버에서 만들어지는지, 브라우저에서 만들어지는지</strong>의 차이.</dd>
+        <dt>이 문서에서는</dt><dd>대부분 서버 컴포넌트인데, <strong>F2-03·F2-04만 클라이언트가 주도</strong>합니다. 인출액 슬라이더를 움직일 때마다 서버에 다녀오면 느리기 때문입니다.</dd>
+      </dl>
+    </div>
+    <div class="term">
+      <div class="term-h"><b>웹훅</b><em>webhook</em></div>
+      <dl>
+        <dt>쉽게 말하면</dt><dd>"일이 생기면 <strong>네가 나한테 알려줘</strong>"라는 방식. 내가 계속 물어보는(polling) 대신.</dd>
+        <dt>이 문서에서는</dt><dd>예탁결제원 전문 수신이 이 방식입니다. 그런데 §9.6에 <strong>이게 가능한지 확인 안 됐다</strong>는 충돌이 걸려 있습니다.</dd>
+      </dl>
+    </div>
+  </div>
+
+  <div class="deep" data-track="eng">
+    <span class="chip deep">심화</span>
+    <p><strong>Server Action은 사실 숨겨진 POST 엔드포인트입니다.</strong> Next.js가 빌드 시점에 각 액션에 고유한 ID를 부여하고, 클라이언트에서 호출하면 프레임워크가 알아서 POST 요청을 만들어 보냅니다. 개발자 눈에는 그냥 함수 호출처럼 보이지만 실제로는 네트워크를 탑니다.</p>
+    <p>그래서 SRS-002의 <code>TEC-ACT-003</code>이 <strong>"클라이언트 검증 결과를 신뢰하지 않는다"</strong>를 요구사항으로 못박았습니다. 함수처럼 생겼다고 안전한 게 아니라, 누구든 그 엔드포인트를 직접 때릴 수 있기 때문입니다.</p>
+    <pre>'use server'   // ← 이 한 줄이 파일 전체를 서버 전용으로 만든다
+
+export async function submitTransfer(input) {
+  // 여기 코드는 브라우저에 절대 내려가지 않는다
+  // 하지만 input 은 클라이언트가 보낸 것 → 반드시 재검증
+}</pre>
+  </div>
+</section>
+
+<!-- 05 용어 3 -->
+<section class="slide">
+  <p class="eyebrow">1부 · 용어 해설집 ③</p>
+  <h2>데이터를 다루는 말들</h2>
+  <p class="lede">SRS-002 §5는 이 프로젝트에서 가장 중요한 장입니다. <strong>"규칙을 문서가 아니라 데이터베이스에 새겨 넣는다"</strong>는 발상이 여기 들어 있습니다.</p>
+
+  <div class="terms">
+    <div class="term">
+      <div class="term-h"><b>데이터베이스 / PostgreSQL</b><em>DB · 포스트그레스</em></div>
+      <dl>
+        <dt>쉽게 말하면</dt><dd>데이터를 <strong>표 형태로 저장</strong>하는 창고. PostgreSQL은 그 창고 제품 중 하나입니다.</dd>
+      </dl>
+    </div>
+    <div class="term">
+      <div class="term-h"><b>Supabase</b><em>수파베이스</em></div>
+      <dl>
+        <dt>쉽게 말하면</dt><dd>PostgreSQL을 <strong>대신 운영해주는 서비스</strong>. 서버 설치·백업·보안을 직접 안 해도 됩니다.</dd>
+        <dt>이 문서에서는</dt><dd>C-TEC-003. "인프라 설정 복잡도를 최소화한다"가 이걸 고른 이유입니다.</dd>
+      </dl>
+    </div>
+    <div class="term">
+      <div class="term-h"><b>ORM / Prisma</b><em>오알엠 · 프리즈마</em></div>
+      <dl>
+        <dt>쉽게 말하면</dt><dd>데이터베이스를 <strong>코드처럼 다루게</strong> 해주는 도구. SQL을 직접 안 써도 됩니다.</dd>
+        <dt>덤으로 얻는 것</dt><dd>실수를 <strong>코드 작성 시점에</strong> 잡아줍니다. 없는 컬럼 이름을 쓰면 바로 빨간 줄이 뜹니다.</dd>
+      </dl>
+    </div>
+    <div class="term">
+      <div class="term-h"><b>스키마</b><em>schema</em></div>
+      <dl>
+        <dt>쉽게 말하면</dt><dd>데이터베이스의 <strong>설계도</strong>. 어떤 표가 있고, 각 표에 어떤 칸이 있고, 어떤 값이 들어갈 수 있는지.</dd>
+        <dt>이 문서에서는</dt><dd>§5.2에 16개 모델이 정의돼 있습니다.</dd>
+      </dl>
+    </div>
+    <div class="term">
+      <div class="term-h"><b>마이그레이션</b><em>migration</em></div>
+      <dl>
+        <dt>쉽게 말하면</dt><dd>설계도가 바뀌었을 때 <strong>실제 창고를 그에 맞게 고치는 작업</strong>. 이력이 남습니다.</dd>
+        <dt>PM이 알아야 할 것</dt><dd>배포할 때마다 자동으로 돕니다. 되돌리기가 까다로우므로 <strong>스키마 변경은 신중해야 합니다</strong>.</dd>
+      </dl>
+    </div>
+    <div class="term">
+      <div class="term-h"><b>트랜잭션 / 롤백</b><em>transaction · rollback</em></div>
+      <dl>
+        <dt>쉽게 말하면</dt><dd>여러 작업을 <strong>하나로 묶어서</strong> "전부 되거나 전부 안 되거나"로 만드는 것. 중간에 실패하면 전부 되돌립니다(롤백).</dd>
+        <dt>이 문서에서는</dt><dd>전송 확정할 때 <strong>감사 로그 남기기 + 상태 바꾸기</strong>가 한 묶음입니다. 로그가 실패하면 전송도 취소됩니다.</dd>
+      </dl>
+    </div>
+  </div>
+
+  <div class="deep" data-track="eng">
+    <span class="chip deep">심화</span>
+    <p><strong>스키마 레벨 제약이 이 문서의 핵심 발상입니다.</strong> SRS-002 §5.3은 논리 규칙을 DB 제약으로 내려서 강제합니다.</p>
+    <pre>-- 감사 로그는 절대 수정·삭제 불가 (WORM)
+REVOKE UPDATE, DELETE ON "AuditLog" FROM app_role;
+CREATE TRIGGER audit_log_immutable BEFORE UPDATE OR DELETE ...
+
+-- 밴드는 시작일 ≤ 종료일
+ALTER TABLE "LockWindow" ADD CONSTRAINT band_order
+  CHECK (end_band_from &lt;= end_band_to);
+
+-- 같은 전문을 두 번 처리할 수 없음 (멱등성)
+@@unique([transferId, stageNo, messageSeq])</pre>
+    <p>왜 이렇게까지 하냐면 — <strong>코드는 사람이 실수할 수 있지만 DB 제약은 실수를 허용하지 않기 때문</strong>입니다. 감사 로그를 지우는 코드를 누가 실수로 짜도, DB가 거부합니다.</p>
+  </div>
+</section>
+
+<!-- 06 용어 4 -->
+<section class="slide">
+  <p class="eyebrow">1부 · 용어 해설집 ④</p>
+  <h2>화면을 만드는 말들</h2>
+  <p class="lede">SRS-002 §6입니다. 짧지만 여기에도 중요한 발상이 하나 숨어 있습니다.</p>
+
+  <div class="terms">
+    <div class="term">
+      <div class="term-h"><b>컴포넌트</b><em>component</em></div>
+      <dl>
+        <dt>쉽게 말하면</dt><dd>화면을 이루는 <strong>재사용 가능한 조각</strong>. 버튼, 카드, 표 같은 것.</dd>
+        <dt>왜 쪼개나</dt><dd>같은 버튼을 12개 화면에서 각각 만들면 나중에 하나만 고쳐도 11개가 남습니다.</dd>
+      </dl>
+    </div>
+    <div class="term">
+      <div class="term-h"><b>Tailwind CSS</b><em>테일윈드</em></div>
+      <dl>
+        <dt>쉽게 말하면</dt><dd>디자인을 <strong>미리 정해진 이름표로</strong> 붙이는 방식. 색·간격·글자 크기가 정해진 목록에서만 나옵니다.</dd>
+        <dt>왜 골랐나</dt><dd>C-TEC-004의 표현대로 <strong>"일관된 디자인 코드를 생성하도록 강제"</strong>하기 위해서입니다.</dd>
+      </dl>
+    </div>
+    <div class="term">
+      <div class="term-h"><b>shadcn/ui</b><em>샤드시엔 유아이</em></div>
+      <dl>
+        <dt>쉽게 말하면</dt><dd>잘 만들어진 <strong>컴포넌트 모음</strong>. 버튼·표·다이얼로그 같은 걸 가져다 씁니다.</dd>
+        <dt>이 문서에서는</dt><dd>§6.1에 화면 요소 14종이 어떤 컴포넌트에 대응되는지 매핑돼 있습니다.</dd>
+      </dl>
+    </div>
+    <div class="term">
+      <div class="term-h"><b>타입</b><em>type</em></div>
+      <dl>
+        <dt>쉽게 말하면</dt><dd>"이 자리에는 <strong>이런 종류의 값만</strong> 들어갈 수 있다"는 약속. 코드를 쓰는 순간 어긋나면 잡힙니다.</dd>
+        <dt>이 문서에서는</dt><dd>이걸 <strong>규칙 강제 수단으로</strong> 씁니다. 다음 카드를 보세요.</dd>
+      </dl>
+    </div>
+  </div>
+
+  <div class="note">
+    <p><b>이 장에서 가장 영리한 부분.</b> PRD는 "완료일을 단일 날짜로 표시하지 말 것"을 여러 번 요구합니다. 화면이 12개인데, 개발자가 한 곳에서만 실수해도 규칙이 깨집니다.</p>
+    <p>SRS-002는 <code>&lt;BandDisplay&gt;</code>라는 전용 컴포넌트를 만들고, <b>그 컴포넌트의 타입에 "단일 날짜" 자리를 아예 정의하지 않았습니다.</b> 단일 날짜를 넣으려는 코드는 <b>작성하는 순간 오류가 납니다.</b> 코드 리뷰까지 갈 필요도 없습니다.</p>
+  </div>
+
+  <div class="deep" data-track="eng">
+    <span class="chip deep">심화</span>
+    <pre>// components/domain/band-display.tsx
+type BandDisplayProps = {
+  endBandFrom: Date          // 시작
+  endBandTo: Date            // 종료
+  businessDaysMin: number
+  businessDaysMax: number
+  approximate?: boolean      // 폴백 시 "대략치입니다" 병기
+}
+// endDate 같은 prop 이 타입에 없다 → 컴파일 실패로 위반 차단</pre>
+    <p>같은 방식으로 <code>&lt;StatusLabel&gt;</code>(내부 코드 노출 차단), <code>&lt;MoneyText&gt;</code>(비율 단독 표기 차단), <code>&lt;MaskedAccount&gt;</code>(계좌번호 마스킹)가 있습니다. <strong>규칙을 사람의 주의력이 아니라 도구에 맡기는 설계</strong>입니다.</p>
+  </div>
+</section>
+
+<!-- 07 용어 5 -->
+<section class="slide">
+  <p class="eyebrow">1부 · 용어 해설집 ⑤</p>
+  <h2>배포와 운영</h2>
+  <p class="lede">여기가 <strong>충돌 7건 중 4건</strong>이 나오는 지점입니다. 용어를 정확히 알아야 §9를 읽을 수 있습니다.</p>
+
+  <div class="terms">
+    <div class="term">
+      <div class="term-h"><b>배포</b><em>deploy</em></div>
+      <dl>
+        <dt>쉽게 말하면</dt><dd>만든 코드를 <strong>실제 사용자가 쓸 수 있는 곳에 올리는 것</strong>.</dd>
+      </dl>
+    </div>
+    <div class="term">
+      <div class="term-h"><b>Vercel</b><em>버셀</em></div>
+      <dl>
+        <dt>쉽게 말하면</dt><dd>Next.js 앱을 <strong>올려서 돌려주는 서비스</strong>. 서버를 직접 사고 관리할 필요가 없습니다.</dd>
+        <dt>이 문서에서는</dt><dd>C-TEC-007. <strong>Git에 코드를 올리면 자동으로 배포</strong>됩니다.</dd>
+      </dl>
+    </div>
+    <div class="term">
+      <div class="term-h"><b>서버리스</b><em>serverless</em></div>
+      <dl>
+        <dt>쉽게 말하면</dt><dd>서버가 <strong>항상 켜져 있지 않고</strong>, 요청이 올 때만 잠깐 켜졌다 꺼지는 방식.</dd>
+        <dt>장점</dt><dd>안 쓸 때 비용이 안 듭니다. 갑자기 몰려도 알아서 늘어납니다.</dd>
+        <dt>대가</dt><dd><strong>꺼져 있던 걸 켜는 데 시간이 걸립니다.</strong> 그리고 <strong>계속 돌아야 하는 작업을 못 합니다.</strong></dd>
+      </dl>
+    </div>
+    <div class="term">
+      <div class="term-h"><b>콜드 스타트</b><em>cold start</em></div>
+      <dl>
+        <dt>쉽게 말하면</dt><dd>꺼져 있던 서버가 <strong>처음 깨어날 때의 지연</strong>. 보통 수백 밀리초.</dd>
+        <dt>왜 문제인가</dt><dd>이 프로젝트는 <strong>0.5초 안에 응답</strong>해야 하는 요구가 있습니다. 콜드 스타트 하나로 그 시간을 다 쓸 수 있습니다.</dd>
+      </dl>
+    </div>
+    <div class="term">
+      <div class="term-h"><b>배치 / Cron</b><em>batch · 크론</em></div>
+      <dl>
+        <dt>쉽게 말하면</dt><dd>사람이 시키지 않아도 <strong>정해진 시각에 자동으로 도는 작업</strong>. Cron은 그 스케줄을 정하는 방식.</dd>
+        <dt>이 문서에서는</dt><dd>밴드 재계산(영업일 09:00), 잔고 확인, 세율 점검, 정합성 보정 4개.</dd>
+      </dl>
+    </div>
+    <div class="term">
+      <div class="term-h"><b>환경 변수</b><em>environment variable</em></div>
+      <dl>
+        <dt>쉽게 말하면</dt><dd>코드 밖에 두는 <strong>설정값</strong>. API 키, 접속 주소, 임계치 같은 것.</dd>
+        <dt>왜 밖에 두나</dt><dd>① 비밀값을 코드에 박으면 유출됩니다 ② <strong>배포 없이 값만 바꿀 수 있습니다</strong>.</dd>
+      </dl>
+    </div>
+    <div class="term">
+      <div class="term-h"><b>CI/CD</b><em>지속적 통합 / 배포</em></div>
+      <dl>
+        <dt>쉽게 말하면</dt><dd>코드를 올리면 <strong>자동으로 검사하고 배포</strong>하는 파이프라인.</dd>
+        <dt>이 문서에서는</dt><dd>C-TEC-007이 "별도 CI/CD 설정 없이"라고 했는데, Vercel이 그 역할을 대신하기 때문입니다.</dd>
+      </dl>
+    </div>
+    <div class="term">
+      <div class="term-h"><b>커넥션 풀</b><em>connection pool</em></div>
+      <dl>
+        <dt>쉽게 말하면</dt><dd>데이터베이스 접속 통로를 <strong>미리 만들어 두고 돌려쓰는</strong> 방식.</dd>
+        <dt>왜 필요한가</dt><dd>서버리스는 요청마다 새 인스턴스가 뜹니다. 각자 접속을 열면 <strong>DB가 감당을 못 합니다</strong>.</dd>
+      </dl>
+    </div>
+  </div>
+</section>
+
+<!-- 08 용어 6 -->
+<section class="slide">
+  <p class="eyebrow">1부 · 용어 해설집 ⑥</p>
+  <h2>품질을 재는 말들</h2>
+  <p class="lede">PM이 가장 자주 마주칠 용어들입니다. 특히 <strong>p95</strong>와 <strong>멱등성</strong>은 회의에서 그냥 나옵니다.</p>
+
+  <div class="terms">
+    <div class="term">
+      <div class="term-h"><b>p95</b><em>95 백분위</em></div>
+      <dl>
+        <dt>쉽게 말하면</dt><dd>100번 중 <strong>95번은 이 시간 안에 끝난다</strong>는 뜻. 나머지 5번은 더 걸립니다.</dd>
+        <dt>왜 평균이 아닌가</dt><dd>평균은 <strong>느린 소수를 숨깁니다.</strong> 99명이 0.1초, 1명이 10초여도 평균은 0.2초입니다. p95는 그 1명을 드러냅니다.</dd>
+      </dl>
+    </div>
+    <div class="term">
+      <div class="term-h"><b>SLO</b><em>Service Level Objective</em></div>
+      <dl>
+        <dt>쉽게 말하면</dt><dd><strong>지키기로 한 품질 목표.</strong> "응답 p95 ≤ 0.5초" 같은 숫자.</dd>
+        <dt>PM 관점</dt><dd>SLO는 <strong>협상 대상</strong>입니다. 못 지키면 아키텍처를 바꾸거나 목표를 조정해야 합니다. 그 결정은 PM이 합니다.</dd>
+      </dl>
+    </div>
+    <div class="term">
+      <div class="term-h"><b>멱등성</b><em>idempotency</em></div>
+      <dl>
+        <dt>쉽게 말하면</dt><dd><strong>같은 요청을 몇 번 보내도 결과가 한 번 보낸 것과 같은</strong> 성질.</dd>
+        <dt>왜 금융에서 필수인가</dt><dd>네트워크는 끊깁니다. 재시도도 합니다. 멱등성이 없으면 <strong>이체가 두 번 나갑니다.</strong></dd>
+      </dl>
+    </div>
+    <div class="term">
+      <div class="term-h"><b>WORM</b><em>Write Once Read Many</em></div>
+      <dl>
+        <dt>쉽게 말하면</dt><dd><strong>한 번 쓰면 고칠 수도 지울 수도 없는</strong> 저장 방식.</dd>
+        <dt>이 문서에서는</dt><dd>감사 로그가 여기 해당합니다. 나중에 분쟁이 생기면 <strong>고쳐지지 않았다는 것 자체가 증거</strong>이기 때문입니다.</dd>
+      </dl>
+    </div>
+    <div class="term">
+      <div class="term-h"><b>캐시 / TTL</b><em>cache · Time To Live</em></div>
+      <dl>
+        <dt>쉽게 말하면</dt><dd>한 번 계산한 결과를 <strong>잠깐 저장해두고 재사용</strong>하는 것. TTL은 그 유효 시간.</dd>
+        <dt>이 문서에서는</dt><dd>밴드 값을 <strong>당일 캐시</strong>합니다. 같은 날 여러 번 봐도 값이 안 흔들리게 하려고요.</dd>
+      </dl>
+    </div>
+    <div class="term">
+      <div class="term-h"><b>RLS</b><em>Row Level Security</em></div>
+      <dl>
+        <dt>쉽게 말하면</dt><dd>데이터베이스가 <strong>행 단위로</strong> "이 사람은 이 줄만 볼 수 있다"를 강제하는 기능.</dd>
+        <dt>이 문서에서는</dt><dd>"본인 계좌만 조회" 규칙을 <strong>코드와 DB 양쪽에서</strong> 이중으로 막습니다.</dd>
+      </dl>
+    </div>
+  </div>
+
+  <div class="deep" data-track="eng">
+    <span class="chip deep">심화</span>
+    <p><strong>멱등성은 "재시도해도 안전한가"를 묻는 질문입니다.</strong> HTTP 메서드로 보면 GET·PUT·DELETE는 본래 멱등이고 POST는 아닙니다. 그런데 이 프로젝트의 전송·예약은 POST 성격인데 멱등이어야 합니다.</p>
+    <p>해법은 <strong>멱등 키</strong>입니다. 클라이언트가 요청마다 고유 ID를 만들어 보내고, 서버는 그 ID를 본 적 있으면 <strong>다시 처리하지 않고 최초 결과를 그대로 돌려줍니다.</strong></p>
+    <pre>// 전문 수신의 멱등 키 — DB 유니크 제약으로 강제
+@@unique([transferId, stageNo, messageSeq])
+
+// 고객 요청의 멱등 키 — 클라이언트가 생성
+submitTransfer({ transferId, requestId, ... })</pre>
+  </div>
+</section>
+
+<!-- 09 개념 1 -->
+<section class="slide">
+  <p class="eyebrow">2부 · 핵심 개념 ①</p>
+  <h2>왜 프론트와 백을 합쳤나</h2>
+  <p class="lede">C-TEC-001·002가 이 프로젝트의 성격을 결정합니다. 보통은 나누는데, 여기서는 일부러 합쳤습니다.</p>
+
+  <div class="tw">
+    <table>
+      <tr><th></th><th>분리 방식 (일반적)</th><th>단일 풀스택 (이 프로젝트)</th></tr>
+      <tr><td><b>구성</b></td><td>프론트엔드 앱 + 백엔드 서버 각각</td><td>Next.js 앱 하나</td></tr>
+      <tr><td><b>팀</b></td><td>프론트 팀 · 백엔드 팀</td><td>한 팀</td></tr>
+      <tr><td><b>연결</b></td><td>API 규격을 합의하고 맞춰야 함</td><td>같은 코드베이스라 합의 불필요</td></tr>
+      <tr><td><b>배포</b></td><td>각각 배포. 버전 맞춰야 함</td><td>한 번에 배포</td></tr>
+      <tr><td><b>적합</b></td><td>규모가 크고 팀이 나뉠 때</td><td><b>빠르게 만들어 검증할 때</b></td></tr>
+    </table>
+  </div>
+
+  <div class="note">
+    <p><b>PM이 알아야 할 트레이드오프.</b> 합치면 빠릅니다. 대신 나중에 규모가 커져 <b>팀을 나눠야 할 때 분리 비용이 발생합니다.</b> 지금은 Phase 0~1 검증 단계이므로 합치는 게 맞는 선택입니다.</p>
+    <p>다만 SRS-002는 미래를 위한 장치를 하나 심어뒀습니다 — <b>도메인 계산 로직을 순수한 별도 모듈로 격리</b>했습니다. 나중에 백엔드를 분리하더라도 계산 코드는 그대로 옮길 수 있습니다.</p>
+  </div>
+
+  <div class="deep" data-track="eng">
+    <span class="chip deep">심화</span>
+    <p><code>lib/domain/*</code>은 Prisma를 import하지 않습니다(<code>TEC-DOM-001</code>). I/O가 전혀 없는 순수 함수 집합입니다.</p>
+    <p>이렇게 만든 실질적 이득이 두 가지입니다. 첫째, <strong>단위 시험이 즉시 가능</strong>합니다 — DB 없이도 검증 데이터셋 6건을 돌릴 수 있어서 매 릴리스 자동 회귀가 성립합니다. 둘째, <strong>같은 코드를 브라우저에서도 실행</strong>할 수 있습니다. 이게 §9.3 충돌의 해법이 됩니다.</p>
+  </div>
+</section>
+
+<!-- 10 개념 2 -->
+<section class="slide">
+  <p class="eyebrow">2부 · 핵심 개념 ②</p>
+  <h2>Server Action이냐 Route Handler냐</h2>
+  <p class="lede">§4.1의 판정표입니다. 규칙은 간단합니다 — <strong>누가 부르는가</strong>로 갈립니다.</p>
+
+  <div class="grid2">
+    <div class="card">
+      <h3>Server Action</h3>
+      <p style="font-size:14.5px;color:var(--ink-2);margin-bottom:10px"><strong>고객이</strong> 화면에서 부를 때</p>
+      <ul style="margin:0;font-size:14px">
+        <li>로그인 세션이 이미 있음</li>
+        <li>보안 처리를 프레임워크가 해줌</li>
+        <li>화면 갱신을 같이 처리 가능</li>
+      </ul>
+      <p style="margin-top:12px;font-size:13.5px;color:var(--ink-3)">예약 저장 · 전송 · 취소 · 인출 시뮬레이션 <b>(7개)</b></p>
+    </div>
+    <div class="card">
+      <h3>Route Handler</h3>
+      <p style="font-size:14.5px;color:var(--ink-2);margin-bottom:10px"><strong>다른 시스템이</strong> 부를 때</p>
+      <ul style="margin:0;font-size:14px">
+        <li>로그인 세션이 없음</li>
+        <li>별도 인증이 필요</li>
+        <li>응답 형식을 상대가 파싱함</li>
+      </ul>
+      <p style="margin-top:12px;font-size:13.5px;color:var(--ink-3)">매매창 판정 · 전문 수신 · 배치 4종 <b>(7개)</b></p>
+    </div>
+  </div>
+
+  <div class="note good">
+    <p><b>이 구분이 왜 문서에 명시돼 있나.</b> 둘 다 "서버에서 도는 코드"라 개발자마다 다르게 고를 수 있습니다. 기준이 없으면 비슷한 기능이 서로 다른 방식으로 구현되고, <b>보안 처리가 빠지는 자리가 생깁니다.</b></p>
+    <p>PM 관점에서는 이걸 <b>"판단이 필요한 자리를 미리 없앤 것"</b>으로 읽으면 됩니다. 좋은 기술 문서의 특징입니다.</p>
+  </div>
+</section>
+
+<!-- 11 개념 3 -->
+<section class="slide">
+  <p class="eyebrow">2부 · 핵심 개념 ③</p>
+  <h2>"로그를 못 남기면 전송도 취소한다"</h2>
+  <p class="lede">SRS-002에서 가장 강한 요구사항 중 하나입니다. 처음 보면 과하게 느껴지는데, 이유가 있습니다.</p>
+
+  <div class="card">
+    <h3>상황</h3>
+    <p style="margin-bottom:0">고객이 이체 전송 버튼을 누릅니다. 이때 화면에는 <strong>"8월 31일 ~ 9월 2일 완료 예정"</strong>이라고 떠 있었습니다. 시스템은 ① 감사 로그를 남기고 ② 상태를 "접수됨"으로 바꿔야 합니다.</p>
+  </div>
+
+  <div class="card">
+    <h3>만약 ②만 성공하고 ①이 실패하면</h3>
+    <p style="margin-bottom:0">신청은 접수됐는데 <strong>기록이 없습니다.</strong> 나중에 완료가 늦어져 고객이 "9월 2일이라고 했잖아요"라고 하면, 회사는 <strong>그때 화면에 뭐가 떠 있었는지 증명할 방법이 없습니다.</strong> 밴드 값은 이후 재계산으로 계속 바뀌기 때문입니다.</p>
+  </div>
+
+  <div class="note warn">
+    <p><b>그래서 둘을 한 묶음(트랜잭션)으로 처리합니다.</b> 로그 적재가 실패하면 상태 변경도 되돌리고, 고객에게는 "다시 시도해 주세요"를 보여줍니다.</p>
+    <p>전송은 법적으로 <b>전자적 의사표시</b>입니다. 기록 없이 의사표시만 성립시키면 회사가 방어 수단을 잃습니다.</p>
+  </div>
+
+  <div class="deep" data-track="eng">
+    <span class="chip deep">심화</span>
+    <p>주목할 점은 <strong>화면에 표시된 밴드 값을 클라이언트가 서버로 보낸다</strong>는 설계입니다. 보통은 클라이언트가 보낸 값을 믿지 않는 게 원칙인데, 여기서는 일부러 받습니다.</p>
+    <p>서버가 다시 계산하면 <strong>그 순간의 값</strong>이지 <strong>고객이 실제로 본 값</strong>이 아니기 때문입니다. 감사 로그에 남아야 하는 건 후자입니다.</p>
+    <pre>await prisma.$transaction(async (tx) => {
+  assertTransition(t.status, 'RECEIVED')   // 금지 전이 차단
+  await tx.auditLog.create({ ... })        // 실패 시 전체 롤백
+  await tx.transfer.update({
+    where: { id, status: 'DRAFT' },        // 낙관적 동시성
+    data:  { status: 'RECEIVED' },
+  })
+})
+// 외부 전문 송신·알림은 트랜잭션 밖 — 실패해도 상태는 유지</pre>
+  </div>
+</section>
+
+<!-- 12 개념 4 -->
+<section class="slide">
+  <p class="eyebrow">2부 · 핵심 개념 ④</p>
+  <h2>같은 요청이 두 번 와도 한 번만</h2>
+  <p class="lede">멱등성입니다. 금융 시스템에서 이걸 놓치면 <strong>돈이 두 번 움직입니다.</strong></p>
+
+  <div class="tw">
+    <table>
+      <tr><th>상황</th><th>왜 생기나</th><th>멱등성 없으면</th></tr>
+      <tr><td>고객이 버튼 두 번 누름</td><td>응답이 느려서 다시 누름</td><td>신청이 2건</td></tr>
+      <tr><td>네트워크 끊김 후 재시도</td><td>앱이 자동으로 재전송</td><td>신청이 2건</td></tr>
+      <tr><td>같은 전문 2회 수신</td><td>중계망이 재전송</td><td>상태가 두 단계 건너뜀</td></tr>
+      <tr><td>배치가 중복 실행</td><td>스케줄러 특성</td><td>밴드 값이 흔들림</td></tr>
+    </table>
+  </div>
+
+  <div class="note">
+    <p><b>해법은 "이 요청 본 적 있나?"를 확인하는 것입니다.</b> 요청마다 고유 번호를 붙이고, 이미 처리한 번호면 <b>새로 처리하지 않고 처음 결과를 그대로 돌려줍니다.</b></p>
+    <p>SRS-002는 이걸 코드가 아니라 <b>데이터베이스 제약</b>으로 강제합니다. 같은 번호를 두 번 저장하려 하면 DB가 거부합니다. 개발자가 깜빡해도 막힙니다.</p>
+  </div>
+
+  <div class="note good">
+    <p><b>PM이 기억할 한 문장.</b> "재시도해도 안전한가?" — 이 질문을 상태를 바꾸는 모든 기능에 대해 물어야 합니다. 답이 "아니오"면 사고가 날 자리입니다.</p>
+  </div>
+</section>
+
+<!-- 13 개념 5 -->
+<section class="slide">
+  <p class="eyebrow">2부 · 핵심 개념 ⑤</p>
+  <h2>서버리스가 주는 것과 가져가는 것</h2>
+  <p class="lede">Vercel을 고른 대가입니다. 충돌 7건 중 <strong>4건이 여기서</strong> 나옵니다.</p>
+
+  <div class="grid2">
+    <div class="card">
+      <h3 style="color:var(--safe-ink)">주는 것</h3>
+      <ul style="margin:0;font-size:14px">
+        <li>서버 관리가 필요 없음</li>
+        <li>안 쓸 때 비용이 안 듦</li>
+        <li>몰려도 알아서 늘어남</li>
+        <li>Git에 올리면 자동 배포</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3 style="color:var(--signal-ink)">가져가는 것</h3>
+      <ul style="margin:0;font-size:14px">
+        <li><strong>콜드 스타트</strong> — 처음 깨는 데 시간이 듦</li>
+        <li><strong>실행 시간 한도</strong> — 오래 도는 작업 불가</li>
+        <li><strong>상주 프로세스 없음</strong> — "상시 감시" 불가</li>
+        <li><strong>커넥션 관리</strong> — DB 접속이 폭증할 수 있음</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="note warn">
+    <p><b>가장 아픈 지점.</b> PRD는 "잔고가 반영되면 <b>60초 이내</b> 알림"을 요구합니다. 그런데 서버리스에는 계속 지켜보는 프로세스가 없습니다. 정해진 주기로만 확인할 수 있습니다.</p>
+    <p>주기를 1분으로 잡아도 최악의 경우 60초를 넘깁니다. <b>그래서 SRS-002는 "원장 쪽에서 알려주는(push) 연동이 필요하다"고 결론 냈습니다.</b> 이건 우리가 못 정하는 문제라 다른 팀에 요청해야 합니다.</p>
+  </div>
+
+  <div class="deep" data-track="eng">
+    <span class="chip deep">심화</span>
+    <p>Cron 중복 실행 문제는 <strong>리더 선출 없이 멱등 갱신으로</strong> 풀었습니다. 조건을 UPDATE 문에 포함시켜 원자적으로 처리합니다.</p>
+    <pre>await prisma.lockWindow.updateMany({
+  where: { transferId, cachedOn: { lt: today } },  // ← 조건이 UPDATE 안에
+  data:  { endBandFrom, endBandTo, cachedOn: today },
+})
+// 두 번째 실행은 cachedOn 이 이미 today 라 대상 0건</pre>
+    <p>또 하나 — Vercel Cron은 <strong>UTC 기준</strong>입니다. <code>0 0 * * 1-5</code>가 KST 09:00 월~금이 됩니다. 다만 <strong>공휴일은 Cron이 모릅니다.</strong> 그래서 핸들러 진입 직후 영업일 여부를 확인하고 아니면 즉시 반환합니다.</p>
+  </div>
+</section>
+
+<!-- 14 개념 6 -->
+<section class="slide">
+  <p class="eyebrow">2부 · 핵심 개념 ⑥</p>
+  <h2>규칙을 문서가 아니라 도구에 새긴다</h2>
+  <p class="lede">SRS-002를 관통하는 설계 철학입니다. 이 하나만 이해해도 문서의 절반이 읽힙니다.</p>
+
+  <div class="tw">
+    <table>
+      <tr><th>규칙</th><th>약한 방법</th><th>이 문서의 방법</th></tr>
+      <tr><td>완료일을 단일 날짜로 표시 금지</td><td>문서에 적고 리뷰에서 확인</td><td><b>컴포넌트 타입에 단일 날짜 자리를 안 만듦</b></td></tr>
+      <tr><td>감사 로그 수정·삭제 금지</td><td>"고치지 마세요" 규칙</td><td><b>DB가 UPDATE·DELETE를 거부</b></td></tr>
+      <tr><td>같은 전문 중복 처리 금지</td><td>코드에서 확인 후 건너뜀</td><td><b>DB 유니크 제약으로 저장 자체를 차단</b></td></tr>
+      <tr><td>본인 계좌만 조회</td><td>코드에서 검사</td><td><b>코드 + DB 행 단위 보안 이중</b></td></tr>
+      <tr><td>밴드는 시작일 ≤ 종료일</td><td>계산 후 검증</td><td><b>DB 제약으로 저장 불가</b></td></tr>
+    </table>
+  </div>
+
+  <div class="note good">
+    <p><b>왜 이렇게까지 하나.</b> 문서에 적힌 규칙은 <b>사람이 읽고 기억해야</b> 지켜집니다. 새 개발자가 오거나, 급한 수정이 들어가거나, 6개월 뒤 아무도 기억 못 할 때 깨집니다.</p>
+    <p>도구에 새긴 규칙은 <b>깨뜨리려는 시도 자체가 실패합니다.</b> 코드가 컴파일되지 않거나, DB가 저장을 거부합니다.</p>
+  </div>
+
+  <div class="note">
+    <p><b>PM이 써먹을 수 있는 질문.</b> 중요한 규칙을 이야기할 때 이렇게 물어보세요.<br><b>"이 규칙을 어기면 어느 단계에서 걸리나요? 코드 작성할 때? 리뷰할 때? 운영 중에?"</b></p>
+    <p>앞쪽일수록 안전합니다. "운영 중에 발견됩니다"라는 답이 나오면, 그 규칙은 언젠가 깨집니다.</p>
+  </div>
+</section>
+
+<!-- 15 개념 7 -->
+<section class="slide">
+  <p class="eyebrow">2부 · 핵심 개념 ⑦</p>
+  <h2>p95를 이해하면 성능 회의가 달라진다</h2>
+  <p class="lede">"빨라야 한다"는 요구는 검증할 수 없습니다. p95는 그걸 검증 가능한 숫자로 바꾸는 도구입니다.</p>
+
+  <div class="card">
+    <h3>같은 데이터, 다른 결론</h3>
+    <p>100명이 화면을 열었습니다. 95명은 0.3초 만에 봤고, 5명은 3초가 걸렸습니다.</p>
+    <ul style="margin-bottom:0">
+      <li><strong>평균으로 보면</strong> 0.44초 — "괜찮네요"</li>
+      <li><strong>p95로 보면</strong> 3초 — <strong>"5%가 3초를 기다립니다"</strong></li>
+    </ul>
+  </div>
+
+  <div class="note">
+    <p><b>이 프로젝트의 p95 목표</b><br>
+    홈 진행 카드 <b>≤ 0.8초</b> · 현황판 <b>≤ 1.2초</b> · 상태 조회 API <b>≤ 0.5초</b> · 인출 계산 <b>≤ 1초</b> · 인출액 변경 재계산 <b>≤ 0.3초</b></p>
+  </div>
+
+  <div class="note warn">
+    <p><b>PM이 반드시 알아야 할 것 — 목표치와 알람은 다릅니다.</b></p>
+    <p>SRS-002는 두 숫자를 따로 관리합니다. <b>합격 기준</b>은 "p95 ≤ 0.8초"이고, <b>운영 알람</b>은 "p95가 1.0초를 10분 넘게 초과하면"입니다.</p>
+    <p>왜 나누냐면 — 알람이 합격 기준과 같으면 <b>목표를 아슬아슬하게 지키는 동안 계속 울립니다.</b> 그러면 사람들이 알람을 무시하기 시작합니다.</p>
+  </div>
+</section>
+
+<!-- 16 충돌 지도 -->
+<section class="slide">
+  <p class="eyebrow">3부 · 제약 충돌</p>
+  <h2>기술을 정하면 부딪히는 곳이 생긴다</h2>
+  <p class="lede">SRS-002 §9입니다. 이 장이 <strong>이 문서에서 가장 값나가는 부분</strong>입니다. 스택을 얹어보니 기존 요구사항과 충돌하는 지점 7건이 드러났습니다.</p>
+
+  <div class="cmap">
+    <div class="crow hi"><div class="cnum">01</div><div class="ctext"><b>콜드 스타트 vs 0.5초 응답</b> — 매매창 판정이 늦으면 정상 주문이 거부됨</div><span class="chip sig">출시 판정</span></div>
+    <div class="crow hi"><div class="cnum">02</div><div class="ctext"><b>서버리스 vs "상시 감시"</b> — 60초 알림 요구를 폴링만으로 충족 불가</div><span class="chip sig">출시 차단</span></div>
+    <div class="crow"><div class="cnum">03</div><div class="ctext"><b>0.3초 재계산 vs 서버 왕복</b> — 계산 코드를 브라우저에서도 실행해 해결</div><span class="chip ok">해결됨</span></div>
+    <div class="crow"><div class="cnum">04</div><div class="ctext"><b>DB 접속 폭증</b> — 커넥션 풀러 경유로 해결</div><span class="chip ok">해결됨</span></div>
+    <div class="crow"><div class="cnum">05</div><div class="ctext"><b>배치 중복 실행</b> — 멱등 갱신으로 해결</div><span class="chip ok">해결됨</span></div>
+    <div class="crow hi"><div class="cnum">06</div><div class="ctext"><b>전문 수신 경로</b> — 예탁결제원이 우리 주소로 직접 보낼 수 있는지 미확인</div><span class="chip sig">개발 차단</span></div>
+    <div class="crow"><div class="cnum">07</div><div class="ctext"><b>퍼블릭 클라우드 vs 금융권 요건</b> — 별도 규제 검토 필요</div><span class="chip sig">출시 판정</span></div>
+  </div>
+
+  <div class="note good">
+    <p><b>PM 관점에서 이 표를 읽는 법.</b> 3·4·5는 엔지니어가 이미 풀었습니다. 보고만 받으면 됩니다.</p>
+    <p><b>1·2·6·7이 PM의 일입니다.</b> 다른 팀에 요청하거나, 목표를 조정하거나, 의사결정을 받아와야 하는 것들입니다.</p>
+  </div>
+</section>
+
+<!-- 17 충돌 상세 1 -->
+<section class="slide">
+  <p class="eyebrow">3부 · 제약 충돌</p>
+  <h2>가장 위험한 두 건</h2>
+  <p class="lede">1번과 2번입니다. 둘 다 <strong>기술로 완전히 풀리지 않고</strong> 다른 팀의 답이 필요합니다.</p>
+
+  <div class="card" style="border-left:3px solid var(--signal)">
+    <h3>충돌 01 — 콜드 스타트가 정상 주문을 막는다</h3>
+    <p><strong>구조.</strong> 고객이 주식을 사려 하면, 주문 시스템이 우리에게 <strong>"이 계좌 지금 매매 가능한가?"</strong>를 묻습니다. 우리는 0.5초 안에 답해야 합니다.</p>
+    <p><strong>문제.</strong> 서버가 꺼져 있었으면 깨우는 데만 그 시간을 다 씁니다. 답이 늦으면 시스템은 <strong>안전한 쪽인 "매매 불가"로 처리</strong>합니다.</p>
+    <p style="margin-bottom:0"><strong>결과.</strong> 이관과 무관한 <strong>정상 주문이 거부됩니다.</strong> 그리고 이건 "화면이 가능하다고 했는데 거부된" 사고로 집계되어, 즉시 롤백을 발동시키는 가드레일 지표(일간 0.1%)를 갉아먹습니다.</p>
+  </div>
+
+  <div class="note">
+    <p><b>그나마 다행인 것.</b> 실패 방향이 안전합니다. "막혔는데 열렸다고 표시"하면 주문이 나가버려 되돌릴 수 없지만, 반대는 고객이 다시 시도하면 됩니다. <b>설계가 의도적으로 이 방향을 골랐습니다.</b></p>
+  </div>
+
+  <div class="card" style="border-left:3px solid var(--signal)">
+    <h3>충돌 02 — 60초 알림을 지킬 수 없다</h3>
+    <p><strong>구조.</strong> 돈이 계좌에 들어오면 60초 안에 알려야 합니다. 그래야 고객이 바로 매매를 재개할 수 있습니다.</p>
+    <p><strong>문제.</strong> 서버리스에는 계속 지켜보는 프로세스가 없습니다. 정해진 주기로 "들어왔나?" 확인만 할 수 있고, <strong>주기가 곧 지연</strong>이 됩니다.</p>
+    <p style="margin-bottom:0"><strong>해법.</strong> 우리가 물어보는 대신 <strong>원장이 우리에게 알려주게</strong> 바꿔야 합니다. 그런데 이건 연금시스템팀이 지원해줘야 가능합니다.</p>
+  </div>
+
+  <div class="note warn">
+    <p><b>PM이 할 일.</b> 연금시스템팀에 <b>"잔고 반영 시 우리 쪽으로 통보를 보내줄 수 있는가"</b>를 물어야 합니다. 답이 "불가"면 <b>60초 요구를 완화하는 PRD 변경</b>이 필요하고, 그건 PM의 결정입니다.</p>
+  </div>
+</section>
+
+<!-- 18 충돌 상세 2 -->
+<section class="slide">
+  <p class="eyebrow">3부 · 제약 충돌</p>
+  <h2>나머지 다섯 건</h2>
+
+  <div class="card">
+    <h3><span class="chip ok">해결됨</span> 충돌 03 · 04 · 05</h3>
+    <p><strong>03 — 0.3초 재계산.</strong> 인출액 슬라이더를 움직일 때마다 서버에 다녀오면 느립니다. 계산 코드가 순수 모듈로 격리돼 있어서 <strong>같은 코드를 브라우저에서도 돌립니다.</strong> 단, 제출할 때는 반드시 서버에서 다시 계산해 검증합니다.</p>
+    <p><strong>04 — DB 접속 폭증.</strong> 서버리스는 요청마다 인스턴스가 뜨고, 각자 DB에 접속하면 한도를 넘습니다. <strong>커넥션 풀러</strong>를 거치게 해서 해결했습니다.</p>
+    <p style="margin-bottom:0"><strong>05 — 배치 중복 실행.</strong> 밴드 재계산이 두 번 돌면 같은 날 값이 달라집니다. "오늘 아직 갱신 안 된 것만" 처리하도록 조건을 걸어서, <strong>두 번 돌아도 두 번째는 대상이 0건</strong>이 되게 했습니다.</p>
+  </div>
+
+  <div class="card" style="border-left:3px solid var(--signal)">
+    <h3><span class="chip sig">개발 차단</span> 충돌 06 — 전문 수신 경로</h3>
+    <p style="margin-bottom:0">예탁결제원이 보내는 진행 전문을 받아야 이관 단계를 추적할 수 있습니다. 그런데 우리 서비스는 인터넷 주소에 있고, <strong>금융 전용망으로 오가는 전문을 직접 받을 수 있는지 확인되지 않았습니다.</strong> 중계해줄 내부 시스템이 있는지 물어야 합니다. <strong>답이 없으면 기능1의 핵심을 구현할 수 없습니다.</strong></p>
+  </div>
+
+  <div class="card" style="border-left:3px solid var(--signal)">
+    <h3><span class="chip sig">출시 판정</span> 충돌 07 — 퍼블릭 클라우드</h3>
+    <p style="margin-bottom:0">Vercel과 Supabase는 외부 클라우드 서비스입니다. 금융회사의 실제 운영 환경에는 망 구성·데이터 소재지 같은 추가 요건이 적용될 수 있습니다. <strong>SRS-002는 이 판단을 하지 않고 기록만 했습니다.</strong> 학습·검증 목적이면 문제없고, 실제 출시에는 정보보호·법무 검토가 별도로 필요합니다.</p>
+  </div>
+</section>
+
+<!-- 19 Blocks 구분 -->
+<section class="slide">
+  <p class="eyebrow">3부 · 제약 충돌</p>
+  <h2>"개발을 막는가" vs "출시를 막는가"</h2>
+  <p class="lede">이 구분을 못 하면 프로젝트가 통째로 멈춥니다. PM이 가장 자주 쓰게 될 판단 틀입니다.</p>
+
+  <div class="grid2">
+    <div class="card">
+      <h3 style="color:var(--signal-ink)">Blocks Development</h3>
+      <p style="font-size:14.5px;margin-bottom:10px">답이 없으면 <strong>지금 코드를 못 씁니다.</strong> 만들 대상 자체가 불분명하니까요.</p>
+      <p style="font-size:13.5px;color:var(--ink-3);margin-bottom:0">이 프로젝트: <b>2건</b><br>전문 수신 경로 · 본인 인증 수단</p>
+    </div>
+    <div class="card">
+      <h3 style="color:var(--accent-ink)">Blocks Release</h3>
+      <p style="font-size:14.5px;margin-bottom:10px">개발은 <strong>진행할 수 있습니다.</strong> 다만 답 없이 고객에게 내보낼 수 없습니다.</p>
+      <p style="font-size:13.5px;color:var(--ink-3);margin-bottom:0">이 프로젝트: <b>3건</b><br>60초 알림 · 응답 시간 실측 · 규제 적합성</p>
+    </div>
+  </div>
+
+  <div class="note good">
+    <p><b>왜 이 구분이 결정적인가.</b> 미해결 항목을 전부 "차단"으로 묶으면 <b>답을 기다리는 동안 팀이 논다</b>는 뜻이 됩니다. 실제로는 5건 중 3건이 개발과 무관합니다.</p>
+    <p>SRS-002는 여기서 한 발 더 갔습니다 — <b>기능2 전체가 법무 판정(LEGAL-Q1)에 걸려 있지만, 기능1은 영향이 없어 단독 출시가 가능하다</b>고 명시했습니다. 하나의 미결 사항이 프로젝트 전체를 볼모로 잡지 않게 만든 것입니다.</p>
+  </div>
+
+  <div class="note">
+    <p><b>PM이 회의에서 쓸 문장.</b><br>"이 항목이 지금 <b>개발을 막나요, 출시를 막나요?</b> 개발을 막는다면 무엇을 못 만드나요?"</p>
+  </div>
+</section>
+
+<!-- 20 Gate 관리 -->
+<section class="slide">
+  <p class="eyebrow">4부 · 운영 관점</p>
+  <h2>미해결 항목을 관리하는 법</h2>
+  <p class="lede">이 프로젝트에는 상위 문서에서 내려온 <strong>Gate 3건</strong>과 이 문서에서 새로 나온 <strong>기술 질문 7건</strong>이 있습니다.</p>
+
+  <div class="tw">
+    <table>
+      <tr><th>구분</th><th>항목</th><th>물어볼 곳</th><th>영향</th></tr>
+      <tr><td rowspan="2"><b>PRD Gate</b></td><td>상품별 결제 규정 실측</td><td>연금시스템팀</td><td>Phase 1 착수 불가</td></tr>
+      <tr><td>콜센터 문의코드 신설</td><td>콜센터 운영</td><td>지표 기준선 확보 불가</td></tr>
+      <tr><td><b>Release Gate</b></td><td>투자자문업 해당 여부</td><td>법무</td><td>기능2 출시 보류</td></tr>
+      <tr><td rowspan="2"><b>개발 차단</b></td><td>전문 수신 경로</td><td>연금시스템 · 정보보호</td><td>기능1 핵심 구현 불가</td></tr>
+      <tr><td>본인 인증 수단</td><td>정보보호 · Product</td><td>전송 기능 구현 불가</td></tr>
+      <tr><td rowspan="3"><b>출시 차단·판정</b></td><td>완료 알림 60초</td><td>연금시스템팀</td><td>SLO 미충족</td></tr>
+      <tr><td>응답 시간 실측</td><td>엔지니어링</td><td>가드레일 소진 위험</td></tr>
+      <tr><td>규제 적합성</td><td>정보보호 · 법무</td><td>인프라 재검토 가능성</td></tr>
+    </table>
+  </div>
+
+  <div class="note">
+    <p><b>좋은 미해결 관리의 조건 세 가지.</b></p>
+    <p>① <b>누가 답할지</b>가 정해져 있을 것 — "논의 필요"는 담당자가 없다는 뜻입니다.<br>
+    ② <b>답이 없을 때 뭘 할지</b>가 정해져 있을 것 — SRS-002는 항목마다 "미해결 시 확정 동작"을 적어뒀습니다.<br>
+    ③ <b>차단 등급</b>이 구분돼 있을 것 — 앞 장의 이야기입니다.</p>
+  </div>
+</section>
+
+<!-- 21 질문 목록 -->
+<section class="slide">
+  <p class="eyebrow">4부 · 운영 관점</p>
+  <h2>엔지니어에게 물어야 할 12가지</h2>
+  <p class="lede">기술을 몰라도 <strong>좋은 질문은 할 수 있습니다.</strong> 아래는 이 문서를 근거로 실제 회의에서 쓸 수 있는 것들입니다.</p>
+
+  <ol class="qlist">
+    <li>이 항목이 지금 <strong>개발을 막나요, 출시를 막나요?</strong></li>
+    <li>이 규칙을 어기면 <strong>어느 단계에서 걸리나요?</strong> 코드 작성 때인가요, 운영 중인가요?</li>
+    <li>이 기능은 <strong>재시도해도 안전한가요?</strong> 두 번 눌리면 어떻게 되나요?</li>
+    <li>실패하면 <strong>어느 방향으로 실패하나요?</strong> 안전한 쪽인가요, 위험한 쪽인가요?</li>
+    <li>이 숫자는 <strong>합격 기준인가요, 알람 기준인가요?</strong></li>
+    <li>평균 말고 <strong>p95로는</strong> 어떻게 되나요?</li>
+    <li>이 값의 <strong>진짜 출처(Source of Truth)</strong>는 어디인가요?</li>
+    <li>같은 값이 두 화면에 있는데 <strong>다를 수 있나요?</strong></li>
+    <li>이건 우리가 정할 수 있나요, <strong>다른 팀에 요청해야 하나요?</strong></li>
+    <li>답이 안 오면 <strong>어떤 축소형으로 나가나요?</strong></li>
+    <li>이 결정을 나중에 <strong>되돌리려면 비용이 얼마나 드나요?</strong></li>
+    <li>지금 이 판단의 <strong>근거가 문서 어디에</strong> 적혀 있나요?</li>
+  </ol>
+</section>
+
+<!-- 22 독해 체크리스트 -->
+<section class="slide">
+  <p class="eyebrow">4부 · 운영 관점</p>
+  <h2>기술 문서를 받았을 때</h2>
+  <p class="lede">SRS-002를 처음부터 읽을 때, 그리고 앞으로 다른 기술 문서를 받을 때 쓰는 순서입니다.</p>
+
+  <div class="card">
+    <h3>1. 먼저 볼 것 — 이 문서가 무엇을 정하는 문서인가</h3>
+    <p style="margin-bottom:0">SRS-002는 <strong>"어떻게 만드는가"</strong>만 다룹니다. "왜 이 기능이 필요한가"는 PRD에 있습니다. 문서의 역할을 헷갈리면 엉뚱한 데서 답을 찾게 됩니다.</p>
+  </div>
+
+  <div class="card">
+    <h3>2. 그다음 — 미해결과 충돌부터 읽는다</h3>
+    <p style="margin-bottom:0">본문을 처음부터 읽지 마세요. <strong>§9 제약 충돌</strong>과 <strong>§11 Open Questions</strong>를 먼저 봅니다. <strong>PM이 결정해야 할 것이 거기 다 있습니다.</strong></p>
+  </div>
+
+  <div class="card">
+    <h3>3. 확인할 것 — 요구사항이 조용히 바뀌지 않았는가</h3>
+    <p style="margin-bottom:0">기술 문서가 <strong>"구현이 어려우니 요구사항을 줄였다"</strong>고 하는 경우가 있습니다. SRS-002는 §10.1에 <strong>"삭제·완화·해제한 것이 없다"</strong>를 명시적으로 확인해뒀습니다. 이 확인이 없는 문서는 직접 대조해야 합니다.</p>
+  </div>
+
+  <div class="card">
+    <h3>4. 마지막 — 판정과 근거가 일치하는가</h3>
+    <p style="margin-bottom:0">SRS-002의 판정은 <strong>"조건부 착수 가능"</strong>입니다. 그리고 무엇이 막고 있는지, 어디까지 착수 가능한지를 §13.3에 표로 적어뒀습니다. <strong>판정만 있고 근거가 없으면 그 판정은 신뢰할 수 없습니다.</strong></p>
+  </div>
+</section>
+
+<!-- 23 정리 -->
+<section class="slide">
+  <p class="eyebrow">4부 · 운영 관점</p>
+  <h2>이 문서가 잘 쓰인 이유</h2>
+  <p class="lede">앞으로 다른 기술 문서를 평가할 때 기준이 됩니다.</p>
+
+  <div class="tw">
+    <table>
+      <tr><th>좋은 특징</th><th>SRS-002에서</th></tr>
+      <tr><td>기술 선택의 <b>대가를 숨기지 않음</b></td><td>충돌 7건을 별도 장으로 격리. "완화 가능"과 "잔여 위험"을 나눠 적음</td></tr>
+      <tr><td><b>못 정하는 것을 정한 척 안 함</b></td><td>PRD에 없는 값은 TBD로 남기고 누가 정해야 하는지 명시</td></tr>
+      <tr><td>요구사항과 구현을 <b>섞지 않음</b></td><td>신규 생성은 기술 규약 51건뿐. 기능 요구사항 0건</td></tr>
+      <tr><td>판단이 필요한 자리를 <b>미리 없앰</b></td><td>Server Action / Route Handler 판정표 같은 기준 제공</td></tr>
+      <tr><td>규칙을 <b>도구로 강제</b></td><td>타입·DB 제약으로 위반 자체를 차단</td></tr>
+      <tr><td>차단 등급을 <b>구분</b></td><td>개발 차단 2건과 출시 차단 3건을 분리</td></tr>
+    </table>
+  </div>
+
+  <div class="note warn">
+    <p><b>반대로, 이런 문서는 의심해야 합니다.</b></p>
+    <p>기술 선택의 단점이 하나도 안 적혀 있거나 · 미해결 항목이 "추후 협의"로만 되어 있거나 · 요구사항이 슬쩍 완화됐는데 그 사실이 표시돼 있지 않거나 · 판정만 있고 근거가 없는 문서.</p>
+  </div>
+</section>
+
+<!-- 24 다음 -->
+<section class="slide">
+  <div class="cover">
+    <div class="rule"></div>
+    <p class="eyebrow">마무리</p>
+    <h1>이제 원본을 읽을 수 있습니다</h1>
+    <p class="lede">SRS-002의 1,124줄 중 PM이 실제로 판단해야 하는 부분은 §9(충돌 7건)와 §11(미해결 7건), 그리고 §13(판정)입니다. 나머지는 필요할 때 찾아보면 됩니다.</p>
+
+    <div class="card">
+      <h3>다음에 배우면 좋은 것</h3>
+      <ul style="margin-bottom:0">
+        <li><strong>상태 머신</strong> — PRD §8.6의 상태 전이표. 이 제품의 심장입니다</li>
+        <li><strong>트레이드오프 읽기</strong> — 모든 기술 선택에는 대가가 있습니다. 그걸 찾는 눈</li>
+        <li><strong>SLO 협상</strong> — 목표 숫자를 정하고 못 지킬 때 조정하는 판단</li>
+        <li><strong>데이터 계보</strong> — 값 하나가 어디서 와서 어디로 가는지 추적하는 법</li>
+      </ul>
+    </div>
+
+    <div class="note good">
+      <p><b>기억할 한 가지.</b> 기술 문서를 읽는 목적은 <b>기술을 아는 것이 아니라 결정을 내리는 것</b>입니다. 모르는 용어가 나와도, "이게 우리 결정에 영향을 주는가"만 판단할 수 있으면 충분합니다.</p>
+    </div>
+
+    <div class="meta">
+      <div><span>원본</span><span>SRS/srs-002-pension-plus-nextjs-v1_0.md</span></div>
+      <div><span>상위 문서</span><span>ai-place-prd-v3_1.md · ai-place-srs-v1_0.md</span></div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<div class="nav">
+  <button id="prev" aria-label="이전 장">← 이전</button>
+  <div class="hint"><kbd>←</kbd> <kbd>→</kbd> 방향키로 넘기기 · <kbd>Home</kbd> 처음으로</div>
+  <button id="next" aria-label="다음 장">다음 →</button>
+</div>
+
+<script>
+(function(){
+  var slides = Array.prototype.slice.call(document.querySelectorAll('.slide'));
+  var i = 0, n = slides.length;
+  var rail = document.getElementById('rail');
+  var cur  = document.getElementById('cur');
+  var tot  = document.getElementById('tot');
+  var prev = document.getElementById('prev');
+  var next = document.getElementById('next');
+  tot.textContent = n;
+
+  function show(k){
+    i = Math.max(0, Math.min(n - 1, k));
+    slides.forEach(function(s, idx){ s.classList.toggle('on', idx === i); });
+    cur.textContent = i + 1;
+    rail.style.width = ((i + 1) / n * 100) + '%';
+    prev.disabled = i === 0;
+    next.disabled = i === n - 1;
+    window.scrollTo({ top: 0, behavior: 'auto' });
+  }
+
+  prev.addEventListener('click', function(){ show(i - 1); });
+  next.addEventListener('click', function(){ show(i + 1); });
+
+  document.addEventListener('keydown', function(e){
+    if (e.target && /^(INPUT|TEXTAREA|SELECT)$/.test(e.target.tagName)) return;
+    if (e.key === 'ArrowRight' || e.key === 'PageDown'){ e.preventDefault(); show(i + 1); }
+    else if (e.key === 'ArrowLeft' || e.key === 'PageUp'){ e.preventDefault(); show(i - 1); }
+    else if (e.key === 'Home'){ e.preventDefault(); show(0); }
+    else if (e.key === 'End'){ e.preventDefault(); show(n - 1); }
+  });
+
+  // 목차 링크
+  document.querySelectorAll('[data-go]').forEach(function(a){
+    a.addEventListener('click', function(e){
+      e.preventDefault();
+      show(parseInt(a.getAttribute('data-go'), 10));
+    });
+  });
+
+  // 터치 스와이프
+  var x0 = null;
+  document.addEventListener('touchstart', function(e){ x0 = e.changedTouches[0].clientX; }, {passive:true});
+  document.addEventListener('touchend', function(e){
+    if (x0 === null) return;
+    var dx = e.changedTouches[0].clientX - x0;
+    if (Math.abs(dx) > 60) show(dx < 0 ? i + 1 : i - 1);
+    x0 = null;
+  }, {passive:true});
+
+  // 트랙 토글
+  var pmBtn = document.getElementById('t-pm');
+  var enBtn = document.getElementById('t-eng');
+  function setTrack(eng){
+    document.body.classList.toggle('eng', eng);
+    pmBtn.setAttribute('aria-pressed', String(!eng));
+    enBtn.setAttribute('aria-pressed', String(eng));
+    try { localStorage.setItem('srs-track', eng ? 'eng' : 'pm'); } catch(err){}
+  }
+  pmBtn.addEventListener('click', function(){ setTrack(false); });
+  enBtn.addEventListener('click', function(){ setTrack(true); });
+  try {
+    if (localStorage.getItem('srs-track') === 'eng') setTrack(true);
+  } catch(err){}
+
+  show(0);
+})();
+</script>
