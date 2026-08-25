@@ -19,6 +19,7 @@ KB증권 연금 서비스 기획 산출물을 **예시 SRS(`AD-Core-Platform`) �
 | 파일 | 설명 |
 | --- | --- |
 | **[`ai-place-srs-v1_0.md`](ai-place-srs-v1_0.md)** | **소프트웨어 요구사항 명세서 (SRS).** 2,183줄. 예시 양식 §1~§7 구성. REQ-FUNC 14 · REQ-NF 14, 상세 FR 83건, 인수 조건 76건 |
+| **[`SRS/srs-002-pension-plus-nextjs-v1_0.md`](SRS/srs-002-pension-plus-nextjs-v1_0.md)** | **기술 제약 반영판 SRS.** 1,124줄. Next.js·Prisma·Supabase·Tailwind·shadcn/ui·Vercel 제약(C-TEC 7건) 반영. 라우트 맵·Prisma 스키마·**제약 충돌 7건** |
 | **[`design/`](design/README.md)** | **기술 설계 문서 8종.** 유스케이스·ERD·클래스·컴포넌트·시퀀스·상태·흐름도·인과 순환. 다이어그램 46개 |
 
 ### 예시 양식 대조
@@ -91,7 +92,9 @@ SRS 본문에도 16개를 배치했습니다 — §3 시스템 컨텍스트 · �
 - [x] 기술 설계 문서 8종 작성 (다이어그램 46개)
 - [x] **예시 SRS 양식(§1~§7) 전면 적용** — 이해관계자·추적 매트릭스·향후 개선 신설
 - [x] 개발 인계 관점 검토 반영 — PRD v3.1(상태전이·예외·영업일) + SRS(Data Contract·RTM·DR)
+- [x] 기술 제약 반영 SRS 작성 (C-TEC 7건 · TEC 규약 51건)
 - [ ] 착수 게이트 3건 회신 — SYS-Q3 · SYS-Q7 · LEGAL-Q1
+- [ ] 기술 Open Question 회신 — OPEN-TEC-004(전문 수신) · OPEN-TEC-007(본인 인증)
 
 ---
 
@@ -117,6 +120,9 @@ SRS 본문에도 16개를 배치했습니다 — §3 시스템 컨텍스트 · �
 SRS-authoring-project/
 ├── README.md
 ├── ai-place-srs-v1_0.md              # 산출물 · SRS (예시 양식)
+├── srs-001-pension-plus-v0_1.md      # 산출물 · SRS (ISO 29148 템플릿)
+├── SRS/
+│   └── srs-002-pension-plus-nextjs-v1_0.md   # 산출물 · SRS (기술 제약 반영판)
 ├── design/                           # 산출물 · 기술 설계 문서
 │   ├── README.md                     #   색인 · 읽는 순서
 │   └── 01-usecase.md ~ 08-causal-loop.md
