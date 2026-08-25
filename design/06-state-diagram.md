@@ -1,0 +1,228 @@
+# 06. 상태 다이어그램 (State Machine)
+
+> 출처: `ai-place-srs-v1_0.md` §3.2.3
+> 이 문서는 **상태가 어떤 조건으로 옮겨가는가**를 정의한다. 이관 건 상태와 매매창 상태는 **연동되지만 별개**다.
+
+---
+
+## 1. 이관 건 상태 (`transfer_status`)
+
+```mermaid
+stateDiagram-v2
+    [*] --> DRAFT : 예약 저장
+
+    DRAFT --> RECEIVED : 전송 확정<br/>(본인 인증 + 감사 로그 성공)
+    DRAFT --> [*] : 예약 폐기
+
+    RECEIVED --> REQUESTED : 이체 요청 전문 송신
+    RECEIVED --> RECEIVED : 전문 송신 실패<br/>(재시도 큐)
+
+    REQUESTED --> VERIFYING : 이관사 의사확인 착수 (③)
+    VERIFYING --> LIQUIDATING : 자산 현금화 착수 (④)
+    LIQUIDATING --> REMITTING : 송금 통보 수신 (⑤)
+    REMITTING --> COMPLETED : 수관 계좌 잔고 반영 확인 (⑥)
+
+    COMPLETED --> [*]
+
+    VERIFYING --> ACTION_REQUIRED : 본인 확인 미완
+    ACTION_REQUIRED --> VERIFYING : 통화 완료
+    ACTION_REQUIRED --> [*] : 5영업일 자동취소
+
+    REQUESTED --> REJECTED : 이관사 거절
+    VERIFYING --> REJECTED : 이관사 거절
+    REJECTED --> [*]
+
+    LIQUIDATING --> PARTIAL_BLOCKED : 일부 종목 이전 불가
+    PARTIAL_BLOCKED --> LIQUIDATING : 고객 선택 완료
+
+    note right of DRAFT
+        매매 제한 없음
+        고객이 전송 시점을 고른다
+    end note
+
+    note right of REMITTING
+        송금 통보만으로
+        완료 표시 금지 (ADR-009)
+    end note
+
+    note left of ACTION_REQUIRED
+        ③ 병목의 상당수
+        고객이 해결 가능한 유일 구간
+    end note
+```
+
+### 1.1 지연은 상태가 아니라 **플래그**다
+
+`DELAYED`는 별도 상태로 두지 않고 **현재 상태 위에 얹는 플래그**로 처리한다.
+
+```mermaid
+stateDiagram-v2
+    state "VERIFYING" as V {
+        [*] --> 정상
+        정상 --> 지연중 : 마지막 전문 후 D+4 경과
+        지연중 --> 정상 : 전문 수신
+    }
+```
+
+> **왜 별도 상태로 만들지 않는가.** 지연은 단계가 뒤로 가는 것이 아니라 **같은 단계에 오래 머무는 것**이다. 상태로 만들면 "접수됨 → 지연 → 접수됨"처럼 단계가 왕복해 고객이 더 혼란스러워진다. AC F1-04 #4는 "단계는 유지하되 지연 안내와 밴드 확장"을 요구한다.
+
+### 1.2 취소 가능 구간
+
+```mermaid
+stateDiagram-v2
+    direction LR
+    state "취소 가능" as CAN
+    state "취소 불가" as CANNOT
+
+    [*] --> CAN : DRAFT
+    CAN --> CAN : RECEIVED · REQUESTED
+    CAN --> CANNOT : 의사확인 완료
+    CANNOT --> CANNOT : LIQUIDATING 이후
+```
+
+| 상태 | 취소 | 근거 |
+|---|:---:|---|
+| `DRAFT` | 가능 | 아직 신청이 아님 |
+| `RECEIVED` · `REQUESTED` | **신청 당일, 의사확인 전까지만** | 이관사 절차 |
+| `VERIFYING` (확인 완료 후) | 불가 | 의사확인이 끝나면 당일이라도 철회 불가 |
+| `LIQUIDATING` 이후 | 불가 | 자산이 이미 현금화 중 |
+
+**의사확인 기한은 두 개다.** 모순이 아니라 성격이 다르다.
+
+| 날짜 | 성격 |
+|---|---|
+| 이체신청일 +1영업일 | 통화가 이뤄져야 하는 **원칙 기한** |
+| 신청 후 5영업일 | 재시도까지 끝난 뒤의 **자동취소 마감** |
+
+화면은 두 날짜를 하나의 타임라인 위에 **눈금 두 개**로 표시한다.
+
+---
+
+## 2. 매매창 상태 (`trading_window`)
+
+```mermaid
+stateDiagram-v2
+    [*] --> OPEN : 예약 저장 (DRAFT)
+
+    OPEN --> SELL_ONLY : 전송 확정 (RECEIVED)
+    SELL_ONLY --> LOCKED : 현금화 착수 (LIQUIDATING)
+    LOCKED --> REOPENED : 잔고 반영 (COMPLETED)
+    REOPENED --> [*]
+
+    OPEN --> LOCKED : confidence 임계 미만
+    SELL_ONLY --> LOCKED : confidence 임계 미만
+
+    note right of LOCKED
+        미확인이면 여기로 강등한다 (D-4)
+        막혔는데 열렸다고 하면 회복 불가
+        열렸는데 막혔다고 하면 회복 가능
+    end note
+```
+
+### 2.1 허용 매트릭스
+
+| 상태 | 적용 시점 | 매수 | 매도 | 추가 납입 | 수령 신청 |
+|---|---|:---:|:---:|:---:|:---:|
+| `OPEN` | 예약 저장 중 | 가능 | 가능 | 가능 | 가능 |
+| `SELL_ONLY` | 전송 후 ~ 현금화 착수 전 | **막힘** | 가능 | 막힘 | 막힘 |
+| `LOCKED` | 현금화 진행 중 | 막힘 | 막힘 | 막힘 | 막힘 |
+| `REOPENED` | 잔고 반영 후 | 가능 | 가능 | 가능 | 가능 |
+
+**예외** — 실물이전이 불가한 리츠·지분증권 등 상장상품은 기한 내에 **직접 매도해야 한다.** 이 매도는 제한 대상이 아니며, 하지 않으면 이전 신청이 취소된다.
+
+### 2.2 두 상태 기계의 연동
+
+```mermaid
+flowchart LR
+    subgraph TS["transfer_status"]
+        direction TB
+        T1["DRAFT"] --> T2["RECEIVED"] --> T3["REQUESTED"] --> T4["VERIFYING"] --> T5["LIQUIDATING"] --> T6["REMITTING"] --> T7["COMPLETED"]
+    end
+    subgraph TW["trading_window"]
+        direction TB
+        W1["OPEN"] --> W2["SELL_ONLY"] --> W3["LOCKED"] --> W4["REOPENED"]
+    end
+
+    T1 -.-> W1
+    T2 -.-> W2
+    T3 -.-> W2
+    T4 -.-> W2
+    T5 -.-> W3
+    T6 -.-> W3
+    T7 -.-> W4
+```
+
+> **왜 분리했는가.** 매매 제한의 범위와 시작 시점은 **이관사가 정한다**(SRS L-4). 회사마다 다를 수 있어 우리가 실시간으로 확인할 수 없다. 이관 단계와 매매 제한을 한 필드로 묶으면 이관사 정책이 다를 때 표현할 수 없다.
+
+---
+
+## 3. 종목 상태 (`holding_status`)
+
+```mermaid
+stateDiagram-v2
+    [*] --> 판정중
+
+    판정중 --> 실물이전가능 : 같은 유형 계좌 · 취급 상품
+    판정중 --> 현금화필요 : 미취급 상품 · 리츠 등
+    판정중 --> 판정불가 : settle_days 사전에 없음
+
+    실물이전가능 --> 이체대상확정 : 전송 후
+    현금화필요 --> 자동환매중 : 펀드·예금
+    현금화필요 --> 직접매도필요 : 리츠·지분증권
+    직접매도필요 --> 정리완료 : 고객이 기한 내 매도
+    직접매도필요 --> 신청취소 : 기한 내 미매도
+
+    자동환매중 --> 현금화완료
+    이체대상확정 --> 입고완료
+    현금화완료 --> 입고완료
+    정리완료 --> 입고완료
+
+    note right of 판정불가
+        밴드 계산에서 제외한다
+        "소요 기간 확인 중" 표시
+        임의 추정 금지
+    end note
+
+    note left of 직접매도필요
+        자동 처리되지 않는다
+        미매도 시 이전 신청 자체가 취소
+    end note
+```
+
+---
+
+## 4. 상태 전이 시 부수 효과
+
+| 전이 | 부수 효과 |
+|---|---|
+| `DRAFT` → `RECEIVED` | 감사 로그 적재 (**실패 시 롤백**) · `trading_window = SELL_ONLY` · 접수 알림 |
+| `REQUESTED` → `VERIFYING` | `STAGE_EVENT` 적재 · 밴드 재계산 · 의사확인 알림 (60초 이내) |
+| `VERIFYING` → `LIQUIDATING` | `trading_window = LOCKED` · 자산 정리 알림 |
+| `LIQUIDATING` → `REMITTING` | `remitted_at` 기록. **완료 표시하지 않음** |
+| `REMITTING` → `COMPLETED` | `settled_at` 기록 · `band_hit` 적재 · `trading_window = REOPENED` · 입고 알림 (60초 이내) |
+| → `ACTION_REQUIRED` | 통화 예정일 + 자동취소 마감 병기 표시 · 대표번호 노출 |
+| → `REJECTED` | 사유 평이화 · 해소 절차 3단계 · 재신청 버튼 비활성 |
+| → `PARTIAL_BLOCKED` | 종목별 구분 + 평가손익 · 선택지 2개 이상 (매도 지시 버튼 없음) |
+| 병목 정리 | `is_critical_path` 해제 · 익영업일 09:00 밴드 재계산 |
+
+---
+
+## 5. 화면 표시 매핑
+
+내부 코드는 화면에 **절대 노출되지 않는다** (U-1).
+
+| 코드 | 화면 표시 |
+|---|---|
+| `DRAFT` | 예약 저장됨 |
+| `RECEIVED` | 신청 접수됨 |
+| `REQUESTED` | 요청 전달됨 |
+| `VERIFYING` | ○○에서 확인 중 |
+| `LIQUIDATING` | 자산 정리 중 |
+| `REMITTING` | 송금 중 |
+| `COMPLETED` | 이체 완료 |
+| `ACTION_REQUIRED` | 고객 확인 필요 |
+| `REJECTED` | 이체 거절 |
+| `PARTIAL_BLOCKED` | 일부 이전 불가 |
+| `DELAYED` (플래그) | 예정보다 늦어지고 있습니다 |
+
+"원 사업자 처리 대기" 같은 내부 용어도 금지다. 한글 상태명과 **회사명**만 쓴다.

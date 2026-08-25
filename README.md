@@ -46,7 +46,25 @@ KB증권 연금 통합 시연 프로토타입(V7)을 SRS(Software Requirements S
 
 | 파일 | 설명 |
 | --- | --- |
-| **`ai-place-srs-v1_0.md`** | **소프트웨어 요구사항 명세서 (SRS).** 1,355줄. PRD 요구사항 83건 전건 이관(누락·추가 0건), 인수 조건 76건, 요구사항 추적 매트릭스 포함 |
+| **`ai-place-srs-v1_0.md`** | **소프트웨어 요구사항 명세서 (SRS).** 1,582줄. PRD 요구사항 83건 전건 이관(누락·추가 0건), 인수 조건 76건, 요구사항 추적 매트릭스, 본문 삽입 다이어그램 10개 |
+| **[`design/`](design/README.md)** | **기술 설계 문서 8종.** 유스케이스·ERD·클래스·컴포넌트·시퀀스·상태·흐름도·인과 순환. 다이어그램 46개 (총 2,862줄) |
+
+### 설계 문서
+
+SRS가 "무엇을 만들 것인가"라면 `design/`은 "어떻게 만들 것인가"입니다. 모든 다이어그램은 Mermaid로 작성되어 GitHub에서 바로 렌더링됩니다.
+
+| # | 문서 | 답하는 질문 | 다이어그램 |
+| :---: | --- | --- | :---: |
+| 01 | [유스케이스 명세](design/01-usecase.md) | 누가 시스템으로 무엇을 하는가 | 2 |
+| 02 | [데이터 모델 (ERD)](design/02-erd.md) | 무엇을 어떤 관계로 저장하는가 | 1 |
+| 03 | [클래스 다이어그램](design/03-class-diagram.md) | 코드가 어떤 책임 단위로 나뉘는가 | 6 |
+| 04 | [컴포넌트 다이어그램](design/04-component-diagram.md) | 배포 단위와 외부 경계는 어디인가 | 4 |
+| 05 | [시퀀스 다이어그램](design/05-sequence-diagram.md) | 시간 순서로 무엇이 무엇을 부르는가 | 11 |
+| 06 | [상태 다이어그램](design/06-state-diagram.md) | 상태가 어떤 조건으로 옮겨가는가 | 6 |
+| 07 | [논리 흐름도](design/07-flowchart.md) | 분기 많은 법정 계산이 어떻게 도는가 | 9 |
+| 08 | [인과 순환 다이어그램](design/08-causal-loop.md) | 지표들이 서로를 어떻게 밀고 당기는가 | 7 |
+
+SRS 본문에도 10개를 배치했습니다 — §1.3.1 시스템 컨텍스트 · §1.3.2 유스케이스 · §3.1.1 화면 전이 · §3.1.2 컴포넌트 · §3.2.3 상태 전이 2종 · §3.2.4 계산 흐름 3종 · §3.5.2 ERD.
 
 ### 예시 양식을 벗어나 추가한 챕터
 
@@ -73,6 +91,7 @@ KB증권 연금 통합 시연 프로토타입(V7)을 SRS(Software Requirements S
 - [x] 프로토타입 HTML → Markdown 변환 (내용 손실 없음)
 - [x] PRD 정비 (목표·지표 / 스토리·AC / 기능 요구 / 비기능 / 리스크·가정 / 범위 6항목 기준)
 - [x] SRS 작성 — ISO/IEC/IEEE 29148 구성, 요구사항 83건 전건 이관
+- [x] 기술 설계 문서 8종 작성 (다이어그램 46개) 및 SRS 본문 배치
 - [ ] 예시 SRS 문서(`AD-Core-Platform`) 확보
 - [ ] 예시 양식에 맞춘 §1~§4 재배치
 
@@ -84,6 +103,16 @@ KB증권 연금 통합 시연 프로토타입(V7)을 SRS(Software Requirements S
 SRS-authoring-project/
 ├── README.md
 ├── ai-place-srs-v1_0.md              # 산출물 · SRS
+├── design/                           # 산출물 · 기술 설계 문서
+│   ├── README.md                     #   색인 · 읽는 순서
+│   ├── 01-usecase.md                 #   유스케이스
+│   ├── 02-erd.md                     #   데이터 모델
+│   ├── 03-class-diagram.md           #   클래스
+│   ├── 04-component-diagram.md       #   컴포넌트
+│   ├── 05-sequence-diagram.md        #   시퀀스
+│   ├── 06-state-diagram.md           #   상태
+│   ├── 07-flowchart.md               #   논리 흐름도
+│   └── 08-causal-loop.md             #   인과 순환
 └── source/
     ├── ai-place-prd-v1_0.md          # SRS의 직접 원본 (PRD)
     ├── 통합_프로토타입_최종_V7.html   # 프로토타입 원본 (무수정)
