@@ -1,0 +1,237 @@
+# 개발 태스크 분해 v1.0 — 전체판
+
+| 항목 | 내용 |
+| --- | --- |
+| Document ID | PENSION-PLUS-TASK-V1 |
+| Version | 1.0 |
+| 작성일 | 2026-08-25 |
+| 대상 문서 | [SRS/srs-002-pension-plus-nextjs-v1_0.md](../SRS/srs-002-pension-plus-nextjs-v1_0.md) |
+| 총 태스크 | 102 (개발·인프라 73 / UI·UX 디자인 29) |
+| 후속 버전 | [task-breakdown-v2-merged.md](task-breakdown-v2-merged.md) — M·L 병합 66개판 |
+
+## 도출 원칙
+
+1. SRS-002에 **명시되지 않은 기능은 추가하지 않는다.**
+2. **UI/UX 디자인**과 **개발·인프라**를 분리한다.
+3. 모든 태스크는 ID와 상호 의존성을 갖는다.
+
+> **§7 AI Integration에서는 태스크가 도출되지 않는다.** §7.1이 "PRD v3.1에는 AI를 호출하는 기능 요구사항이 존재하지 않는다", "현재 적용 대상 없음"으로 판정했다. `TEC-AI-001~005`는 AI 기능이 **추가될 경우**의 상시 제약이므로, 지금 개발 태스크로 만들면 문서에 없는 기능을 만드는 것이 된다.
+
+---
+
+# 1. 개발 · 인프라 관점
+
+## Epic 1. Platform & Infrastructure
+
+| Task ID | Epic (도메인) | Feature (기능명) | 관련 SRS 섹션 | 선행 태스크 | 복잡도 |
+|---|---|---|---|---|:---:|
+| FR-001 | Platform | Next.js App Router 프로젝트 초기화 및 5계층 디렉터리 구조 수립 | 2.2 계층 책임 / 2.3 디렉터리 구조 | None | L |
+| FR-002 | Platform | Supabase 프로젝트 프로비저닝 (Production / Preview 분리) | 5.1 / 8.1 | None | L |
+| FR-003 | Platform | Prisma Client 구성 — 커넥션 풀러 경유 + 전역 싱글턴 | 5.1 / 9.4 · TEC-DB-002 | FR-001, FR-002 | M |
+| FR-004 | Platform | Vercel 프로젝트 연결 및 Git Push 자동 배포 | 8.1 · TEC-OPS-001, 002 | FR-001 | L |
+| FR-005 | Platform | 환경 변수 12종 등록 및 `NEXT_PUBLIC_` 접두사 사용 차단 검증 | 8.2 · TEC-OPS-010 | FR-002, FR-004 | L |
+| FR-006 | Platform | Tailwind CSS + shadcn/ui 초기 설정 | 6. UI Layer · C-TEC-004 | FR-001 | L |
+| FR-007 | Platform | 빌드 단계 `prisma migrate deploy` 편입 | 8.1 · TEC-OPS-004 | FR-003, FR-004 | M |
+| FR-008 | Platform | Preview 배포 회귀 게이트 — 검증 데이터셋 6건 통과 강제 | 8.1 · TEC-OPS-003 | FR-004, FR-025 | M |
+| FR-009 | Platform | 매매창 판정 경로 Edge Runtime 배포 + 짧은 TTL 캐시 + 주기 워밍 | 9.1 CONFLICT-01 완화 ①②③ / 10 | FR-001 | M |
+
+## Epic 2. Data Layer
+
+| Task ID | Epic (도메인) | Feature (기능명) | 관련 SRS 섹션 | 선행 태스크 | 복잡도 |
+|---|---|---|---|---|:---:|
+| FR-010 | Data Layer | Prisma 스키마 — enum 7종 정의 (TransferStatus 외) | 5.2 | FR-003 | L |
+| FR-011 | Data Layer | Prisma 스키마 — 모델 16종 정의 및 관계 설정 | 5.2 | FR-010 | H |
+| FR-012 | Data Layer | 마이그레이션 SQL — CHECK 제약 (밴드 순서 · 금액 음수 금지 · 밴드 폭) | 5.3 · TEC-DB-010, 011, 012 | FR-011 | M |
+| FR-013 | Data Layer | AuditLog WORM 강제 — 권한 회수 + BEFORE UPDATE/DELETE 트리거 | 5.3 · TEC-DB-013 | FR-011 | M |
+| FR-014 | Data Layer | StageEvent 멱등 유니크 제약 `@@unique([transferId, stageNo, messageSeq])` | 5.3 · TEC-DB-014 | FR-011 | L |
+| FR-015 | Data Layer | Supabase RLS 정책 — 본인 계좌 데이터 한정 접근 | 5.3 · TEC-DB-015 | FR-011 | H |
+
+## Epic 3. Domain Engine (순수 TypeScript · I/O 없음)
+
+| Task ID | Epic (도메인) | Feature (기능명) | 관련 SRS 섹션 | 선행 태스크 | 복잡도 |
+|---|---|---|---|---|:---:|
+| FR-016 | Domain Engine | 도메인 모듈 격리 규약 구현 (Prisma import 금지 · 순수 함수 · Decimal 금액) | 5.4 · TEC-DOM-001, 002, 003 | FR-001 | M |
+| FR-017 | Domain Engine | `business-day.ts` — 영업일 판정 및 Cut-off 처리 | 2.3 / 8.3 · TEC-BATCH-002 | FR-016 | H |
+| FR-018 | Domain Engine | `pension-limit.ts` — 연금수령한도 산출 | 5.4 (`calcPensionLimit`) | FR-016 | H |
+| FR-019 | Domain Engine | `withdrawal-order.ts` — 3층 재원 인출순서 판정 | 2.3 | FR-016 | H |
+| FR-020 | Domain Engine | `tax.ts` — 세액 산출 | 2.3 | FR-016, FR-019 | H |
+| FR-021 | Domain Engine | `band.ts` — 완료일 밴드 산출 | 2.3 / 10 (`SRS-BR-011`) | FR-016, FR-017 | H |
+| FR-022 | Domain Engine | `trading-window.ts` — 매매 가능 여부 판정 | 2.3 | FR-016 | M |
+| FR-023 | Domain Engine | `state-machine.ts` — 허용 전이 및 금지 전이 차단 (`assertTransition`) | 2.3 / 4.4 | FR-016, FR-010 | H |
+| FR-024 | Domain Engine | 폴백 사다리 단계 판정 및 `approximate` 플래그 산출 | 6.2 / 13.3 | FR-021 | M |
+| FR-025 | Domain Engine | 검증 데이터셋 6건 단위 시험 자동화 | 5.4 · TEC-DOM-004 | FR-018, FR-019, FR-020 | M |
+
+## Epic 4. External Adapters
+
+| Task ID | Epic (도메인) | Feature (기능명) | 관련 SRS 섹션 | 선행 태스크 | 복잡도 |
+|---|---|---|---|---|:---:|
+| FR-026 | Adapters | `ledger.ts` — 연금 원장 어댑터 | 2.3 / 8.2 (`LEDGER_API_BASE`) | FR-001 | M |
+| FR-027 | Adapters | `mydata.ts` — 마이데이터 어댑터 | 2.3 / 8.2 (`MYDATA_API_BASE`) | FR-001 | M |
+| FR-028 | Adapters | `ksd.ts` — 예탁결제원 어댑터 | 2.3 / 9.6 CONFLICT-06 | FR-001 | M |
+| FR-029 | Adapters | `notification.ts` — 알림 어댑터 (트랜잭션 외부 호출) | 2.3 / 4.4 · TEC-TX-002 | FR-001 | M |
+
+## Epic 5. Server Actions (고객 액션)
+
+| Task ID | Epic (도메인) | Feature (기능명) | 관련 SRS 섹션 | 선행 태스크 | 복잡도 |
+|---|---|---|---|---|:---:|
+| FR-030 | Server Actions | `ActionResult<T>` 판별 유니온 공통 규약 구현 | 4.3 · TEC-ACT-001 | FR-001 | M |
+| FR-031 | Server Actions | 계좌 소유권 검증 가드 (진입 직후 수행) | 4.3 · TEC-ACT-004 | FR-030, FR-015 | M |
+| FR-032 | Server Actions | `requestId` 기반 멱등 처리 공통 모듈 | 4.3 · TEC-ACT-002 | FR-030, FR-011 | H |
+| FR-033 | Server Actions | `saveDraft` — 예약 저장 · 3그룹 판정 · 밴드 산출 | 4.2 | FR-031, FR-032, FR-021, FR-027 | H |
+| FR-034 | Server Actions | `updateDraft` — 예약 갱신 및 밴드 재산출 | 4.2 | FR-033 | M |
+| FR-035 | Server Actions | `submitTransfer` — 전송 확정 + 감사 로그 원자 트랜잭션 | 4.2 / 4.4 · TEC-TX-001, 002, 003 | FR-033, FR-023, FR-013 | H |
+| FR-036 | Server Actions | `cancelTransfer` — 취소 및 상태 전이 | 4.2 | FR-033, FR-023 | M |
+| FR-037 | Server Actions | `getPensionLimit` — 한도 조회 (쓰기 금지) | 4.2 · TEC-ACT-005 | FR-031, FR-018 | M |
+| FR-038 | Server Actions | `simulateWithdrawal` — 층별 차감 · 세액 모의계산 (쓰기 금지) | 4.2 · TEC-ACT-005 | FR-031, FR-019, FR-020 | H |
+| FR-039 | Server Actions | `compareWithCertificate` — 확인서 제출 전/후 비교 (쓰기 금지) | 4.2 · TEC-ACT-005 | FR-038 | M |
+
+## Epic 6. System Integration (Route Handlers)
+
+| Task ID | Epic (도메인) | Feature (기능명) | 관련 SRS 섹션 | 선행 태스크 | 복잡도 |
+|---|---|---|---|---|:---:|
+| FR-040 | System Integration | 시스템 간 인증 공통 모듈 (`INTERNAL_API_KEY`) | 3.2 / 8.2 · `SRS-SEC-003` | FR-005 | M |
+| FR-041 | System Integration | `GET /api/internal/trading-window` — 매매 가능 여부 판정 응답 | 3.2 (`SRS-IF-006`) / 10 | FR-040, FR-022, FR-009 | H |
+| FR-042 | System Integration | `POST /api/internal/stage-events` — 단계 전문 수신 + 서명 검증 + 중복 차단 | 3.2 (`SRS-IF-007`) / 9.6 | FR-040, FR-014, FR-023 | H |
+| FR-043 | System Integration | `POST /api/internal/settlement` — 잔고 반영 push 통보 수신 | 3.2 (`SRS-IF-010`) / 9.2 완화 ③ | FR-040, FR-023 | M |
+
+## Epic 7. Batch (Vercel Cron)
+
+| Task ID | Epic (도메인) | Feature (기능명) | 관련 SRS 섹션 | 선행 태스크 | 복잡도 |
+|---|---|---|---|---|:---:|
+| FR-044 | Batch | Cron 엔드포인트 인증 공통 (`CRON_SECRET` 검증) | 8.3 · TEC-BATCH-001 | FR-005 | L |
+| FR-045 | Batch | 배치 공통 가드 — 영업일 검증 · 페이지 분할 · 실행 결과 로그 | 8.3 · TEC-BATCH-002, 004, 005 | FR-044, FR-017 | M |
+| FR-046 | Batch | `/api/cron/band-recalc` — 밴드 재계산 (조건부 UPDATE 멱등 갱신) | 3.3 / 9.5 · TEC-BATCH-003 | FR-045, FR-021 | H |
+| FR-047 | Batch | `/api/cron/settlement-check` — 잔고 반영 확인 | 3.3 (`SRS-FR-057`) / 9.2 | FR-045, FR-026 | M |
+| FR-048 | Batch | `/api/cron/tax-freshness` — 세율 신선도 점검 (D+21 경고 / D+30 차단) | 3.3 (`SRS-FR-098`) / 8.2 · TEC-OPS-011 | FR-045, FR-011 | M |
+| FR-049 | Batch | `/api/cron/reconcile` — 3자 정합성 보정 | 3.3 (`SRS-REC-003`) / 9.2 | FR-045, FR-026, FR-027 | H |
+| FR-050 | Batch | `vercel.json` Cron 스케줄 선언 (UTC 기준) | 3.3 | FR-046, FR-048 | L |
+
+## Epic 8. UI Foundation (프론트엔드 구현)
+
+| Task ID | Epic (도메인) | Feature (기능명) | 관련 SRS 섹션 | 선행 태스크 | 복잡도 |
+|---|---|---|---|---|:---:|
+| FR-051 | UI Foundation | shadcn/ui 컴포넌트 14종 도입 및 매핑 적용 | 6.1 | FR-006, UX-004 | M |
+| FR-052 | UI Foundation | `<BandDisplay>` — 단일 날짜 prop 미정의 타입 구현 | 6.2 · TEC-UI-001 | FR-051, UX-005 | M |
+| FR-053 | UI Foundation | `<LayerBadge>` — 확정/추정 분기 렌더 | 6.2 (`SRS-FR-034, 035`) | FR-051, UX-006 | M |
+| FR-054 | UI Foundation | `<SimulationLabel>` — 모의계산 라벨 sticky 고정 | 6.2 (`SRS-FR-082`) | FR-051, UX-007 | L |
+| FR-055 | UI Foundation | `<StatusLabel>` — enum → 한글 표시명 변환 (원본 enum 렌더 금지) | 6.2 · TEC-UI-002 | FR-051, FR-010, UX-008 | M |
+| FR-056 | UI Foundation | `<MoneyText>` — 원 단위 금액 표기, 비율 단독 표기 차단 | 6.2 · TEC-UI-003 | FR-051, UX-009 | L |
+| FR-057 | UI Foundation | `<MaskedAccount>` — 계좌번호 중간 4자리 마스킹 | 6.2 (`SRS-SEC-009`) | FR-051, UX-010 | L |
+| FR-058 | UI Foundation | 표기 규칙 위반 차단 ESLint 커스텀 룰 | 6.2 · TEC-UI-004 | FR-052, FR-055, FR-056 | M |
+| FR-059 | UI Foundation | 접근성 구현 — 대비 토큰 · `break-keep` 전역 · ARIA 속성 보존 | 6.3 · TEC-UI-010, 011, 012 | FR-006, UX-002, UX-003 | M |
+
+## Epic 9. 화면 F1 — 이체 진행 조회
+
+| Task ID | Epic (도메인) | Feature (기능명) | 관련 SRS 섹션 | 선행 태스크 | 복잡도 |
+|---|---|---|---|---|:---:|
+| FR-060 | 화면 F1 | `/home` F1-01 홈 · 진행 알림 (Server Component) | 3.1 (`SRS-FR-001~007`) | FR-011, FR-055, UX-018 | M |
+| FR-061 | 화면 F1 | `/transfer/terms` F1-02 유의사항 | 3.1 (`SRS-FR-008~015`) | FR-051, FR-026, UX-019 | M |
+| FR-062 | 화면 F1 | `/transfer/draft` F1-03 예약 · 잠금 미리보기 | 3.1 (`SRS-FR-016~032`) | FR-033, FR-052, FR-027, UX-020 | H |
+| FR-063 | 화면 F1 | `/transfer/[transferId]` F1-04 현황판 (당일 캐시) | 3.1 (`SRS-FR-033~050`) | FR-011, FR-052, FR-053, FR-055, UX-021 | H |
+| FR-064 | 화면 F1 | `/transfer/[transferId]/basis` F1-05 완료일 근거 | 3.1 (`SRS-FR-051~056`) | FR-063, FR-021, UX-022 | M |
+| FR-065 | 화면 F1 | `/transfer/[transferId]/completion` F1-06 완료 | 3.1 (`SRS-FR-057~064`) | FR-063, UX-023 | M |
+
+## Epic 10. 화면 F2 — 인출순서 시뮬레이터
+
+| Task ID | Epic (도메인) | Feature (기능명) | 관련 SRS 섹션 | 선행 태스크 | 복잡도 |
+|---|---|---|---|---|:---:|
+| FR-066 | 화면 F2 | `/withdrawal` F2-01 출금관리 | 3.1 (`SRS-FR-065~068`) | FR-051, FR-026, UX-024 | M |
+| FR-067 | 화면 F2 | `/withdrawal/recipient` F2-02 수령 대상 | 3.1 (`SRS-FR-069~071`) | FR-066, UX-025 | L |
+| FR-068 | 화면 F2 | 도메인 계산 모듈 클라이언트 동시 실행 구성 | 9.3 · TEC-CALC-001 | FR-018, FR-019, FR-020 | H |
+| FR-069 | 화면 F2 | 세율표 버전 동기화 및 클라이언트 계산 무효화 | 9.3 · TEC-CALC-002, 003, 004 | FR-068, FR-048 | H |
+| FR-070 | 화면 F2 | `/withdrawal/amount` F2-03 인출금액 (Client 주도) | 3.1 (`SRS-FR-072~084`) / 9.3 | FR-068, FR-069, FR-037, FR-056, UX-026 | H |
+| FR-071 | 화면 F2 | `/withdrawal/result` F2-04 인출순서 결과 (Client 주도) | 3.1 (`SRS-FR-085~101`) / 9.3 | FR-068, FR-069, FR-038, UX-027 | H |
+| FR-072 | 화면 F2 | `/withdrawal/tax-free` F2-05 비과세 관리 | 3.1 (`SRS-FR-102~106`) | FR-039, FR-051, UX-028 | M |
+| FR-073 | 화면 F2 | `/withdrawal/inheritance` F2-06 타명의 조회 (정적 + 딥링크) | 3.1 (`SRS-FR-107~110`) | FR-051, UX-029 | L |
+
+---
+
+# 2. UI/UX 디자인 관점
+
+## Epic 11. Design System
+
+| Task ID | Epic (도메인) | Feature (기능명) | 관련 SRS 섹션 | 선행 태스크 | 복잡도 |
+|---|---|---|---|---|:---:|
+| UX-001 | Design System | 디자인 토큰 정의 (색 · 타이포 · 간격) — Tailwind 토큰과 1:1 대응 | 6.1 / 6.3 · C-TEC-004 | None | M |
+| UX-002 | Design System | 접근성 대비 검증 팔레트 확정 (본문 4.5:1 · 큰 텍스트 3:1) | 6.3 · TEC-UI-010 | UX-001 | M |
+| UX-003 | Design System | 한글 어절 단위 줄바꿈 타이포 규칙 정의 | 6.3 · TEC-UI-011 | UX-001 | L |
+| UX-004 | Design System | shadcn/ui 14종 시각 스타일 정의 (ARIA 속성 보존 전제) | 6.1 / 6.3 · TEC-UI-012 | UX-001, UX-002 | H |
+
+## Epic 12. 표기 규칙 디자인 (공통 컴포넌트)
+
+| Task ID | Epic (도메인) | Feature (기능명) | 관련 SRS 섹션 | 선행 태스크 | 복잡도 |
+|---|---|---|---|---|:---:|
+| UX-005 | 표기 규칙 디자인 | `<BandDisplay>` 밴드 표기 시각 규격 (단일 날짜 표현 금지) | 6.2 (`SRS-FR-018, 036`) | UX-004 | M |
+| UX-006 | 표기 규칙 디자인 | `<LayerBadge>` 확정(분단위 시각) / 추정(비단정 서술) 시각 구분 | 6.2 (`SRS-FR-034, 035`) | UX-004 | M |
+| UX-007 | 표기 규칙 디자인 | `<SimulationLabel>` 모의계산 sticky 라벨 디자인 | 6.2 (`SRS-FR-082`) | UX-004 | L |
+| UX-008 | 표기 규칙 디자인 | `<StatusLabel>` 상태 12종 한글 표시명 및 시각 규격 | 6.2 (`SRS-FR-047`) / 5.2 enum | UX-004 | M |
+| UX-009 | 표기 규칙 디자인 | `<MoneyText>` 원 단위 확정 금액 표기 규격 | 6.2 (`SRS-FR-093`) | UX-004 | L |
+| UX-010 | 표기 규칙 디자인 | `<MaskedAccount>` 계좌번호 마스킹 표기 규격 | 6.2 (`SRS-SEC-009`) | UX-004 | L |
+| UX-011 | 표기 규칙 디자인 | 폴백 ③④단계 "대략치입니다" 병기 표기 디자인 | 6.2 (`approximate`) / 13.3 | UX-005 | M |
+
+## Epic 13. 커스텀 시각화 디자인
+
+| Task ID | Epic (도메인) | Feature (기능명) | 관련 SRS 섹션 | 선행 태스크 | 복잡도 |
+|---|---|---|---|---|:---:|
+| UX-012 | 커스텀 시각화 | 단계 타임라인 디자인 (`Progress` + 커스텀) | 6.1 (`SRS-FR-033`) | UX-004, UX-008 | H |
+| UX-013 | 커스텀 시각화 | 한도 게이지 3구간 커스텀 디자인 | 6.1 (`SRS-FR-072`) | UX-004 | H |
+| UX-014 | 커스텀 시각화 | 3층 재원 소진 시각화 커스텀 디자인 | 6.1 (`SRS-FR-085`) | UX-004, UX-009 | H |
+| UX-015 | 커스텀 시각화 | 종목 3그룹 판정 디자인 (`Accordion` + `Badge`) | 6.1 (`SRS-FR-016`) | UX-004 | M |
+| UX-016 | 커스텀 시각화 | 예외 상태 배너 variant 체계 (`Alert` variant) | 6.1 (`SRS-FR-040`) | UX-004, UX-008 | M |
+| UX-017 | 커스텀 시각화 | 고객센터 연결 시트 디자인 (`Sheet`) | 6.1 (`SRS-FR-010, 011`) | UX-004 | M |
+
+## Epic 14. 화면 설계 — F1 이체 진행 조회
+
+| Task ID | Epic (도메인) | Feature (기능명) | 관련 SRS 섹션 | 선행 태스크 | 복잡도 |
+|---|---|---|---|---|:---:|
+| UX-018 | 화면 설계 F1 | F1-01 홈 · 진행 알림 화면 설계 | 3.1 (`SRS-FR-001~007`) | UX-004, UX-008 | M |
+| UX-019 | 화면 설계 F1 | F1-02 유의사항 화면 설계 (`ScrollArea` 약관 전문 포함) | 3.1 (`SRS-FR-008~015`) / 6.1 | UX-004, UX-017 | M |
+| UX-020 | 화면 설계 F1 | F1-03 예약 · 잠금 미리보기 화면 설계 | 3.1 (`SRS-FR-016~032`) | UX-005, UX-015 | H |
+| UX-021 | 화면 설계 F1 | F1-04 현황판 화면 설계 (상태 12종 · 예외 배너 포함) | 3.1 (`SRS-FR-033~050`) | UX-012, UX-016, UX-006 | H |
+| UX-022 | 화면 설계 F1 | F1-05 완료일 근거 화면 설계 | 3.1 (`SRS-FR-051~056`) | UX-005, UX-011 | M |
+| UX-023 | 화면 설계 F1 | F1-06 완료 화면 설계 | 3.1 (`SRS-FR-057~064`) | UX-021 | M |
+
+## Epic 15. 화면 설계 — F2 인출순서 시뮬레이터
+
+| Task ID | Epic (도메인) | Feature (기능명) | 관련 SRS 섹션 | 선행 태스크 | 복잡도 |
+|---|---|---|---|---|:---:|
+| UX-024 | 화면 설계 F2 | F2-01 출금관리 화면 설계 | 3.1 (`SRS-FR-065~068`) | UX-004 | M |
+| UX-025 | 화면 설계 F2 | F2-02 수령 대상 화면 설계 | 3.1 (`SRS-FR-069~071`) | UX-024 | L |
+| UX-026 | 화면 설계 F2 | F2-03 인출금액 화면 설계 (`Input` + `Slider` · 계산 근거 `Collapsible`) | 3.1 (`SRS-FR-072~084`) / 6.1 | UX-013, UX-007, UX-009 | H |
+| UX-027 | 화면 설계 F2 | F2-04 인출순서 결과 화면 설계 (경고·주의 `Alert` 포함) | 3.1 (`SRS-FR-085~101`) / 6.1 | UX-014, UX-016 | H |
+| UX-028 | 화면 설계 F2 | F2-05 비과세 관리 화면 설계 (제출 전/후 비교) | 3.1 (`SRS-FR-102~106`) | UX-009, UX-007 | M |
+| UX-029 | 화면 설계 F2 | F2-06 타명의 조회 화면 설계 (정적 + 딥링크) | 3.1 (`SRS-FR-107~110`) | UX-004 | L |
+
+---
+
+# 3. 착수 차단 태스크 (§13.3 근거)
+
+문서가 명시한 **Blocks Development 2건**에 걸린 태스크다. 도출은 되지만 선행 조건 없이 착수하면 재작업이 발생한다.
+
+| 차단 태스크 | 차단 원인 | 문서 근거 | 해제 조건 |
+|---|---|---|---|
+| FR-028, FR-042 | OPEN-TEC-004 예탁원 전문 수신 경로 미확정 | 9.6 CONFLICT-06 / 13.2 | 내부 중계 시스템 존재 여부 확인 |
+| FR-035 | OPEN-TEC-007 본인 인증 수단 미확정 | 13.2 / 13.3 "전송 기능 — 불가" | 인증 수단 확정 (`authResult` 규격 결정) |
+| FR-060 ~ FR-065 (부분) | 전문 수신 경로 확정 전까지 **폴백 사다리 ③단계 기준으로만** 구현 가능 | 13.3 "화면 F1-01~F1-06 — 부분" | OPEN-TEC-004 해제 |
+| FR-047, FR-049 | Cron 주기가 TBD (OPEN-TEC-001 · 002) | 3.3 / 13.3 "배치·Cron — 가능, 주기는 잠정값으로" | 잠정값으로 착수 가능, 실측 후 확정 |
+
+**출시 차단(Blocks Release) 3건은 개발 태스크를 막지 않는다** — OPEN-TEC-001(60초 알림) · OPEN-TEC-003(판정 응답 시간 실측) · OPEN-TEC-005(규제 적합성). 전부 개발한 뒤 판정한다.
+
+---
+
+# 4. 도출 요약
+
+| 항목 | 값 |
+|---|---:|
+| 개발 · 인프라 태스크 | 73 |
+| UI/UX 디자인 태스크 | 29 |
+| **총 태스크** | **102** |
+| Epic 수 | 15 |
+| 복잡도 H / M / L | 30 / 52 / 20 |
+| 선행 태스크 없음 (즉시 착수) | FR-001, FR-002, UX-001 |
+| 착수 차단 태스크 | 3 (+ 부분 제약 6) |
+| SRS 미근거로 제외한 영역 | §7 AI Integration 전체 |
+
+**즉시 착수 가능한 최장 경로**는 `FR-001 → FR-003 → FR-010 → FR-011 → FR-015` (Data Layer)와 `FR-001 → FR-016 → FR-017 → FR-021` (Domain Engine)이다. 두 경로 모두 차단 조건이 없고, §13.3이 "도메인 계산 모듈 — 가능, 조건 없음", "Prisma 스키마 · 마이그레이션 — 가능"으로 명시한 범위와 일치한다.
+
+**임계 경로 후보는 FR-011(Prisma 모델 16종)이다.** Server Actions · 화면 · 배치가 전부 여기에 걸려 있어, 이 태스크가 하루 늦으면 전체가 하루 늦는다.
