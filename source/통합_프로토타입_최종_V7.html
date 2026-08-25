@@ -1,0 +1,2025 @@
+<!DOCTYPE html>
+
+<html lang="ko">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport"/>
+<title>KB증권 연금 통합 시연 프로토타입 V7</title>
+<link as="style" crossorigin="" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.8/dist/web/static/pretendard.css" rel="stylesheet"/>
+<style>
+
+/* CSS Reset and Variables */
+:root {
+  --kb-yellow: #FFCC00;
+  --kb-yellow-hover: #E6B800;
+  --kb-dark: #1E1E1E;
+  --kb-gray: #645B4C;
+  --kb-blue: #3B82F6;
+  
+  --bg-color: #F4F7FA;
+  --surface: #FFFFFF;
+  --text-primary: #0F172A;
+  --text-secondary: #64748B;
+  --text-tertiary: #94A3B8;
+  --border: #E2E8F0;
+  --border-light: #F1F5F9;
+  
+  --success: #10B981;
+  --success-bg: #D1FAE5;
+  --warning: #F59E0B;
+  --warning-bg: #FEF3C7;
+  --danger: #EF4444;
+  --danger-bg: #FEE2E2;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: 'Pretendard', -apple-system, sans-serif;
+  background-color: #E5E7EB;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start; padding: 40px 0; box-sizing: border-box;
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Mobile Device Mockup */
+.device {
+  width: 375px;
+  height: 812px;
+  background-color: var(--bg-color);
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  border-radius: 40px;
+  border: 14px solid #111827;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Screens */
+.screen {
+  display: none;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+  background-color: var(--bg-color);
+  animation: fadeSlideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.screen.active {
+  display: flex;
+}
+.scroll-area {
+  flex: 1;
+  min-height: 0; /* Flexbox 하위 요소가 영역을 벗어나지 않도록 강제 (스크롤 잘림 핵심 원인 해결) */
+  overflow-y: auto;
+  position: relative;
+  padding-bottom: 40px;
+}
+.scroll-area::-webkit-scrollbar { display: none; }
+
+@keyframes fadeSlideUp {
+  from { opacity: 0; transform: translateY(15px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Header */
+.header {
+  height: 56px;
+  min-height: 56px;
+  background-color: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 20px;
+  font-weight: 700;
+  font-size: 17px;
+  color: var(--text-primary);
+  border-bottom: 1px solid rgba(226, 232, 240, 0.8);
+  position: sticky;
+  top: 0;
+  z-index: 50;
+}
+.header .back-btn {
+  position: absolute;
+  left: 20px;
+  cursor: pointer;
+  font-size: 24px;
+  color: var(--text-primary);
+}
+
+/* Typography & Common */
+.section-padding { padding: 24px 20px; }
+.title-large { 
+  font-size: 24px; 
+  font-weight: 700; 
+  margin-bottom: 8px; 
+  color: var(--text-primary); 
+  line-height: 1.35; 
+  letter-spacing: -0.5px;
+  word-break: keep-all;
+}
+.subtitle { 
+  font-size: 14px; 
+  color: var(--text-secondary); 
+  margin-bottom: 24px; 
+  line-height: 1.5; 
+}
+.section-title { 
+  font-size: 18px; 
+  font-weight: 700; 
+  color: var(--text-primary); 
+  margin-bottom: 16px; 
+  letter-spacing: -0.3px;
+}
+
+/* UI Badges (Replacing Emojis) */
+.badge-text {
+  display: inline-block;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 700;
+  margin-right: 6px;
+  vertical-align: middle;
+}
+.badge-text.info { background: #E0E7FF; color: #4338CA; }
+.badge-text.warn { background: #FEF3C7; color: #B45309; }
+.badge-text.alert { background: #FEE2E2; color: #B91C1C; }
+
+/* Status Dot (Replacing Emojis in lists) */
+.status-dot-small {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  margin-right: 8px;
+}
+.status-dot-small.success { background-color: var(--success); }
+.status-dot-small.warning { background-color: var(--warning); }
+.status-dot-small.danger { background-color: var(--danger); }
+.status-dot-small.pending { background-color: var(--text-tertiary); }
+.status-dot-small.active { background-color: var(--kb-blue); }
+
+/* Info Box */
+.info-box {
+  background-color: var(--surface);
+  border-radius: 16px;
+  padding: 18px;
+  font-size: 14px;
+  color: var(--text-secondary);
+  line-height: 1.5;
+  margin-bottom: 24px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.03);
+}
+.info-box.highlight { 
+  background-color: var(--warning-bg); 
+  border: 1px solid rgba(245, 158, 11, 0.3); 
+  color: #B45309; 
+}
+
+/* Buttons */
+.btn {
+  display: block; width: 100%; padding: 16px; border-radius: 14px; border: none; font-size: 16px; font-weight: 700;
+  text-align: center; cursor: pointer; margin-bottom: 12px; transition: all 0.2s; box-sizing: border-box;
+}
+.btn:last-child { margin-bottom: 0; }
+.btn:active { transform: scale(0.98); }
+.btn-primary { 
+  background-color: var(--kb-yellow); 
+  color: var(--kb-dark); 
+  box-shadow: 0 4px 12px rgba(255, 204, 0, 0.3);
+}
+.btn-secondary { 
+  background-color: #EFF6FF; 
+  color: var(--kb-blue); 
+}
+.btn-outline { 
+  background-color: var(--surface); 
+  color: var(--text-primary); 
+  border: 1px solid var(--border); 
+}
+.btn-small { 
+  padding: 10px 14px; 
+  font-size: 13px; 
+  border-radius: 10px; 
+  display: inline-block; 
+  width: auto; 
+  margin: 0;
+}
+
+/* Bottom Actions */
+.bottom-area { 
+  padding: 16px 20px 34px;
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-top: 1px solid rgba(226, 232, 240, 0.8); 
+  position: sticky; 
+  bottom: 0; 
+  z-index: 40; 
+  display: flex; 
+  gap: 12px;
+}
+.bottom-area .btn { margin-bottom: 0; }
+
+/* -------------------------------------
+   Screen 1: 예약 (Lock Window)
+------------------------------------- */
+.lock-band-container {
+  background: var(--surface);
+  border-radius: 20px;
+  padding: 24px;
+  margin-bottom: 24px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.04);
+}
+.lock-band-title { 
+  font-size: 14px; 
+  font-weight: 700; 
+  color: var(--danger); 
+  margin-bottom: 20px; 
+  display: flex; 
+  align-items: center; 
+}
+.lock-timeline {
+  display: flex; justify-content: space-between; align-items: flex-start; position: relative; margin-bottom: 16px;
+}
+.lock-timeline::before {
+  content: ''; position: absolute; top: 12px; left: 24px; right: 24px; height: 3px; 
+  background: linear-gradient(90deg, var(--danger) 0%, rgba(239, 68, 68, 0.2) 100%); 
+  z-index: 0;
+  border-radius: 2px;
+}
+.lock-point { position: relative; z-index: 1; display: flex; flex-direction: column; align-items: center; width: 80px; }
+.lock-dot { 
+  width: 12px; height: 12px; border-radius: 50%; background: var(--danger); margin-bottom: 8px; 
+  border: 4px solid var(--surface); box-shadow: 0 0 0 1px var(--danger);
+}
+.lock-point:last-child .lock-dot {
+  background: var(--surface); border-color: var(--danger); box-shadow: none; border-width: 3px;
+}
+.lock-date { font-size: 14px; font-weight: 800; color: var(--text-primary); margin-bottom: 2px;}
+.lock-label { font-size: 12px; color: var(--text-secondary); font-weight: 500;}
+
+.lock-duration-box { text-align: center; }
+.lock-duration { 
+  font-size: 13px; font-weight: 700; color: var(--kb-blue); 
+  background: #EFF6FF; display: inline-block; padding: 6px 14px; border-radius: 20px; 
+}
+
+/* Calendar Widget */
+.calendar { margin-top: 24px; border-top: 1px solid var(--border-light); padding-top: 20px; }
+.cal-month { font-weight: 800; font-size: 15px; text-align: left; margin-bottom: 12px; color: var(--text-primary);}
+.cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; text-align: center; font-size: 13px; margin-bottom: 12px;}
+.cal-header { color: var(--text-tertiary); font-size: 11px; font-weight: 600; margin-bottom: 8px;}
+.cal-day { padding: 6px 0; border-radius: 8px; color: var(--text-primary); font-weight: 500; }
+.cal-day.weekend { color: var(--text-tertiary); }
+.cal-day.locked { background-color: var(--danger-bg); color: var(--danger); font-weight: 700; }
+.cal-day.start { background-color: var(--danger); color: white; border-radius: 8px 0 0 8px; box-shadow: -2px 0 8px rgba(239, 68, 68, 0.4);}
+.cal-day.end { background-color: var(--danger); color: white; border-radius: 0 8px 8px 0; }
+.cal-day.locked-mid { border-radius: 0; }
+
+/* Item List Group */
+.item-group { margin-bottom: 28px; }
+.item-group-title { font-size: 15px; font-weight: 800; display: flex; align-items: center; margin-bottom: 14px; letter-spacing: -0.3px;}
+
+.item-card { 
+  background: var(--surface); border-radius: 16px; padding: 20px; margin-bottom: 12px; 
+  box-shadow: 0 2px 10px rgba(0,0,0,0.02); border: 1px solid transparent;
+}
+.item-card.highlight { border-color: var(--warning); background: #FFFAF0; box-shadow: 0 4px 12px rgba(245, 158, 11, 0.08);}
+.item-card.danger { border-color: rgba(239,68,68,0.3); background: #FEF2F2; }
+
+.item-row { display: flex; justify-content: space-between; align-items: center; }
+.item-name { font-weight: 700; font-size: 15px; color: var(--text-primary); }
+.item-amount { font-weight: 800; font-size: 15px; color: var(--text-primary); }
+.item-desc { font-size: 13px; color: var(--text-secondary); margin-top: 10px; line-height: 1.6; }
+
+.val-up { color: var(--danger); font-weight: 700; }
+.val-down { color: var(--kb-blue); font-weight: 700; }
+
+.item-actions { margin-top: 16px; display: flex; gap: 8px; }
+
+/* -------------------------------------
+   Screen 2: 현황판 본체
+------------------------------------- */
+.status-banner {
+  background: linear-gradient(135deg, var(--kb-dark) 0%, #333 100%);
+  color: white; padding: 20px 24px;
+  display: flex; justify-content: space-between; align-items: center;
+}
+.status-banner-text { font-size: 16px; font-weight: 800; display: flex; align-items: center; gap: 6px;}
+.status-banner-sub { font-size: 13px; color: #94A3B8; margin-top: 6px; font-weight: 500;}
+.status-dday { 
+  background: var(--kb-yellow); color: var(--kb-dark); font-weight: 900; 
+  font-size: 13px; padding: 6px 12px; border-radius: 16px; box-shadow: 0 2px 8px rgba(255,204,0,0.3);
+}
+
+/* Pizza Tracker (Screen 2) */
+.tracker-container { background: var(--surface); padding: 32px 24px 24px; border-bottom-left-radius: 24px; border-bottom-right-radius: 24px; box-shadow: 0 4px 12px rgba(0,0,0,0.03);}
+.pizza-tracker { display: flex; justify-content: space-between; position: relative; margin-bottom: 24px; }
+.pizza-tracker::before { content: ''; position: absolute; top: 12px; left: 16px; right: 16px; height: 4px; background: var(--border-light); z-index: 1; border-radius: 2px;}
+.pizza-tracker-progress { position: absolute; top: 12px; left: 16px; width: 50%; height: 4px; background: var(--kb-blue); z-index: 2; border-radius: 2px; transition: width 0.5s ease;}
+.tracker-step { position: relative; z-index: 3; display: flex; flex-direction: column; align-items: center; width: 48px;}
+.tracker-icon { width: 28px; height: 28px; border-radius: 50%; background: var(--surface); border: 3px solid var(--border); display: flex; justify-content: center; align-items: center; font-size: 11px; font-weight: 800; color: var(--text-tertiary); margin-bottom: 8px; box-sizing: border-box;}
+.tracker-step.done .tracker-icon { background: var(--kb-blue); border-color: var(--kb-blue); color: white; }
+.tracker-step.active .tracker-icon { background: var(--surface); border-color: var(--kb-blue); color: var(--kb-blue); box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.2); animation: pulse 2s infinite;}
+.tracker-label { font-size: 12px; font-weight: 700; color: var(--text-tertiary); white-space: nowrap;}
+.tracker-step.done .tracker-label { color: var(--text-primary); }
+.tracker-step.active .tracker-label { color: var(--kb-blue); }
+
+@keyframes pulse {
+  0% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.4); }
+  70% { box-shadow: 0 0 0 8px rgba(59, 130, 246, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0); }
+}
+
+/* Focus Card */
+.focus-card { background: #F8FAFC; border: 1px solid rgba(59, 130, 246, 0.3); border-radius: 16px; padding: 20px; box-shadow: 0 4px 16px rgba(59, 130, 246, 0.05);}
+.focus-header { display: flex; justify-content: space-between; margin-bottom: 12px; align-items: center;}
+.focus-title { font-size: 16px; font-weight: 800; color: var(--kb-blue); }
+.focus-time { font-size: 12px; color: var(--text-secondary); font-weight: 500;}
+.focus-desc { font-size: 13px; color: var(--text-primary); line-height: 1.5; margin-bottom: 16px; font-weight: 600;}
+.focus-action { background: white; border: 1px solid var(--border); border-radius: 12px; padding: 16px; display: flex; flex-direction: column; gap: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.02);}
+.focus-action-title { font-size: 14px; font-weight: 800; display: flex; align-items: flex-start; gap: 8px; color: var(--text-primary);}
+
+/* Progress Track */
+.track-header { display: flex; justify-content: space-between; font-size: 15px; font-weight: 800; margin-bottom: 16px; color: var(--text-primary);}
+.track-list { background: var(--surface); border-radius: 16px; padding: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.02);}
+.track-item { display: flex; align-items: center; margin-bottom: 16px; font-size: 14px; }
+.track-item:last-child { margin-bottom: 0; }
+.track-name { flex: 1; color: var(--text-primary); font-weight: 600; }
+.track-status { color: var(--text-secondary); text-align: right; font-size: 13px; font-weight: 500;}
+.track-status.highlight { color: var(--kb-blue); font-weight: 700; }
+
+/* Restriction Box */
+.restrict-box { background: var(--surface); padding: 24px; border-radius: 16px; margin: 0 20px 24px; box-shadow: 0 4px 12px rgba(0,0,0,0.02);}
+.restrict-title { font-size: 15px; font-weight: 800; margin-bottom: 16px; display: flex; align-items: center; gap: 6px;}
+.restrict-list { font-size: 14px; color: var(--text-secondary); }
+.restrict-row { display: flex; justify-content: space-between; margin-bottom: 12px; padding-bottom: 12px; border-bottom: 1px solid var(--border-light); }
+.restrict-row:last-child { margin-bottom: 0; padding-bottom: 0; border-bottom: none; }
+.restrict-val { font-weight: 800; font-size: 13px;}
+.val-no { color: var(--text-tertiary); }
+.val-yes { color: var(--kb-blue); }
+
+/* -------------------------------------
+   Screen 3: 완료
+------------------------------------- */
+.success-header { text-align: center; padding: 48px 20px 32px; }
+.success-icon { 
+  width: 64px; height: 64px; border-radius: 50%; background-color: var(--success); 
+  color: white; font-size: 32px; line-height: 64px; margin: 0 auto 20px;
+  display: flex; justify-content: center; align-items: center;
+  box-shadow: 0 8px 16px rgba(16, 185, 129, 0.25);
+}
+.success-title { font-size: 26px; font-weight: 800; color: var(--text-primary); margin-bottom: 10px; letter-spacing: -0.5px;}
+.success-time { font-size: 14px; color: var(--text-secondary); font-weight: 500;}
+
+.summary-card { background: var(--surface); margin: 0 20px 24px; border-radius: 20px; padding: 24px; box-shadow: 0 8px 24px rgba(0,0,0,0.04); }
+.summary-total { font-size: 14px; color: var(--text-secondary); text-align: center; margin-bottom: 8px; font-weight: 600;}
+.summary-amount { font-size: 32px; font-weight: 900; color: var(--text-primary); text-align: center; margin-bottom: 28px; letter-spacing: -0.5px;}
+.summary-row { display: flex; justify-content: space-between; align-items: center; font-size: 14px; padding-bottom: 14px; margin-bottom: 14px; border-bottom: 1px dashed var(--border); }
+.summary-row:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+.summary-label { color: var(--text-secondary); display: flex; align-items: center; font-weight: 500;}
+.summary-val { font-weight: 800; color: var(--text-primary); text-align: right; font-size: 15px;}
+.summary-sub { font-size: 11px; color: var(--text-secondary); margin-left: 8px; background: var(--border-light); padding: 4px 8px; border-radius: 6px; font-weight: 700;}
+
+.unlock-msg { text-align: center; font-size: 15px; font-weight: 700; color: var(--kb-blue); margin-bottom: 24px; background: #EFF6FF; margin: 0 20px 24px; padding: 16px; border-radius: 12px;}
+
+.compare-box { margin: 0 20px 24px; background: var(--surface); border-radius: 16px; padding: 20px; font-size: 14px; box-shadow: 0 2px 10px rgba(0,0,0,0.02);}
+.compare-title { font-weight: 800; font-size: 15px; margin-bottom: 16px; color: var(--text-primary); }
+.compare-row { display: flex; justify-content: space-between; margin-bottom: 12px; color: var(--text-secondary); }
+.compare-row:last-child { margin-bottom: 0; }
+.compare-val { font-weight: 700; color: var(--text-primary); }
+.compare-val.match { color: var(--success); display: flex; align-items: center; gap: 6px; }
+
+/* Dev Nav */
+.dev-nav {
+  display: flex; background: #111; padding: 10px; gap: 8px;
+}
+.dev-nav button {
+  flex: 1; padding: 8px; font-size: 12px; font-weight: 700; border-radius: 6px; border: none; background: #333; color: white; cursor: pointer; transition: 0.2s;
+}
+.dev-nav button:hover { background: #444; }
+.dev-nav button.active { background: var(--kb-yellow); color: var(--kb-dark); }
+
+/* Override some f1 base styles to match launcher */
+body { background-color: #f0f0f0; }
+
+/* CSS Reset and Variables */
+:root {
+  --kb-yellow: #FFCC00;
+  --kb-gray: #645B4C;
+  --kb-dark: #2b2b2b;
+  --bg-color: #F8FAFC;
+  --surface: #FFFFFF;
+  --text-primary: #1E293B;
+  --text-secondary: #64748B;
+  --border: #E2E8F0;
+  --danger: #EF4444;
+  --kb-blue: #2563EB;
+}
+body {
+  margin: 0;
+  padding: 0;
+  font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, 'Helvetica Neue', 'Segoe UI', 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', sans-serif;
+  background-color: #e5e7eb;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start; padding: 40px 0; box-sizing: border-box;
+  min-height: 100vh;
+}
+/* Mobile Device Mockup Container */
+.device {
+  width: 375px;
+  height: 812px;
+  background-color: var(--bg-color);
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  border-radius: 40px;
+  border: 14px solid #1f2937;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Screens */
+.screen {
+  display: none;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+  background-color: var(--bg-color);
+  animation: fadeIn 0.3s ease;
+}
+.screen.active {
+  display: flex;
+}
+.scroll-area {
+  flex: 1;
+  overflow-y: auto;
+  position: relative;
+}
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateX(10px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+/* Header */
+.header {
+  height: 60px;
+  min-height: 60px;
+  background-color: var(--surface);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 20px;
+  font-weight: 700;
+  font-size: 18px;
+  color: var(--text-primary);
+  position: relative;
+  z-index: 10;
+  border-bottom: 1px solid var(--border);
+}
+.header .back-btn {
+  position: absolute;
+  left: 20px;
+  cursor: pointer;
+  font-size: 24px;
+  color: var(--text-primary);
+  font-weight: 300;
+}
+
+/* Common Padding */
+.section-padding {
+  padding: 24px 20px;
+}
+.title-large {
+  font-size: 24px;
+  font-weight: 700;
+  margin-bottom: 8px;
+  color: var(--text-primary);
+  line-height: 1.4;
+  word-break: keep-all;
+}
+.subtitle {
+  font-size: 14px;
+  color: var(--text-secondary);
+  margin-bottom: 24px;
+  line-height: 1.5;
+  word-break: keep-all;
+}
+
+/* Menu List */
+.menu-list {
+  background: var(--surface);
+  border-radius: 16px;
+  padding: 8px 0;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+}
+.menu-item {
+  padding: 18px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid var(--border);
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.menu-item:last-child {
+  border-bottom: none;
+}
+.menu-item:hover {
+  background: #F1F5F9;
+}
+.menu-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text-primary);
+  display: flex;
+  align-items: center;
+}
+.menu-desc {
+  font-size: 12px;
+  color: var(--text-secondary);
+  margin-top: 4px;
+}
+.menu-icon {
+  color: var(--text-secondary);
+  font-size: 20px;
+}
+.new-badge {
+  background: var(--danger);
+  color: white;
+  font-size: 10px;
+  padding: 2px 6px;
+  border-radius: 4px;
+  margin-left: 8px;
+  font-weight: bold;
+}
+
+/* Sub Title Dropdown */
+.sub-header {
+  text-align: center;
+  padding: 2px 0 16px;
+  background-color: var(--surface);
+}
+.account-selector {
+  display: inline-flex;
+  align-items: center;
+  background-color: #F1F5F9;
+  padding: 6px 12px;
+  border-radius: 16px;
+  font-size: 13px;
+  color: var(--text-secondary);
+  cursor: pointer;
+}
+.account-selector::after {
+  content: '▼';
+  font-size: 10px;
+  margin-left: 6px;
+}
+
+/* Tabs */
+.tabs {
+  display: flex;
+  border-bottom: 1px solid var(--border);
+  background-color: var(--surface);
+}
+.tab {
+  flex: 1;
+  text-align: center;
+  padding: 14px 0;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  cursor: pointer;
+  position: relative;
+}
+.tab.active {
+  color: var(--text-primary);
+}
+.tab.active::after {
+  content: '';
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background-color: var(--text-primary);
+}
+
+/* Tab Content */
+.tab-content {
+  display: none;
+  animation: fadeIn 0.3s ease;
+}
+.tab-content.active {
+  display: block;
+}
+
+/* Dark Card */
+.dark-card {
+  background-color: #1a233a;
+  border-radius: 12px;
+  padding: 24px 20px;
+  color: white;
+  text-align: center;
+  margin: 20px;
+}
+.dark-card-title {
+  font-size: 14px;
+  color: #94a3b8;
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.dark-card-title .info-icon {
+  display: inline-block;
+  width: 14px; height: 14px;
+  border-radius: 50%;
+  border: 1px solid #94a3b8;
+  font-size: 10px;
+  line-height: 14px;
+  margin-left: 4px;
+  color: #94a3b8;
+}
+.dark-card-amount {
+  font-size: 24px;
+  font-weight: 700;
+  margin-bottom: 20px;
+}
+.dark-card-amount .highlight {
+  color: var(--kb-yellow);
+}
+.dark-card-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 13px;
+  color: #cbd5e1;
+  margin-bottom: 8px;
+}
+.dark-card-row:last-child {
+  margin-bottom: 0;
+}
+
+/* Title Area */
+.section-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 16px;
+  word-break: keep-all;
+  line-height: 1.4;
+}
+
+/* Simulator Box */
+.simulator-box {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 24px;
+}
+.order-list {
+  position: relative;
+  padding-left: 36px;
+}
+.order-list::before {
+  content: '';
+  position: absolute;
+  left: 15px;
+  top: 10px;
+  bottom: 20px;
+  width: 2px;
+  background-color: var(--border);
+}
+.order-item {
+  position: relative;
+  margin-bottom: 20px;
+}
+.order-item:last-child {
+  margin-bottom: 0;
+}
+.order-badge {
+  position: absolute;
+  left: -32px;
+  top: 0;
+  width: 22px;
+  height: 22px;
+  background: var(--border);
+  color: var(--text-secondary);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: bold;
+  z-index: 1;
+}
+.order-content {
+  background: #F8FAFC;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 16px;
+}
+.order-item.highlight .order-badge {
+  background: var(--kb-yellow);
+  color: var(--kb-dark);
+}
+.order-item.highlight .order-content {
+  border-color: var(--kb-yellow);
+  background: #FFFBEB;
+}
+.order-name {
+  font-weight: 700;
+  font-size: 14px;
+  color: var(--text-primary);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.order-tax {
+  font-size: 12px;
+  color: var(--danger);
+  font-weight: 600;
+  margin-top: 4px;
+}
+.order-amount {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-top: 12px;
+  text-align: right;
+}
+.tag-free {
+  background-color: #E0F2FE;
+  color: #0284C7;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+/* Action Checkbox & Buttons */
+.notice-box {
+  display: flex;
+  align-items: flex-start;
+  margin-bottom: 16px;
+}
+.notice-box input[type="checkbox"] {
+  margin-top: 4px;
+  margin-right: 12px;
+  width: 20px;
+  height: 20px;
+}
+.notice-box label {
+  font-size: 13px;
+  color: var(--text-secondary);
+  line-height: 1.5;
+  word-break: keep-all;
+}
+
+.action-card {
+  background: var(--surface);
+  border: 1px solid var(--kb-blue);
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 24px;
+}
+.action-card h4 {
+  margin: 0 0 8px 0;
+  font-size: 15px;
+  color: var(--kb-blue);
+}
+.action-card p {
+  margin: 0 0 16px 0;
+  font-size: 13px;
+  color: var(--text-secondary);
+  line-height: 1.5;
+  word-break: keep-all;
+}
+
+/* Button Styles */
+.btn {
+  display: block;
+  width: 100%;
+  padding: 14px;
+  border-radius: 8px;
+  border: none;
+  font-size: 15px;
+  font-weight: 700;
+  text-align: center;
+  cursor: pointer;
+  text-decoration: none;
+  margin-bottom: 10px;
+  transition: opacity 0.2s;
+  box-sizing: border-box;
+}
+.btn:last-child {
+  margin-bottom: 0;
+}
+.btn:active {
+  opacity: 0.8;
+}
+.btn-primary {
+  background-color: var(--kb-yellow);
+  color: var(--kb-dark);
+}
+.btn-secondary {
+  background-color: var(--surface);
+  color: var(--kb-blue);
+  border: 1px solid var(--kb-blue);
+}
+.btn-outline {
+  background-color: var(--surface);
+  color: var(--text-primary);
+  border: 1px solid var(--border);
+}
+
+/* Fixed Bottom Button Area */
+.bottom-area {
+  padding: 16px 20px 34px;
+  background-color: var(--surface);
+  border-top: 1px solid var(--border);
+  position: sticky;
+  bottom: 0;
+  z-index: 10;
+  display: flex;
+  gap: 12px;
+}
+
+/* ==================================
+   Modal Styles (Bottom Sheet Type) 
+   ================================== */
+.modal-overlay {
+  display: none;
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 100;
+  align-items: flex-end; 
+}
+.modal-overlay.active {
+  display: flex;
+}
+.modal-content {
+  background: var(--surface);
+  width: 100%;
+  border-radius: 24px 24px 0 0;
+  padding: 24px 20px;
+  box-sizing: border-box;
+  animation: slideUp 0.3s ease;
+  max-height: 85%;
+  display: flex;
+  flex-direction: column;
+}
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+.modal-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+.modal-close {
+  cursor: pointer;
+  font-size: 28px;
+  color: var(--text-secondary);
+  line-height: 1;
+}
+.modal-body {
+  overflow-y: auto;
+  flex: 1;
+  padding-bottom: 20px;
+}
+@keyframes slideUp {
+  from { transform: translateY(100%); }
+  to { transform: translateY(0); }
+}
+
+
+
+    :root {
+      --kb-yellow: #FFD200;
+      --kb-gray: #F4F4F4;
+      --kb-dark: #222222;
+      --text-primary: #1A1A1A;
+      --text-secondary: #666666;
+      --border: #E5E7EB;
+    }
+    
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Pretendard', sans-serif; }
+    body { background-color: #f0f0f0; display: flex; justify-content: center; align-items: flex-start; padding: 40px 0; box-sizing: border-box; min-height: 100vh; }
+    
+    .device {
+      width: 375px; height: 812px; background: white;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+      position: relative; overflow: hidden; display: flex; flex-direction: column;
+    }
+    
+    .status-bar {
+      height: 44px; padding: 0 20px; display: flex; justify-content: space-between; align-items: center;
+      font-size: 14px; font-weight: 600; flex-shrink: 0; background: white; z-index: 10;
+    }
+
+    .screen { display: none; flex-direction: column; height: calc(100% - 44px); overflow-y: auto; background: white; }
+    .screen.active { display: flex; }
+
+    /* Screen A (Menu) Styles */
+    .menu-header { display: flex; align-items: center; padding: 12px 16px; gap: 12px; border-bottom: 1px solid var(--border); }
+    .search-bar { flex: 1; background: #F5F5F5; border-radius: 8px; padding: 10px 12px; color: #999; font-size: 14px; }
+    .menu-tabs { display: flex; overflow-x: auto; padding: 0 16px; border-bottom: 1px solid var(--border); }
+    .menu-tab { padding: 16px 12px; font-size: 15px; color: var(--text-secondary); white-space: nowrap; }
+    .menu-tab.active { color: var(--text-primary); font-weight: 700; border-bottom: 2px solid var(--text-primary); }
+    
+    .menu-body { display: flex; flex: 1; overflow: hidden; }
+    .menu-sidebar { width: 110px; background: #F9FAFB; overflow-y: auto; border-right: 1px solid var(--border); }
+    .sidebar-item { padding: 16px; font-size: 15px; color: var(--text-secondary); }
+    .sidebar-item.active { background: #333; color: white; font-weight: 700; }
+    
+    .menu-content { flex: 1; overflow-y: auto; padding: 20px 16px; }
+    .menu-group-title { font-size: 13px; color: #888; margin-bottom: 12px; margin-top: 24px; }
+    .menu-group-title:first-child { margin-top: 0; }
+    .menu-link { display: block; padding: 12px 0; font-size: 16px; color: var(--text-primary); text-decoration: none; cursor: pointer; }
+
+    /* Screen B (Manage) Styles */
+    .header-nav { display: flex; align-items: center; padding: 16px; font-size: 18px; font-weight: 700; border-bottom: 1px solid var(--border); }
+    .back-btn { font-size: 20px; color: var(--text-primary); cursor: pointer; margin-right: 12px; }
+    
+    .manage-tabs { display: flex; border-bottom: 1px solid var(--border); }
+    .manage-tab { flex: 1; text-align: center; padding: 16px 0; font-size: 15px; color: var(--text-secondary); }
+    .manage-tab.active { color: var(--text-primary); font-weight: 700; border-bottom: 2px solid var(--text-primary); }
+    
+    .manage-section { padding: 24px 20px 0; }
+    .manage-section-title { font-size: 18px; font-weight: 700; margin-bottom: 16px; }
+    
+    .manage-item { display: flex; justify-content: space-between; align-items: center; padding: 16px 0; border-bottom: 1px solid #F3F4F6; cursor: pointer; text-decoration: none; }
+    .manage-item-left { display: flex; align-items: center; gap: 12px; font-size: 16px; color: var(--text-primary); }
+    .manage-icon { width: 28px; height: 28px; background: #F3F4F6; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 14px; }
+    .manage-arrow { color: #CCC; font-size: 16px; }
+
+  
+/* Ensure screens are hidden properly */
+.screen { display: none !important; }
+.screen.active { display: flex !important; }
+
+/* ==================================================
+   Lock Window & User's V1 Calendar Grid
+   ================================================== */
+.lock-band-container { background: var(--surface); border-radius: 20px; padding: 24px; margin-bottom: 24px; box-shadow: 0 4px 20px rgba(0,0,0,0.04); }
+.lock-band-title { font-size: 14px; font-weight: 700; color: var(--text-secondary); margin-bottom: 16px; text-align: center;}
+
+/* Reverting to User's V1 7-Column Grid Calendar */
+.calendar { margin-top: 8px; border-top: 1px solid var(--border-light); padding-top: 20px; }
+.cal-month { font-weight: 800; font-size: 15px; text-align: left; margin-bottom: 12px; color: var(--text-primary);}
+.cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; text-align: center; font-size: 13px; margin-bottom: 12px;}
+.cal-header { color: var(--text-tertiary); font-size: 11px; font-weight: 600; margin-bottom: 8px;}
+.cal-day { padding: 6px 0; border-radius: 8px; color: var(--text-primary); font-weight: 500; transition: all 0.3s; }
+.cal-day.weekend { color: var(--text-tertiary); }
+.cal-day.locked { background-color: var(--danger-bg); color: var(--danger); font-weight: 700; }
+.cal-day.est { background: repeating-linear-gradient(115deg, var(--warning-bg) 0 4px, #FDE68A 4px 8px); color: #B45309; font-weight: 700; }
+.cal-day.start { background-color: var(--danger); color: white; border-radius: 8px 0 0 8px; box-shadow: -2px 0 8px rgba(239, 68, 68, 0.4);}
+.cal-day.end { background-color: var(--warning); color: white; border-radius: 0 8px 8px 0; box-shadow: 2px 0 8px rgba(245, 158, 11, 0.4);}
+.cal-day.locked-mid { border-radius: 0; }
+
+.lock-duration-box { text-align: center; margin-top: 24px; }
+.lock-duration { font-size: 13px; font-weight: 700; color: var(--kb-blue); background: #EFF6FF; display: inline-block; padding: 6px 14px; border-radius: 20px; transition: all 0.3s ease; }
+
+/* Item List Group */
+.item-group { margin-bottom: 28px; }
+.item-group-title { font-size: 15px; font-weight: 800; display: flex; align-items: center; margin-bottom: 14px; letter-spacing: -0.3px;}
+.item-card { background: var(--surface); border-radius: 16px; padding: 20px; margin-bottom: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.02); border: 1px solid transparent; transition: all 0.3s ease; }
+.item-card.highlight { border-color: var(--warning); background: #FFFAF0; box-shadow: 0 4px 12px rgba(245, 158, 11, 0.08);}
+.item-card.danger { border-color: rgba(239,68,68,0.3); background: #FEF2F2; }
+.item-row { display: flex; justify-content: space-between; align-items: center; }
+.item-name { font-weight: 700; font-size: 14px; color: var(--text-primary); display: flex; align-items: center; gap: 4px; white-space: nowrap; overflow: visible; }
+.item-amount { font-weight: 800; font-size: 14px; color: var(--text-primary); white-space: nowrap; }
+.item-desc { font-size: 13px; color: var(--text-secondary); margin-top: 10px; line-height: 1.6; }
+.val-up { color: var(--danger); font-weight: 700; }
+.val-down { color: var(--kb-blue); font-weight: 700; }
+.item-actions { margin-top: 16px; display: flex; gap: 8px; }
+
+/* Status Banner */
+.status-banner { background: linear-gradient(135deg, var(--kb-dark) 0%, #333 100%); color: white; padding: 20px 24px; display: flex; justify-content: space-between; align-items: center; transition: all 0.3s ease; }
+.status-banner.alert { background: linear-gradient(135deg, var(--danger) 0%, #991B1B 100%); }
+.status-banner.warning { background: linear-gradient(135deg, var(--warning) 0%, #D97706 100%); }
+.status-banner.success { background: linear-gradient(135deg, var(--success) 0%, #047857 100%); }
+.status-banner-text { font-size: 16px; font-weight: 800; display: flex; align-items: center; gap: 6px; word-break: keep-all; letter-spacing: -0.5px;}
+.status-banner-sub { font-size: 13px; color: #94A3B8; margin-top: 6px; font-weight: 500; word-break: keep-all; letter-spacing: -0.5px;}
+.status-banner.warning .status-banner-sub, .status-banner.alert .status-banner-sub, .status-banner.success .status-banner-sub { color: rgba(255,255,255,0.9); }
+.status-dday { background: var(--kb-yellow); color: var(--kb-dark); font-weight: 900; font-size: 13px; padding: 6px 12px; border-radius: 16px; box-shadow: 0 2px 8px rgba(255,204,0,0.3); white-space: nowrap; flex-shrink: 0; }
+
+/* Pizza Tracker */
+.tracker-container { background: var(--surface); padding: 32px 24px 24px; border-bottom-left-radius: 24px; border-bottom-right-radius: 24px; box-shadow: 0 4px 12px rgba(0,0,0,0.03);}
+.pizza-tracker { display: flex; justify-content: space-between; position: relative; margin-bottom: 24px; }
+.pizza-tracker::before { content: ''; position: absolute; top: 12px; left: 16px; right: 16px; height: 4px; background: var(--border-light); z-index: 1; border-radius: 2px;}
+.pizza-tracker-progress { position: absolute; top: 12px; left: 16px; width: 0%; height: 4px; background: var(--kb-blue); z-index: 2; border-radius: 2px; transition: width 0.5s ease;}
+.tracker-step { position: relative; z-index: 3; display: flex; flex-direction: column; align-items: center; width: 48px;}
+.tracker-icon { width: 28px; height: 28px; border-radius: 50%; background: var(--surface); border: 3px solid var(--border); display: flex; justify-content: center; align-items: center; font-size: 11px; font-weight: 800; color: var(--text-tertiary); margin-bottom: 8px; box-sizing: border-box; transition: all 0.3s; }
+.tracker-step.done .tracker-icon { background: var(--kb-blue); border-color: var(--kb-blue); color: white; }
+.tracker-step.active .tracker-icon { background: var(--surface); border-color: var(--kb-blue); color: var(--kb-blue); box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.2); animation: pulse 2s infinite;}
+.tracker-label { font-size: 12px; font-weight: 700; color: var(--text-tertiary); white-space: nowrap; transition: color 0.3s; }
+.tracker-step.done .tracker-label { color: var(--text-primary); }
+.tracker-step.active .tracker-label { color: var(--kb-blue); }
+
+@keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.4); } 70% { box-shadow: 0 0 0 8px rgba(59, 130, 246, 0); } 100% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0); } }
+
+/* Focus Card */
+.focus-card { background: #F8FAFC; border: 1px solid rgba(59, 130, 246, 0.3); border-radius: 16px; padding: 20px; box-shadow: 0 4px 16px rgba(59, 130, 246, 0.05);}
+.focus-header { display: flex; justify-content: space-between; margin-bottom: 12px; align-items: center;}
+.focus-title { font-size: 16px; font-weight: 800; color: var(--kb-blue); }
+.focus-time { font-size: 12px; color: var(--text-secondary); font-weight: 500;}
+.focus-desc { font-size: 13px; color: var(--text-primary); line-height: 1.5; margin-bottom: 16px; font-weight: 600;}
+.focus-action { background: white; border: 1px solid var(--border); border-radius: 12px; padding: 16px; display: flex; flex-direction: column; gap: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.02);}
+.focus-action-title { font-size: 14px; font-weight: 800; display: flex; align-items: flex-start; gap: 8px; color: var(--text-primary);}
+
+/* Progress Track */
+.track-header { display: flex; justify-content: space-between; font-size: 15px; font-weight: 800; margin-bottom: 16px; color: var(--text-primary);}
+.track-list { background: var(--surface); border-radius: 16px; padding: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.02);}
+.track-item { display: flex; align-items: center; margin-bottom: 16px; font-size: 14px; }
+.track-item:last-child { margin-bottom: 0; }
+.track-name { flex: 1; color: var(--text-primary); font-weight: 600; margin-left: 8px; }
+.track-status { color: var(--text-secondary); text-align: right; font-size: 13px; font-weight: 500;}
+.track-status.highlight { color: var(--kb-blue); font-weight: 700; }
+
+/* Restriction Box */
+.restrict-box { background: var(--surface); padding: 24px; border-radius: 16px; margin: 0 20px 24px; box-shadow: 0 4px 12px rgba(0,0,0,0.02);}
+.restrict-title { font-size: 15px; font-weight: 800; margin-bottom: 16px; display: flex; align-items: center; gap: 6px;}
+.restrict-list { font-size: 14px; color: var(--text-secondary); }
+.restrict-row { display: flex; justify-content: space-between; margin-bottom: 12px; padding-bottom: 12px; border-bottom: 1px solid var(--border-light); }
+.restrict-row:last-child { margin-bottom: 0; padding-bottom: 0; border-bottom: none; }
+.restrict-val { font-weight: 800; font-size: 13px;}
+.val-no { color: var(--text-tertiary); }
+.val-yes { color: var(--kb-blue); }
+
+/* Success Summary */
+.success-header { text-align: center; padding: 48px 20px 32px; }
+.success-icon { width: 64px; height: 64px; border-radius: 50%; background-color: var(--success); color: white; font-size: 32px; line-height: 64px; margin: 0 auto 20px; display: flex; justify-content: center; align-items: center; box-shadow: 0 8px 16px rgba(16, 185, 129, 0.25); }
+.success-title { font-size: 26px; font-weight: 800; color: var(--text-primary); margin-bottom: 10px; letter-spacing: -0.5px;}
+.success-time { font-size: 14px; color: var(--text-secondary); font-weight: 500;}
+
+.summary-card { background: var(--surface); margin: 0 20px 24px; border-radius: 20px; padding: 24px; box-shadow: 0 8px 24px rgba(0,0,0,0.04); }
+.summary-total { font-size: 14px; color: var(--text-secondary); text-align: center; margin-bottom: 8px; font-weight: 600;}
+.summary-amount { font-size: 32px; font-weight: 900; color: var(--text-primary); text-align: center; margin-bottom: 28px; letter-spacing: -0.5px;}
+.summary-row { display: flex; justify-content: space-between; align-items: center; font-size: 14px; padding-bottom: 14px; margin-bottom: 14px; border-bottom: 1px dashed var(--border); }
+.summary-row:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+.summary-label { color: var(--text-secondary); display: flex; align-items: center; font-weight: 500;}
+.summary-val { font-weight: 800; color: var(--text-primary); text-align: right; font-size: 15px;}
+.summary-sub { font-size: 11px; color: var(--text-secondary); margin-left: 8px; background: var(--border-light); padding: 4px 8px; border-radius: 6px; font-weight: 700;}
+
+.unlock-msg { text-align: center; font-size: 15px; font-weight: 700; color: var(--kb-blue); margin-bottom: 24px; background: #EFF6FF; margin: 0 20px 24px; padding: 16px; border-radius: 12px;}
+
+/* Push Notifications / Toast */
+.push-noti {
+  position: absolute; left: 16px; right: 16px; top: 16px; background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px); border-radius: 16px; padding: 16px; box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+  z-index: 100; transform: translateY(-150%); transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  border: 1px solid var(--border-light);
+}
+.push-noti.show { transform: translateY(0); }
+.push-header { display: flex; align-items: center; gap: 6px; font-size: 11px; color: var(--text-secondary); font-weight: 600; margin-bottom: 6px; }
+.push-app-icon { width: 14px; height: 14px; background: var(--kb-yellow); border-radius: 4px; display: inline-block; }
+.push-title { font-size: 14px; font-weight: 800; color: var(--text-primary); margin-bottom: 4px; }
+.push-desc { font-size: 13px; color: var(--text-secondary); line-height: 1.4; }
+
+#toast {
+  position: absolute; left: 20px; right: 20px; bottom: 30px; background: rgba(30,30,30,0.95); color: #fff;
+  border-radius: 12px; padding: 12px 14px; font-size: 13px; font-weight: 500; text-align: center; z-index: 100;
+  letter-spacing: -0.5px; word-break: keep-all; line-height: 1.5;
+  transform: translateY(150%); transition: transform 0.3s ease; box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+}
+#toast.show { transform: translateY(0); }
+
+/* Scenario Floating Button */
+.demo-fab {
+  position: absolute; bottom: 40px; right: 20px; background: var(--kb-dark); color: white;
+  border: none; border-radius: 50%; width: 44px; height: 44px; display: flex; justify-content: center; align-items: center; font-size: 20px; font-weight: 900; padding: 0;
+  box-shadow: 0 8px 16px rgba(0,0,0,0.2); cursor: pointer; z-index: 90; display: none;
+  animation: bounce 2s infinite;
+}
+@keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
+/* ===== V6 신규 컴포넌트 ===== */
+.restrict-val { text-align: right; letter-spacing: -0.3px; }
+.restrict-exception { margin-top: 18px; padding: 14px; background: #FFFBEB; border: 1px solid rgba(245,158,11,0.3); border-radius: 12px; font-size: 12.5px; line-height: 1.55; color: #92400E; word-break: keep-all; letter-spacing: -0.3px; }
+.restrict-source { margin-top: 12px; font-size: 11.5px; line-height: 1.5; color: var(--text-tertiary); word-break: keep-all; letter-spacing: -0.3px; }
+.rule-note { display: flex; align-items: flex-start; gap: 8px; background: #F8FAFC; border: 1px solid var(--border); border-radius: 12px; padding: 14px 16px; font-size: 13px; line-height: 1.55; color: var(--text-secondary); margin-bottom: 20px; word-break: keep-all; letter-spacing: -0.3px; text-align: left; }
+.pnr-band { margin: 14px 0 16px; padding: 14px 16px; background: #FEF2F2; border: 1px solid rgba(239,68,68,0.25); border-radius: 12px; font-size: 12.5px; line-height: 1.55; color: #991B1B; display: flex; align-items: flex-start; gap: 8px; word-break: keep-all; letter-spacing: -0.3px; }
+.cancel-chip { display: inline-flex; align-items: center; padding: 5px 11px; border-radius: 20px; font-size: 11px; font-weight: 800; letter-spacing: -0.3px; white-space: nowrap; }
+.cancel-chip.open { background: rgba(255,255,255,0.25); color: #fff; }
+.cancel-chip.closed { background: rgba(0,0,0,0.3); color: rgba(255,255,255,0.92); }
+.mode-picker { display: flex; gap: 10px; margin-bottom: 22px; }
+.mode-opt { flex: 1; border: 1.5px solid var(--border); background: var(--surface); border-radius: 14px; padding: 14px 12px; text-align: left; cursor: pointer; transition: all .2s; }
+.mode-opt.on { border-color: var(--kb-blue); background: #EFF6FF; box-shadow: 0 4px 12px rgba(59,130,246,.1); }
+.mode-opt-t { font-size: 13.5px; font-weight: 800; color: var(--text-primary); margin-bottom: 4px; }
+.mode-opt.on .mode-opt-t { color: var(--kb-blue); }
+.mode-opt-d { font-size: 11px; color: var(--text-secondary); line-height: 1.45; word-break: keep-all; letter-spacing: -0.3px; }
+
+</style>
+</head>
+<body>
+<div class="device">
+<!-- Launcher Screens -->
+<div class="status-bar">
+<span>9:41</span>
+<span style="letter-spacing: 2px;">LTE 🔋</span>
+</div>
+<!-- Screen A: 앱 전체 메뉴 (가져오기 진입점) -->
+<div class="screen active" id="screen-menu">
+<div class="menu-header">
+<span style="font-size: 20px;">〈</span>
+<div class="search-bar">🔍 메뉴명을 검색해보세요</div>
+</div>
+<div class="menu-body">
+<div class="menu-sidebar">
+<div class="sidebar-item">My연금</div>
+<div class="sidebar-item">퇴직연금</div>
+<div class="sidebar-item active">연금저축</div>
+</div>
+<div class="menu-content">
+<div style="font-size: 18px; font-weight: 700; margin-bottom: 24px; padding-bottom: 16px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center;">
+  <span>연금저축</span>
+  <button class="btn btn-outline btn-small" onclick="EV.reset()" style="width: auto; font-size: 11px; padding: 4px 10px; border-color: #CBD5E1; color: #64748B; border-radius: 20px;">↺ Reset</button>
+</div>
+<div class="menu-group-title">연금저축 ETF/리츠</div>
+<div class="menu-link">연금저축 ETF/리츠 매매</div>
+<div class="menu-group-title" style="color: #2563eb; font-weight: 800;">연금플러스 🌟</div>
+<div class="menu-link" onclick="nav('screen-manage')" style="display: flex; align-items: center;">
+<span>연금저축 관리</span>
+<span style="font-size: 10px; font-weight: bold; color: #1E1E1E; background: #FFCC00; padding: 2px 4px; border-radius: 4px; margin-left: 6px;">NEW</span>
+</div>
+<a class="menu-link" href="#" onclick="nav('screen-f1-0')" style="display: flex; align-items: center; text-decoration: none;">
+<span>타사 IRP 가져오기 <span style="font-size: 12px; letter-spacing: -0.5px;">(실물이전)</span></span>
+<span style="font-size: 10px; font-weight: bold; color: #1E1E1E; background: #FFCC00; padding: 2px 4px; border-radius: 4px; margin-left: 6px;">NEW</span>
+</a>
+</div>
+</div>
+</div>
+<!-- Screen B: 연금저축 관리 (인출 시뮬레이터 진입점) -->
+<div class="screen" id="screen-manage">
+<div class="header-nav">
+<span class="back-btn" onclick="nav('screen-menu')">〈</span>
+      연금저축 관리
+    </div>
+<div class="manage-tabs">
+<div class="manage-tab active">입출금 관리</div>
+<div class="manage-tab">서비스 관리</div>
+</div>
+<div style="flex:1; overflow-y:auto; padding-bottom: 40px; background: white;">
+<div class="manage-section">
+<div class="manage-section-title">입금 관리</div>
+<div class="manage-item">
+<div class="manage-item-left"><div class="manage-icon">📅</div> 입금한도 설정</div>
+<div class="manage-arrow">〉</div>
+</div>
+<div class="manage-item">
+<div class="manage-item-left"><div class="manage-icon">🧾</div> 입금지급내역</div>
+<div class="manage-arrow">〉</div>
+</div>
+</div>
+<div style="height: 12px; background: #F9FAFB; margin-top: 24px;"></div>
+<div class="manage-section">
+<div class="manage-section-title">출금 관리</div>
+<div class="manage-item">
+<div class="manage-item-left"><div class="manage-icon" style="background:#f3e8ff;">💰</div> 연금수령</div>
+<div class="manage-arrow">〉</div>
+</div>
+<!-- F2 연결 포인트: 연금 외 수령 -->
+<a class="manage-item" href="#" onclick="nav('screen-f2-detail')" style="background: #F0FDF4; margin: 8px -20px; padding: 16px 20px; border-bottom: none;">
+<div class="manage-item-left"><div class="manage-icon" style="background:white;">💸</div>
+<div>
+<div style="font-weight: 700; color: #15803d;">연금 외 수령</div>
+<div style="font-size: 13px; color: #166534; margin-top: 4px;">해지 없이 꼭 필요한 금액만 빼기</div>
+</div>
+</div>
+<div class="manage-arrow" style="color: #15803d;">〉</div>
+</a>
+<div class="manage-item">
+<div class="manage-item-left"><div class="manage-icon">🚫</div> 연금저축 해지</div>
+<div class="manage-arrow">〉</div>
+</div>
+</div>
+</div>
+</div>
+<!-- F1 Screens -->
+<div class="dev-nav" style="display:none;">
+<button class="active" id="nav-btn-0" onclick="nav('screen-f1-0')">0. 진입</button>
+<button id="nav-btn-1" onclick="nav('screen-f1-1')">1. 예약</button>
+<button id="nav-btn-2" onclick="nav('screen-f1-2')">2. 현황판</button>
+<button id="nav-btn-3" onclick="nav('screen-f1-3')">3. 완료</button>
+</div>
+<!-- ==============================================
+       Screen 0: 진입 화면 (타사 연금 가져오기)
+       ============================================== -->
+<!-- ==============================================
+       Screen 1: 이전 예약 · 잠금 창 미리보기
+       ============================================== -->
+<!-- ==============================================
+       Screen 2: 현황판 본체
+       ============================================== -->
+<!-- ==============================================
+       Screen 3: 완료 · 재편입
+       ============================================== -->
+<!-- F2 Screens -->
+<!-- Screen 0: 진입 화면 (출금 관리) -->
+<div class="push-noti" id="pushNoti">
+<div class="push-header"><span class="push-app-icon"></span> KB증권 · 지금</div>
+<div class="push-title" id="pushTitle">알림 제목</div>
+<div class="push-desc" id="pushDesc">알림 내용</div>
+</div>
+<div class="screen" id="screen-f1-0">
+<div class="header">
+<span class="back-btn" onclick="nav('screen-menu')">〈</span>
+<span>타사 IRP 가져오기</span>
+</div>
+<div class="scroll-area" style="display: flex; flex-direction: column; padding: 32px 24px; background: white; text-align: center;">
+<div style="font-size: 15px; font-weight: 800; color: var(--kb-blue); margin-bottom: 12px; margin-top: 20px; letter-spacing: -0.3px;">
+        세제혜택은 그대로, 투자선택은 더 넓게
+      </div>
+<div style="font-size: 32px; font-weight: 900; color: var(--text-primary); line-height: 1.3; margin-bottom: 24px; letter-spacing: -1px;">
+        퇴직연금 IRP<br/>KB로 옮길 타이밍
+      </div>
+<div style="background: #F8FAFC; border-radius: 16px; padding: 18px 20px; margin-bottom: 40px; border: 1px solid rgba(59, 130, 246, 0.2); box-shadow: 0 4px 12px rgba(59,130,246,0.05);">
+<div style="font-size: 13px; font-weight: 800; color: var(--kb-blue); margin-bottom: 8px;">KB증권만의 새로운 연금 이전</div>
+<div style="font-size: 15px; color: var(--text-primary); font-weight: 700; line-height: 1.5; letter-spacing: -0.5px; word-break: keep-all;">
+          답답했던 연금 이관, 거래가 멈추는 기간을<br/>
+<span style="background: linear-gradient(180deg, transparent 65%, rgba(245, 158, 11, 0.3) 65%);">먼저 확인하고 원할 때 시작</span>하세요!
+        </div>
+</div>
+<div style="flex: 1;">
+<div style="width: 100%; height: 200px; background: #F8FAFC; border-radius: 20px; border: 1px dashed var(--border); display: flex; flex-direction: column; justify-content: center; align-items: center; margin-bottom: 32px;">
+<div style="font-size: 14px; color: var(--text-secondary); font-weight: 700; background: white; padding: 8px 16px; border-radius: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">타사 개인형 IRP</div>
+<div style="width: 2px; height: 24px; background: var(--kb-blue); margin: 12px 0; opacity: 0.3;"></div>
+<div style="font-size: 15px; color: var(--kb-blue); font-weight: 800; background: #EFF6FF; padding: 8px 16px; border-radius: 20px;">KB증권 IRP</div>
+</div>
+<div class="rule-note" style="margin-bottom: 0;">
+<span class="badge-text info" style="margin-top: 2px;">조건</span>
+<div style="flex:1;">
+같은 유형끼리만 옮길 수 있습니다. <strong>개인형IRP &#8596; 개인형IRP</strong>,<br/>DC &#8596; DC, DB &#8596; DB.<br/>
+연금저축계좌는 실물이전 대상이 아니며, 계좌이체(전액 현금화)로만 옮겨집니다.
+</div>
+</div>
+</div>
+</div>
+<div class="bottom-area">
+<button class="btn btn-primary" onclick="nav('screen-f1-1')">이전 조건 미리 확인하기</button>
+</div>
+</div>
+<div class="screen" id="screen-f1-1">
+<div class="header">
+<span class="back-btn" onclick="nav('screen-f1-0')">〈</span>
+<span>연금 이전 준비</span>
+</div>
+<div class="scroll-area section-padding">
+<!-- User's Original V1 Calendar Grid -->
+<div class="lock-band-container">
+<div class="title-large" style="font-size: 21px; letter-spacing: -0.5px; margin-bottom: 24px; text-align: center;">
+          지금 신청하면 이 기간에<br/>
+<span style="background: linear-gradient(180deg, transparent 65%, rgba(245, 158, 11, 0.25) 65%); padding: 0 4px;">매매·입금이 제한됩니다</span>
+</div>
+<div class="lock-band-title" style="justify-content: center;">
+<span>거래 제한 예상 구간</span>
+</div>
+<div class="calendar" id="calendarGrid">
+<!-- Calendar is rendered by JS to match User's v1 grid exactly -->
+</div>
+<div class="lock-duration-box">
+<div class="lock-duration" id="durationTxt1">예상 7~9영업일</div>
+</div>
+</div>
+<div class="info-box" style="display: flex; align-items: flex-start; gap: 8px;">
+<span class="badge-text info" style="margin-top: 2px;">안내</span>
+<div style="flex: 1; word-break: keep-all;">
+          실물이전은 최소 3영업일이 걸리고, <strong>현금화가 필요한 상품이 있으면 그만큼 더 걸립니다.</strong> 실제 속도는 기존 금융사(이관사)가 정하므로 KB증권이 앞당길 수 없습니다. 밴드는 확정 일정이 아닌 예상 구간입니다.
+        </div>
+</div>
+<div class="section-title" style="margin-top: 32px;">보유 종목 6건 판정 결과</div>
+<div class="rule-note">
+<span class="badge-text warn" style="margin-top: 2px;">원칙</span>
+<div style="flex:1;">
+<strong>전액 이전만 가능합니다.</strong> 일부 종목만 남겨두거나, 일부는 실물·일부는 현금으로 나눠서 옮길 수 없습니다.
+</div>
+</div>
+<div class="item-group">
+<div class="item-group-title" style="color: var(--success);"><span class="status-dot-small success"></span> 그대로 옮겨집니다 (3건)</div>
+<div class="item-card">
+<div class="item-row" style="margin-bottom: 12px;">
+<div class="item-name">KODEX 미국S&amp;P500TR</div>
+<div class="item-amount">12,480,000원</div>
+</div>
+<div class="item-row" style="margin-bottom: 12px;">
+<div class="item-name">TIGER 미국나스닥100</div>
+<div class="item-amount">8,320,000원</div>
+</div>
+<div class="item-row">
+<div class="item-name">KODEX 200</div>
+<div class="item-amount">4,150,000원</div>
+</div>
+</div>
+</div>
+<div class="item-group">
+<div class="item-group-title" style="color: var(--danger);"><span class="status-dot-small danger"></span> 직접 팔아야 합니다 (1건)</div>
+<div class="item-card danger" id="hCritical">
+<div class="item-row">
+<div class="item-name">
+              ESR켄달스퀘어리츠
+              <span class="badge-text alert" style="margin-right:0; margin-left:6px; font-size:9px;">조치 필요</span>
+</div>
+<div class="item-amount">3,240,000원</div>
+</div>
+<div class="item-desc" id="hCriticalDesc">
+<strong style="color: #B91C1C;">※ 리츠는 실물이전이 불가한 상품입니다.</strong><br/>
+            펀드·예금과 달리 자동으로 처리되지 않습니다. 기존 금융사가 정한 기한 안에 <strong>직접 매도하지 않으면 이전 신청 자체가 취소됩니다.</strong><br/>
+            지금 팔면 예상 손익: <span class="val-down">-312,000원</span>
+</div>
+<div class="item-actions" id="hCriticalAction">
+<button class="btn btn-outline btn-small" onclick="EV.sell()" style="background: white; border-color: rgba(239,68,68,0.4); color: #B91C1C;">신청 전에 미리 매도하기</button>
+</div>
+</div>
+</div>
+<div class="item-group">
+<div class="item-group-title" style="color: var(--warning);"><span class="status-dot-small warning"></span> 자동으로 팔려서 현금으로 갑니다 (1건)</div>
+<div class="item-card">
+<div class="item-row">
+<div class="item-name">코어운용 멀티전략</div>
+<div class="item-amount">6,700,000원</div>
+</div>
+<div class="item-desc">
+            KB증권 미취급 상품 · 환매 결제 3영업일<br/>
+            별도 조치 없이 자동 환매됩니다. 지금 기준 예상 손익: <span class="val-up">+214,000원</span>
+</div>
+</div>
+</div>
+<div class="item-group">
+<div class="item-group-title" style="color: var(--danger);"><span class="status-dot-small danger"></span> 불이익이 있습니다 (1건)</div>
+<div class="item-card danger">
+<div class="item-row">
+<div class="item-name">정기예금 (만기 2027-03-11)</div>
+<div class="item-amount">10,000,000원</div>
+</div>
+<div class="item-desc">
+            KB증권이 취급하지 않아 실물이전이 불가합니다. 전액 이전 원칙상 <strong>이 예금만 남겨둘 수 없어</strong> 중도해지됩니다.<br/>
+            중도해지 이율 적용으로 <strong>-86,000원</strong>이 확정됩니다.
+          </div>
+</div>
+</div>
+<div class="rule-note" style="background:#FFFBEB; border-color: rgba(245,158,11,0.35); color:#92400E; margin-top: 4px;">
+<span class="badge-text alert" style="margin-top: 2px;">확인</span>
+<div style="flex:1;">
+신청 전에 <strong>체결되지 않은 주문이 남아 있으면 이전 신청이 취소될 수 있습니다.</strong> 미체결 주문과 예약주문을 먼저 정리해 주세요.
+</div>
+</div>
+<div class="bottom-area">
+<button class="btn btn-secondary" onclick="showToast('예약 상태로 저장되었습니다.')" style="flex: 1;">
+<span style="display: block; font-size: 16px; margin-bottom: 4px;">예약만 저장</span>
+<span style="font-size: 12px; font-weight: 500;">거래 제한 없음</span>
+</button>
+<button class="btn btn-primary" onclick="EV.submit()" style="flex: 1.2;">
+<span style="display: block; font-size: 16px; margin-bottom: 4px;">이전 신청하기</span>
+<span style="font-size: 12px; font-weight: 500; color: rgba(0,0,0,0.6);">신청 즉시 거래 제한</span>
+</button>
+</div>
+</div>
+</div>
+<div class="screen" id="screen-f1-2">
+<div class="header" style="border-bottom: none;">
+<span class="back-btn" onclick="nav('screen-f1-1')">〈</span>
+<span>이전 진행 현황</span>
+</div>
+<!-- Trading Window Banner -->
+<div class="status-banner warning" id="s2-banner">
+<div style="flex:1; min-width:0;">
+<div class="status-banner-text" id="s2-banner-title">거래가 제한된 상태입니다</div>
+<div class="status-banner-sub" id="s2-banner-sub">재개 예상: 8/31(월) ~ 9/2(수)</div>
+<div style="margin-top:10px;"><span class="cancel-chip open" id="s2-cancel-chip">오늘 안에는 취소 가능</span></div>
+</div>
+<div class="status-dday" id="s2-dday">D-5 영업일</div>
+</div>
+<div class="scroll-area">
+<div class="tracker-container">
+<!-- Pizza Tracker -->
+<div class="pizza-tracker">
+<div class="pizza-tracker-progress" id="pizza-progress" style="width: 50%;"></div>
+<div class="tracker-step done">
+<div class="tracker-icon">1</div>
+<div class="tracker-label">접수</div>
+</div>
+<div class="tracker-step done">
+<div class="tracker-icon">2</div>
+<div class="tracker-label">요청</div>
+</div>
+<div class="tracker-step active" id="tracker-step-3">
+<div class="tracker-icon">3</div>
+<div class="tracker-label">확인 중</div>
+</div>
+<div class="tracker-step" id="tracker-step-4">
+<div class="tracker-icon">4</div>
+<div class="tracker-label">송금중</div>
+</div>
+<div class="tracker-step" id="tracker-step-5">
+<div class="tracker-icon">5</div>
+<div class="tracker-label">완료</div>
+</div>
+</div>
+<!-- Current Step Focus Card -->
+<div class="focus-card">
+<div class="focus-header">
+<span class="focus-title" id="focus-title">3. 이관사 이전의사 확인</span>
+<span class="focus-time" id="focus-time">보통 1~3영업일</span>
+</div>
+<div class="focus-desc" id="focus-desc" style="word-break: keep-all; letter-spacing: -0.5px;">
+            이관사가 신청 고객 본인에게 (<strong>유선 통화 또는 문자</strong>)로 최종 확인을 합니다.<br/>
+<span style="color:#B91C1C;">※ 취소는 신청 당일 의사 확인 전까지만 가능합니다. (본인 확인이 안 되면 신청이 취소됩니다.)</span>
+</div>
+<div class="pnr-band" id="pnr-band">
+<span class="badge-text alert" style="margin-top: 1px;">중요</span>
+<div style="flex:1;">
+취소는 <strong>신청 당일에, 이 확인을 마치기 전까지만</strong> 가능합니다. 의사 확인이 끝나면 당일이라도 취소·철회할 수 없습니다.
+</div>
+</div>
+<div class="focus-action" id="focus-action">
+<div class="focus-action-title">
+<span class="badge-text info" style="margin-top: 2px;">알림</span>
+<span>이 번호로 전화가 옵니다</span>
+</div>
+<div style="font-size: 15px; font-weight: 800; color: var(--kb-dark);">1588-9999 국민은행</div>
+<button class="btn btn-primary btn-small" onclick="showToast('연락처에 번호를 저장합니다.')" style="width: 100%; box-shadow: none;">연락처에 번호 저장하기</button>
+</div>
+</div>
+</div>
+<div class="section-padding">
+<div class="track-header">
+<span>종목별 현금화 진행</span>
+<span style="color: var(--kb-blue);">3 / 6 확정</span>
+</div>
+<div class="track-list">
+<div class="track-item">
+<span class="status-dot-small success"></span>
+<div class="track-name">KODEX 미국S&amp;P500TR</div>
+<div class="track-status">이체 대상 확정</div>
+</div>
+<div class="track-item">
+<span class="status-dot-small success"></span>
+<div class="track-name">TIGER 미국나스닥100</div>
+<div class="track-status">이체 대상 확정</div>
+</div>
+<div class="track-item">
+<span class="status-dot-small success"></span>
+<div class="track-name">KODEX 200</div>
+<div class="track-status">이체 대상 확정</div>
+</div>
+<div class="track-item">
+<span class="status-dot-small danger"></span>
+<div class="track-name">ESR켄달스퀘어리츠</div>
+<div class="track-status" style="color:#B91C1C; font-weight:700;"><span style="font-size: 12px; letter-spacing: -0.5px;">직접 매도 필요 · 08-27까지</span></div>
+</div>
+<div class="track-item">
+<span class="status-dot-small active"></span>
+<div class="track-name">코어운용 멀티전략</div>
+<div class="track-status highlight"><span style="font-size: 12px; letter-spacing: -0.5px;">자동 환매 중 · 08-27 결제</span></div>
+</div>
+<div class="track-item">
+<span class="status-dot-small warning"></span>
+<div class="track-name">정기예금</div>
+<div class="track-status">중도해지 처리 · 현금화</div>
+</div>
+</div>
+</div>
+<!-- Restrictions -->
+<div class="restrict-box">
+<div class="restrict-title">이전 진행 중 제한되는 것</div>
+<div class="restrict-list">
+<div class="restrict-row">
+<span>새로 사기 (매수 · 상품가입)</span>
+<span class="restrict-val val-no">불가</span>
+</div>
+<div class="restrict-row">
+<span>팔기 (매도)</span>
+<span class="restrict-val val-no" id="restrict-sell">원칙 불가</span>
+</div>
+<div class="restrict-row">
+<span>예약주문 · 미체결 주문</span>
+<span class="restrict-val val-no">전건 취소</span>
+</div>
+<div class="restrict-row">
+<span>추가 납입 (입금)</span>
+<span class="restrict-val val-no">불가</span>
+</div>
+<div class="restrict-row">
+<span>출금 · 연금수령 신청</span>
+<span class="restrict-val val-no">불가</span>
+</div>
+<div class="restrict-row">
+<span>이전 신청 취소</span>
+<span class="restrict-val val-yes" id="restrict-cancel">당일 · 의사확인 전</span>
+</div>
+</div>
+<div class="restrict-exception">
+<span class="badge-text warn">예외</span>
+실물이전이 불가한 <strong>리츠 · 지분증권 등 상장상품은 기한 내에 직접 매도</strong>해야 합니다. 이 매도는 제한 대상이 아니며, 하지 않으면 이전 신청이 취소됩니다.
+</div>
+<div class="restrict-source">
+※ 제한 범위와 시작 시점은 <strong>기존 금융사(이관사)</strong>가 정합니다. 회사마다 다를 수 있어 KB증권이 실시간으로 확인할 수 없습니다. 정확한 내용은 이관사 안내를 확인해 주세요.
+</div>
+</div>
+<div class="info-box highlight" style="margin: 0 20px 24px; display: flex; align-items: flex-start; gap: 8px;">
+<span class="badge-text alert" style="margin-top: 2px;">주의</span>
+<div style="flex: 1; word-break: keep-all;">
+이전 기간에는 <strong>추가 납입이 막힙니다.</strong><br/>
+<span style="font-size: 13px; margin-top: 4px; display: inline-block; color: #B45309;">12월에 신청하면 그 해 세액공제 납입을 놓칠 수 있습니다. 연말 이전은 일정을 넉넉히 잡아 주세요.</span>
+</div>
+</div>
+</div>
+<!-- Natural Demo Advance Button -->
+</div>
+<div class="screen" id="screen-f1-3">
+<div class="header">
+<span class="back-btn" onclick="nav('screen-f1-2')">〈</span>
+<span>이전 완료</span>
+</div>
+<div class="scroll-area" style="background-color: var(--bg-color);">
+<div class="success-header">
+<div class="success-icon">✓</div>
+<div class="success-title">이전이 완료됐습니다</div>
+<div class="success-time">08월 28일 (금) 11:07 잔고 반영 확인</div>
+</div>
+<div class="summary-card">
+<div class="summary-total">최종 입고 금액</div>
+<div class="summary-amount">44,804,000원</div>
+<div class="summary-row">
+<div class="summary-label">
+            실물이전 3종 <span class="summary-sub">그대로 입고</span>
+</div>
+<div class="summary-val">24,950,000원</div>
+</div>
+<div class="summary-row">
+<div class="summary-label">
+            현금 입고 <span class="summary-sub">리츠·펀드·예금</span>
+</div>
+<div class="summary-val" style="color: var(--kb-blue);">19,854,000원</div>
+</div>
+<div class="summary-row">
+<div class="summary-label">
+            확정된 손익 <span class="summary-sub">현금화 3건</span>
+          </div>
+<div class="summary-val" style="color: var(--danger);">-184,000원</div>
+</div>
+</div>
+<div class="unlock-msg">
+        잔고 반영이 끝나 매매·입금이<br/>모두 재개되었습니다.
+      </div>
+<div class="info-box highlight" style="margin: 0 20px 24px; display: flex; align-items: flex-start; gap: 8px;">
+<span class="badge-text alert" style="margin-top: 2px;">주의</span>
+<div style="flex: 1; word-break: keep-all;">
+<strong>예수금 19,854,000원</strong>이 현금으로 남아있습니다.<br/>
+<span style="font-size: 13px; margin-top: 4px; display: inline-block; color: #B45309;">바로 상품을 매수하여 운용하지 않으면 수익이 발생하지 않습니다.</span>
+</div>
+</div>
+<div class="section-padding" style="padding-top: 0; display: flex; gap: 12px;">
+<button class="btn btn-secondary" onclick="showToast('상품 랭킹 화면으로 이동합니다.')" style="flex: 1;">다른 상품 보기</button>
+<button class="btn btn-primary" onclick="showToast('이전 종목 비중 그대로 주문 화면으로 이동합니다.')" style="flex: 1.5;">이전 종목 그대로 담기</button>
+</div>
+</div>
+</div><button class="demo-fab" id="demoAdvanceBtn" onclick="EV.nextStep()">&gt;</button>
+<div id="toast"></div>
+
+  <div class="screen" id="screen-f2-entry">
+<div class="header">
+<span class="back-btn" onclick="nav('screen-menu')">〈</span>
+<span>출금 관리</span>
+</div>
+<div class="scroll-area section-padding">
+<div class="title-large">연금저축 출금 관리</div>
+<p class="subtitle">필요하신 업무를 선택해주세요.</p>
+<div class="menu-list">
+<div class="menu-item" onclick="alert('기존 연금수령 플로우입니다.')">
+<div>
+<div class="menu-title">연금수령</div>
+<div class="menu-desc">만 55세 이상, 가입 5년 경과 시</div>
+</div>
+<div class="menu-icon">›</div>
+</div>
+<div class="menu-item" onclick="alert('기존 연금저축 해지 플로우입니다.')">
+<div>
+<div class="menu-title">연금저축 해지</div>
+<div class="menu-desc">계좌 전체를 해지하고 전액 출금</div>
+</div>
+<div class="menu-icon">›</div>
+</div>
+<div class="menu-item" onclick="nav('screen-f2-detail')">
+<div>
+<div class="menu-title">연금 외 수령 <span class="new-badge">NEW</span></div>
+<div class="menu-desc">중도인출, 비과세인출, 상속인 조회 등</div>
+</div>
+<div class="menu-icon">›</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Screen 1: 상세 화면 (연금 외 수령) -->
+<div class="screen" id="screen-f2-detail">
+<div class="header" style="border-bottom: none;">
+<span class="back-btn" onclick="nav('screen-menu')">〈</span>
+<span>연금 외 수령</span>
+</div>
+<div class="scroll-area">
+<div class="sub-header">
+<div class="account-selector">신연금저축 394-123-45</div>
+</div>
+<div class="tabs">
+<div class="tab active" onclick="switchTab('tab-self', this)">본인 · 중도인출</div>
+<div class="tab" onclick="switchTab('tab-other', this)">타 명의 · 상속</div>
+</div>
+<!-- Tab Content 1: 본인 (중도인출) -->
+<div class="tab-content active" id="tab-self">
+<div class="dark-card">
+<div class="dark-card-title">예상 인출가능 금액 <span class="info-icon">i</span></div>
+<div class="dark-card-amount">세후 <span class="highlight">15,950,000</span>원</div>
+<div class="dark-card-row">
+<span>총 평가금액(적립금)</span>
+<span>18,500,000원</span>
+</div>
+<div class="dark-card-row">
+<span>세금합계 <span class="info-icon">i</span></span>
+<span>2,550,000원</span>
+</div>
+</div>
+<div class="section-padding" style="padding-top: 0;">
+<!-- Trigger Button for Modal -->
+<div class="action-card" style="text-align: center; border-color: var(--border);">
+<h4 style="color: var(--text-primary); font-size: 16px; margin-bottom: 14px;">내 인출 순서와 세금은?</h4>
+<p style="word-break: keep-all; letter-spacing: -0.3px; text-align: center;">법령에 따른 인출 순서와 비과세 혜택을<br/>미리 확인해보세요.</p>
+<button class="btn btn-outline" onclick="openModal('tax-modal')">인출 항목 및 세금 시뮬레이션 보기</button>
+</div>
+<div class="notice-box" style="margin-top: 32px;">
+<input id="chk1" type="checkbox"/>
+<label for="chk1">본인은 「소득세법 시행령」 제 40조의 2제 6항에 따라 신연금 계좌의 중도인출을 신청합니다.</label>
+</div>
+</div>
+<div class="bottom-area">
+<button class="btn btn-primary" onclick="alert('출금이 진행됩니다.')">해지없이 출금하기</button>
+</div>
+</div>
+<!-- Tab Content 2: 타 명의 (상속 등) -->
+<div class="tab-content" id="tab-other">
+<div class="section-padding">
+<div class="section-title" style="font-size: 20px;">타 명의 계좌 조회 안내</div>
+<p class="subtitle" style="font-size: 14px;">상속 예정이거나 본인 명의가 아닌 계좌의 조회를 희망하시는 경우, 관련 법령에 따라 직접 조회가 제한됩니다.</p>
+<div class="action-card" style="border-color: var(--border);">
+<h4 style="color: var(--text-primary); font-size: 16px;">상속인 금융거래 조회</h4>
+<p>상속인의 편의를 위해 피상속인(사망자) 명의의 모든 금융채권 및 채무를 확인하실 수 있는 서비스입니다.</p>
+<button class="btn btn-outline" onclick="alert('금융감독원 상속인금융거래조회서비스로 이동합니다.')">금감원 상속인금융거래조회 바로가기</button>
+</div>
+<div class="action-card" style="background-color: #F1F5F9; border: none;">
+<h4 style="color: var(--text-primary); font-size: 16px;">KB증권 고객센터 안내</h4>
+<p>타 명의 계좌 인출 및 상속 절차에 대한 상세한 안내가 필요하신 경우 고객센터로 문의해 주시기 바랍니다.</p>
+<div style="font-size: 26px; font-weight: 800; color: var(--kb-dark); text-align: center; margin-top: 20px;">
+              📞 1588-6611
+            </div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- ==============================================
+       Modal: 인출 순서 및 세금 시뮬레이터 (v2 팝업) 
+       ============================================== -->
+<div class="modal-overlay" id="tax-modal">
+<div class="modal-content">
+<div class="modal-header">
+<div class="modal-title">인출 항목 및 세금 시뮬레이터</div>
+<div class="modal-close" onclick="closeModal('tax-modal')">×</div>
+</div>
+<div class="modal-body">
+<p class="subtitle" style="margin-bottom: 20px;">법령에 따라 아래 순서대로 인출되며, 항목별로 세금이 다르게 부과됩니다.</p>
+<div class="simulator-box" style="border: none; padding: 0; margin-bottom: 30px; box-shadow: none;">
+<div class="order-list">
+<!-- 1순위 -->
+<div class="order-item highlight">
+<div class="order-badge">1</div>
+<div class="order-content">
+<div class="order-name">
+                  과세제외금액
+                  <span class="tag-free">비과세</span>
+</div>
+<div class="order-desc" style="font-size:12px; color:var(--text-secondary); margin-top:4px;">
+                  세액공제를 받지 않은 원금
+                </div>
+<div class="order-amount">3,500,000 원</div>
+</div>
+</div>
+<!-- 2순위 -->
+<div class="order-item">
+<div class="order-badge">2</div>
+<div class="order-content">
+<div class="order-name">
+                  이연퇴직소득
+                </div>
+<div class="order-tax" style="margin-top:6px;">퇴직소득세 70~50%</div>
+<div class="order-amount" style="margin-top:16px;">0 원</div>
+</div>
+</div>
+<!-- 3순위 -->
+<div class="order-item">
+<div class="order-badge">3</div>
+<div class="order-content">
+<div class="order-name">
+                  과세대상소득
+                </div>
+<div class="order-desc" style="font-size:12px; color:var(--text-secondary); margin-top:6px; line-height:1.4;">
+                  세액공제 받은 원금 + 운용수익
+                </div>
+<div class="order-tax" style="margin-top:8px;">연금소득세 3.3~5.5%</div>
+<div class="order-amount" style="margin-top:16px;">12,450,000 원</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Action Card for Non-taxable -->
+<div class="action-card">
+<h4>💡 비과세 인출을 희망하시나요?</h4>
+<p>은행연합회에서 연금저축 한도를 조회 및 변경하신 후, 비과세용 추가 계좌를 개설하시면 세금 부담 없이 인출하실 수 있습니다.</p>
+<button class="btn btn-secondary" onclick="alert('은행연합회 한도 조회 페이지로 이동합니다.')">은행연합회 연금저축 한도 조회</button>
+<button class="btn btn-primary" onclick="alert('추가 계좌 개설 절차를 시작합니다.')" style="margin-top: 10px;">비과세 인출용 추가 계좌개설</button>
+</div>
+<!-- Modal Close Button at Bottom -->
+<button class="btn btn-outline" onclick="closeModal('tax-modal')" style="margin-top: 10px;">닫기</button>
+</div>
+</div>
+</div>
+</div>
+<script>
+  function nav(screenId) {
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    let targetScreen = document.getElementById(screenId);
+    if(targetScreen) {
+      targetScreen.classList.add('active');
+      let scrollArea = targetScreen.querySelector('.scroll-area');
+      if (scrollArea) scrollArea.scrollTop = 0;
+      
+      // 기능 1 화면일 때만 상단 시연용 탭(dev-nav) 표시
+      let devNav = document.querySelector('.dev-nav');
+      if (devNav) {
+        if (screenId.startsWith('screen-f1')) {
+          devNav.style.display = 'flex';
+          // 현재 선택된 탭 활성화 로직
+          let btnIdx = screenId.replace('screen-f1-', '');
+          document.querySelectorAll('.dev-nav button').forEach(b => b.classList.remove('active'));
+          let activeBtn = document.getElementById('nav-btn-' + btnIdx);
+          if (activeBtn) activeBtn.classList.add('active');
+        } else {
+          devNav.style.display = 'none';
+        }
+      }
+      
+      // 화면 2번(시뮬레이터) 재진입 시 탭 초기화
+      if (screenId === 'screen-f2-detail') {
+        let firstTab = document.querySelector('.tab[onclick*="tab-self"]');
+        if (firstTab) switchTab('tab-self', firstTab);
+      }
+      
+      let demoBtn = document.getElementById('demoAdvanceBtn');
+      if (demoBtn) {
+        demoBtn.style.display = (screenId === 'screen-f1-2') ? 'block' : 'none';
+      }
+    }
+  }
+  
+  function switchTab(tabId, element) {
+    document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+    element.classList.add('active');
+    
+    document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+    document.getElementById(tabId).classList.add('active');
+  }
+
+  function openModal(modalId) {
+    document.getElementById(modalId).classList.add('active');
+  }
+
+  function closeModal(modalId) {
+    document.getElementById(modalId).classList.remove('active');
+  }
+
+
+// ==================================================
+// Navigation & Toasts
+// ==================================================
+
+
+let tt, pt;
+function showToast(msg) {
+  const el = document.getElementById('toast');
+  el.innerHTML = msg;
+  el.classList.add('show');
+  clearTimeout(tt);
+  tt = setTimeout(() => el.classList.remove('show'), 3400);
+}
+
+function showPush(title, desc) {
+  const el = document.getElementById('pushNoti');
+  document.getElementById('pushTitle').textContent = title;
+  document.getElementById('pushDesc').innerHTML = desc;
+  el.classList.add('show');
+  clearTimeout(pt);
+  pt = setTimeout(() => el.classList.remove('show'), 4000);
+}
+
+// ==================================================
+// V1 7-Column Calendar Logic
+// ==================================================
+const daysInAug = [
+  {d:23, type:'weekend'}, {d:24, type:'start'}, {d:25, type:'locked locked-mid'}, {d:26, type:'locked locked-mid'}, 
+  {d:27, type:'locked locked-mid'}, {d:28, type:'locked locked-mid'}, {d:29, type:'weekend locked-mid'}
+];
+const daysInSep = [
+  {d:30, type:'weekend locked-mid'}, {d:31, type:'locked locked-mid'}, {d:1, type:'est locked-mid'}, 
+  {d:2, type:'est locked-mid'}, {d:3, type:'end'}, {d:4, type:''}, {d:5, type:'weekend'}
+];
+
+// If user clicks "sell", update calendar visual (pull it back to 8-28)
+const daysInAugFast = [
+  {d:23, type:'weekend'}, {d:24, type:'start'}, {d:25, type:'locked locked-mid'}, {d:26, type:'locked locked-mid'}, 
+  {d:27, type:'est locked-mid'}, {d:28, type:'end'}, {d:29, type:'weekend'}
+];
+const daysInSepFast = [
+  {d:30, type:'weekend'}, {d:31, type:''}, {d:1, type:''}, {d:2, type:''}, {d:3, type:''}, {d:4, type:''}, {d:5, type:'weekend'}
+];
+
+function renderCalendar(isFast) {
+  const cal = document.getElementById('calendarGrid');
+  let html = `
+    <div class="cal-month">8월</div>
+    <div class="cal-grid cal-header">
+      <div>일</div><div>월</div><div>화</div><div>수</div><div>목</div><div>금</div><div>토</div>
+    </div>
+    <div class="cal-grid">
+  `;
+  const aug = isFast ? daysInAugFast : daysInAug;
+  aug.forEach(o => { html += `<div class="cal-day ${o.type}">${o.d}</div>`; });
+  html += `</div><div class="cal-month" style="margin-top:12px;">9월</div><div class="cal-grid">`;
+  const sep = isFast ? daysInSepFast : daysInSep;
+  sep.forEach(o => { html += `<div class="cal-day ${o.type}">${o.d}</div>`; });
+  html += `</div>`;
+  cal.innerHTML = html;
+}
+renderCalendar(false);
+
+// ==================================================
+// Natural Scenario Flow (Internal UI logic)
+// ==================================================
+let demoStep = 0; // Tracks the state of Screen 2 for demo
+
+const EV = {
+  reset() {
+    this.isSold = false;
+    demoStep = 0;
+    renderCalendar(false);
+    let dur = document.getElementById('durationTxt1');
+    if(dur) dur.textContent = '예상 7~9영업일';
+    
+    let card = document.getElementById('hCritical');
+    if(card) {
+      card.className = 'item-card danger';
+      card.innerHTML = `<div class="item-row"><div class="item-name">ESR켄달스퀘어리츠<span class="badge-text alert" style="margin-right:0; margin-left:6px; font-size:9px;">조치 필요</span></div><div class="item-amount">3,240,000원</div></div><div class="item-desc" id="hCriticalDesc"><strong style="color: #B91C1C;">※ 리츠는 실물이전이 불가한 상품입니다.</strong><br/>펀드·예금과 달리 자동으로 처리되지 않습니다. 기존 금융사가 정한 기한 안에 <strong>직접 매도하지 않으면 이전 신청 자체가 취소됩니다.</strong><br/>지금 팔면 예상 손익: <span class="val-down">-312,000원</span></div><div class="item-actions" id="hCriticalAction"><button class="btn btn-outline btn-small" onclick="EV.sell()" style="background: white; border-color: rgba(239,68,68,0.4); color:#B91C1C;">신청 전에 미리 매도하기</button></div>`;
+    }
+    
+    let banner = document.getElementById('s2-banner');
+    if(banner) {
+      banner.className = 'status-banner warning';
+      document.getElementById('s2-banner-title').textContent = '거래가 제한된 상태입니다';
+      document.getElementById('s2-banner-sub').textContent = '재개 예상: 8/31(월) ~ 9/2(수)';
+      document.getElementById('s2-dday').textContent = 'D-5 영업일';
+      let chip = document.getElementById('s2-cancel-chip');
+      if(chip) { chip.textContent = '오늘 안에는 취소 가능'; chip.className = 'cancel-chip open'; }
+    }
+    
+    let restrictSell = document.getElementById('restrict-sell');
+    if(restrictSell) {
+      restrictSell.textContent = '원칙 불가';
+      restrictSell.className = 'restrict-val val-no';
+    }
+    let restrictCancel = document.getElementById('restrict-cancel');
+    if(restrictCancel) {
+      restrictCancel.textContent = '당일 · 의사확인 전';
+      restrictCancel.className = 'restrict-val val-yes';
+    }
+    
+    
+      let ft = document.getElementById('focus-title');
+      if(ft) ft.textContent = '3. 이관사 이전의사 확인';
+      let ftime = document.getElementById('focus-time');
+      if(ftime) ftime.textContent = '최장 1~3일';
+            let fdesc = document.getElementById('focus-desc');
+      if(fdesc) fdesc.innerHTML = '이관사가 신청 고객 본인에게 (<strong>유선 통화 또는 문자</strong>)로 최종 확인을 합니다.<br/><span style="color:#B91C1C;">※ 취소는 신청 당일 의사 확인 전까지만 가능합니다. (본인 확인이 안 되면 신청이 취소됩니다.)</span>';
+      let pband = document.getElementById('pnr-band'); if(pband) pband.style.display = '';
+      let fact = document.getElementById('focus-action'); if(fact) fact.style.display = '';
+
+      let pbox = document.getElementById('pnr-box-cancel'); if(pbox) pbox.style.display = 'flex';
+
+    let pizzaProgress = document.getElementById('pizza-progress');
+    if(pizzaProgress) {
+      pizzaProgress.style.width = '50%';
+      let step3 = document.getElementById('tracker-step-3');
+      if(step3) step3.className = 'tracker-step active';
+      let step4 = document.getElementById('tracker-step-4');
+      if(step4) step4.className = 'tracker-step';
+      let step5 = document.getElementById('tracker-step-5');
+      if(step5) step5.className = 'tracker-step';
+    }
+    
+    let demoAdv = document.getElementById('demoAdvanceBtn');
+    if(demoAdv) {
+      demoAdv.style.display = 'none';
+      demoAdv.innerHTML = '&gt;';
+    }
+    
+    showToast('시연 상태가 모두 초기화되었습니다.');
+    nav('screen-f1-0');
+  },
+
+  isSold: false,
+  sell() {
+    if(this.isSold) return;
+    this.isSold = true;
+    
+    // 1. Update Calendar Band visually
+    renderCalendar(true);
+    document.getElementById('durationTxt1').textContent = `예상 5~6영업일`;
+    
+    // 2. Update Card
+    const card = document.getElementById('hCritical');
+    card.className = 'item-card';
+    card.innerHTML = `
+      <div class="item-row">
+        <div class="item-name">ESR켄달스퀘어리츠 <span class="badge-text info" style="margin-left:6px;">사전 매도 완료</span></div>
+        <div class="item-amount">3,240,000원</div>
+      </div>
+      <div class="item-desc">
+        신청 전에 정리했으므로 <strong>이관사의 매도 대기 단계가 사라집니다.</strong><br>
+        예상 구간이 3영업일 앞당겨졌습니다.<br/>확정 손익: <span class="val-down">-312,000원</span>
+      </div>
+    `;
+    
+    showToast('실물이전 불가 종목을 미리 정리했습니다.<br>이전 일정을 다시 계산했습니다.');
+  },
+  
+  submit() {
+    nav('screen-f1-2');
+    setTimeout(() => {
+      showPush('이전 신청이 접수되었습니다', '지금부터 매매·입금·출금이 제한됩니다.<br/>취소는 오늘 중 이관사 의사확인 전까지만 가능합니다.');
+    }, 400);
+  },
+  
+  nextStep() {
+    if(demoStep === 0) {
+      // Advance to "Remit" state
+      const banner = document.getElementById('s2-banner');
+      banner.className = 'status-banner alert';
+      document.getElementById('s2-banner-title').textContent = '현재 모든 거래가 제한됩니다';
+      document.getElementById('s2-banner-sub').textContent = '잔고 반영 후 매매·입금이 재개됩니다';
+            document.getElementById('s2-dday').textContent = '당일 (D-Day)';
+      let pband = document.getElementById('pnr-band'); if(pband) pband.style.display = 'none';
+      let fact = document.getElementById('focus-action'); if(fact) fact.style.display = 'none';
+
+      document.getElementById('focus-title').textContent = '4. 송금 및 내역 확인';
+      document.getElementById('focus-time').textContent = '당일 (D-Day)';
+      document.getElementById('focus-desc').innerHTML = '이관사가 종목과 현금을 당사로 송금하고 있습니다.<br/>입고 내역이 정확한지 대조하고 잔고에 반영하는 중입니다.<br/><span style="color:#B91C1C; font-weight:700;">※ 현재 송금 진행 단계로, 이전 신청 취소 및 철회가 불가합니다.</span>';
+
+      
+      let chip1 = document.getElementById('s2-cancel-chip');
+      if(chip1) { chip1.textContent = '취소 불가 구간'; chip1.className = 'cancel-chip closed'; }
+      
+      document.getElementById('restrict-sell').textContent = '불가';
+      document.getElementById('restrict-sell').className = 'restrict-val val-no';
+      let rc = document.getElementById('restrict-cancel');
+      if(rc) { rc.textContent = '불가'; rc.className = 'restrict-val val-no'; }
+      
+      // Update Tracker
+      document.getElementById('pizza-progress').style.width = '75%';
+      document.getElementById('tracker-step-3').className = 'tracker-step done';
+      document.getElementById('tracker-step-4').className = 'tracker-step active';
+      
+      showPush('이관사 송금 통보를 받았습니다', '아직 완료가 아닙니다.<br/>잔고에 실제로 반영돼야 이전이 끝납니다.');
+      demoStep = 1;
+      document.getElementById('demoAdvanceBtn').innerHTML = '&gt;';
+    } else {
+      // Advance to "Settle" state
+      nav('screen-f1-3');
+      setTimeout(() => {
+        showPush('입고가 완료되었습니다', '예수금 19,854,000원이 반영되었습니다.<br>매매·입금이 모두 재개되었습니다.');
+      }, 400);
+      document.getElementById('demoAdvanceBtn').style.display = 'none';
+    }
+  }
+};
+</script>
+</body>
+</html>
