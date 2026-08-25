@@ -1,6 +1,6 @@
 # 03. 클래스 다이어그램 (CLD · Class Diagram)
 
-> 출처: `ai-place-srs-v1_0.md` §3.2 · §3.2.4 · §3.5
+> 출처: `ai-place-srs-v1_0.md` §4.1 · §4.3 · §4.6
 > 이 문서는 **코드가 어떤 책임 단위로 나뉘는가**를 정의한다. ERD가 "무엇을 저장하나"라면 이것은 "무엇이 계산하나"다.
 >
 > 사업 동태를 다루는 **인과 순환 다이어그램(Causal Loop Diagram)** 은 별도 문서 [`08-causal-loop.md`](08-causal-loop.md)에 있다.
@@ -436,10 +436,10 @@ classDiagram
 |---|---|
 | `BandCalculator` | FR-F1-03-02, 03, 05, 08, 10 · FR-F1-04-03 · FR-F1-05-01 ~ 03 |
 | `TradingWindowResolver` | FR-F1-03-07 · FR-F1-04-09 · D-4 |
-| `PensionLimitCalculator` | FR-F2-01-03 · FR-F2-03-01, 11 · §3.2.4.1 |
-| `WithdrawalOrderCalculator` | FR-F2-04-01, 03, 04 · §3.2.4.2 |
-| `TaxCalculator` | FR-F2-04-05, 06, 08, 11 · §3.2.4.3, §3.2.4.4 |
-| `UnavoidableReasonPolicy` | FR-F2-03-04, 05, 06, 07 · §3.2.4.6 |
+| `PensionLimitCalculator` | FR-F2-01-03 · FR-F2-03-01, 11 · §4.3.1 |
+| `WithdrawalOrderCalculator` | FR-F2-04-01, 03, 04 · §4.3.2 |
+| `TaxCalculator` | FR-F2-04-05, 06, 08, 11 · §4.3.3, §4.3.4 |
+| `UnavoidableReasonPolicy` | FR-F2-03-04, 05, 06, 07 · §4.3.6 |
 | `AuditLogger` | FR-F1-03-09 · S-1, S-2 |
 | `TaxRateProvider` | FR-F2-04-11 · M-1 · A-4 |
 | `NotificationService` | FR-F1-01-02, 03 · FR-F1-06-03 · C-1 |
