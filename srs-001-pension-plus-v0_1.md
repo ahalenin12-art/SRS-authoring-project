@@ -245,6 +245,58 @@ flowchart LR
     S1 --> S5
 ```
 
+**컴포넌트 다이어그램** — 배포 단위와 신뢰 경계
+
+```mermaid
+flowchart TB
+    subgraph Z1["신뢰 경계 1 · 공개망"]
+        UI["CLI-01 모바일 앱<br/>F1/F2 화면 모듈 + 공통 표기 컴포넌트"]
+    end
+    subgraph Z2["신뢰 경계 2 · DMZ"]
+        GW["API Gateway<br/>TLS 1.3 종단 · 본인 인증 · PII 마스킹"]
+    end
+    subgraph Z3["신뢰 경계 3 · 내부망"]
+        direction LR
+        subgraph APP["Application Layer (무상태 · 수평 확장)"]
+            A1["Transfer Service"]
+            A2["Withdrawal Service"]
+            A3["TradingWindow Service"]
+            A4["Notification Service"]
+        end
+        subgraph DOM["Domain Layer (법정 규칙 · 외부 I/O 없음)"]
+            D1["Band Calculator"]
+            D2["Limit · Order · Tax Engine"]
+            D3["UnavoidableReason Policy"]
+        end
+        subgraph BAT["Batch (단일 인스턴스 · 리더 선출)"]
+            B1["밴드 재계산 09:00"]
+            B2["잔고 확인 상시"]
+            B3["세율 신선도 일간"]
+        end
+        subgraph STO["Storage"]
+            T1[("이관 상태 저장소")]
+            T2[("연금 원장 · 읽기 전용")]
+            T3[("세율 설정 · 결제 규정 사전")]
+        end
+    end
+    subgraph Z4["신뢰 경계 4 · 감사"]
+        AU[("AUDIT_LOG · WORM<br/>10년 · 최소권한 · append only")]
+    end
+
+    UI -->|TLS 1.3| GW
+    GW -->|내부 인증| APP
+    APP --> DOM
+    APP --> STO
+    DOM --> T3
+    BAT --> APP
+    BAT --> STO
+    A1 -->|append only| AU
+```
+
+> **도메인 계층에 외부 I/O를 두지 않은 이유.** 연금수령한도·인출순서·세율은 법이 정한 것이라 우리가 바꿀 수 없다. 이 규칙을 화면이나 서비스에 흩어 놓으면 세법 개정 시 고칠 자리를 찾지 못한다. 한곳에 모으고 세율만 외부 설정으로 분리했다 (CON-05).
+>
+> **배치를 단일 인스턴스로 묶은 이유.** 밴드 재계산이 중복 실행되면 같은 날 값이 달라진다. REQ-FUNC-037이 당일 캐시 일관성을 요구하므로 구조로 막는다.
+
 ### 3.2 Client Applications
 
 | ID | 클라이언트 | 엔드포인트 | 화면 수 |
@@ -267,6 +319,82 @@ flowchart LR
 | F2-04 | 인출순서 결과 | US-10 |
 | F2-05 | 비과세 인출 관리 | US-11 |
 | F2-06 | 타명의 조회 | US-12 |
+
+**유스케이스 모델** — 액터가 시스템으로 무엇을 하는가
+
+```mermaid
+flowchart LR
+    CUST(["일반 고객<br/>PB 미배정"])
+    HEIR(["상속인"])
+    OPER(["세율 운영자"])
+
+    subgraph SYS["연금플러스"]
+        direction TB
+        subgraph G1["기능1 · 이수관"]
+            U1["UC-01 이관 조건 사전 확인<br/>US-02"]
+            U2["UC-02 이체 예약 저장<br/>US-03"]
+            U3["UC-03 이체 신청 전송<br/>US-03"]
+            U4["UC-04 진행 현황 조회<br/>US-01 · US-04"]
+            U5["UC-05 완료일 근거 확인<br/>US-05"]
+            U6["UC-06 이체 완료 확인<br/>US-06"]
+            U7["UC-07 병목 종목 사전 정리<br/>US-03"]
+        end
+        subgraph G2["기능2 · 인출 시뮬레이터"]
+            U8["UC-08 인출 가능액 조회<br/>US-07 · US-09"]
+            U9["UC-09 인출순서·세액 시뮬레이션<br/>US-10"]
+            U10["UC-10 비과세 인출 관리<br/>US-11"]
+            U11["UC-11 타명의·상속 조회<br/>US-12"]
+        end
+        subgraph G3["시스템 · 운영"]
+            U12["UC-12 매매 가능 여부 판정"]
+            U13["UC-13 진행 단계 갱신"]
+            U14["UC-14 세율표 갱신·차단"]
+        end
+    end
+
+    KSD(["EXT-03 예탁결제원"])
+    ORD(["EXT-04 주문 시스템"])
+    EXTL(["EXT-06/07 외부 기관"])
+
+    CUST --> U1 & U2 & U3 & U4 & U5 & U6 & U7
+    CUST --> U8 & U9 & U10
+    HEIR --> U11
+    OPER --> U14
+    KSD --> U13
+    ORD --> U12
+    U10 -.-> EXTL
+    U11 -.-> EXTL
+```
+
+**포함 · 확장 관계**
+
+```mermaid
+flowchart LR
+    U3["UC-03 이체 신청 전송"]
+    U2["UC-02 이체 예약 저장"]
+    U4["UC-04 진행 현황 조회"]
+    U5["UC-05 완료일 근거 확인"]
+    U7["UC-07 병목 종목 사전 정리"]
+    U8["UC-08 인출 가능액 조회"]
+    U9["UC-09 인출순서·세액 시뮬레이션"]
+    U10["UC-10 비과세 인출 관리"]
+
+    AUTH["본인 인증"]
+    BAND["완료일 밴드 산출"]
+    LIMIT["연금수령한도 계산"]
+
+    U3 -->|include| AUTH
+    U2 -->|include| BAND
+    U4 -->|include| BAND
+    U5 -->|include| BAND
+    U8 -->|include| LIMIT
+    U9 -->|include| LIMIT
+    U7 -.->|extend| U2
+    U5 -.->|extend| U4
+    U10 -.->|extend| U9
+```
+
+> `include`는 항상 실행되는 하위 절차다 — 전송하려면 본인 인증을 반드시 거친다 (REQ-FUNC-027). `extend`는 조건부 경로다 — 병목 종목이 있을 때만 사전 정리가 열린다.
 
 **화면 전이**
 
@@ -599,6 +727,7 @@ sequenceDiagram
 | REQ-NF-026 | 공제확인서 제출 전환율 | Operational | [REF-01 §2.2] | Should | 비과세 관리 화면 진입 대비 제출 **≥ 15%**. 월간 | A |
 | REQ-NF-027 | 한도 초과 인출률 | Operational | [REF-01 §2.2] | Should | 시뮬레이터 사용 코호트가 미사용 대비 **-30%p**, 절대치 **≤ 10%**. 월간 | A |
 | REQ-NF-028 | 현황판 재방문 정상 대역 | Operational | [REF-01 §2.2] | Could | 신청 1건당 조회 **1.5~4.0회**. 대역 이탈 시 문의율과 교차 확인 | A |
+| REQ-NF-041 | 사전 조회 → 신청 전환율 | Operational | [REF-01 §2.2] | Should | 유의사항·가입일 화면 조회 후 이체 신청 전환 **≥ 35%**. 측정 창구 GA 퍼널 `f1_02_view` → `f1_03_submit`, 주간 | A |
 | REQ-NF-029 | 이관 건당 푸시 발송 | Cost | [REF-01 §10.4] | Could | **≤ 8건**. 모니터링 `push_per_transfer` | A |
 | REQ-NF-030 | 이관 건당 마이데이터 호출 | Cost | [REF-01 §10.4] | Could | **≤ 12회**. 모니터링 `mydata_call_per_transfer` | A |
 | REQ-NF-031 | 건당 처리 원가 | Cost | [REF-01 §10.4] | Should | PB 응대 대비 **≤ 5%**. 모니터링 `unit_cost_ratio`, 월간 | A |
@@ -620,11 +749,11 @@ sequenceDiagram
 | Scalability | 1 |
 | Reliability | 7 |
 | Security | 7 |
-| Operational | 7 |
+| Operational | 8 |
 | Cost | 3 |
 | Usability | 4 |
 | Maintainability | 5 |
-| **합계** | **40** |
+| **합계** | **41** |
 
 ---
 
@@ -648,6 +777,31 @@ Story ↔ Requirement ID ↔ Test Case ID의 3방향 추적이다. 모든 REQ-FU
 | US-10 | 인출순서·세액 확인 | REQ-FUNC-085 ~ 101 | TC-US10-001 ~ 017 | F2-04 |
 | US-11 | 비과세 인출 관리 | REQ-FUNC-102 ~ 106 | TC-US11-001 ~ 005 | F2-05 |
 | US-12 | 타명의·상속 조회 | REQ-FUNC-107 ~ 110 | TC-US12-001 ~ 004 | F2-06 |
+
+**커버리지** — REQ-FUNC-001 ~ 110 전건이 Story 12개 중 하나에 연결된다. 미연결 요구사항 0건.
+
+**비기능 요구사항의 추적** — REQ-NF는 특정 Story가 아니라 **전 Story에 걸리는 품질 속성**이므로 Story 대신 적용 범위를 명시한다.
+
+| Requirement | 적용 범위 (Story) | Test Case ID | 검증 시점 |
+| --- | --- | --- | --- |
+| REQ-NF-001 ~ 003 | US-01, US-03, US-04 | TC-NF-001 ~ 003 | 부하 시험 (Phase 0) |
+| REQ-NF-004 ~ 005 | US-09, US-10 | TC-NF-004 ~ 005 | 부하 시험 (Phase 0) |
+| REQ-NF-006 | US-03, US-05 | TC-NF-006 | 장애 주입 시험 |
+| REQ-NF-007 | 전 Story | TC-NF-007 | 확장 시험 (Phase 2) |
+| REQ-NF-008 ~ 010 | 전 Story | TC-NF-008 ~ 010 | 가용성 모니터링 |
+| REQ-NF-011 | US-03, US-05 | TC-NF-011 | 장애 주입 시험 |
+| REQ-NF-012 | US-10 | TC-NF-012 | 배치 시험 |
+| REQ-NF-013 | US-03 | TC-NF-013 | 장애 주입 시험 |
+| REQ-NF-014 ~ 015 | US-03 | TC-NF-014 ~ 015 | 감사 로그 시험 |
+| REQ-NF-016 ~ 017 | 전 Story | TC-NF-016 ~ 017 | 보안 감사 |
+| REQ-NF-018 ~ 020 | US-09, US-11, US-12 | TC-NF-018 ~ 020 | 개인정보 점검 |
+| REQ-NF-021 | US-03, US-04 | TC-NF-021 | **일간 가드레일 집계** |
+| REQ-NF-022 ~ 028, 041 | US-01 ~ 12 | TC-NF-022 ~ 028, 041 | 지표 집계 (Phase 1~3) |
+| REQ-NF-029 ~ 031 | 전 Story | TC-NF-029 ~ 031 | 자원 사용량 집계 |
+| REQ-NF-032 ~ 035 | 전 Story | TC-NF-032 ~ 035 | 정적 검사 · 접근성 검사 |
+| REQ-NF-036 ~ 040 | US-09, US-10 | TC-NF-036 ~ 040 | 코드 리뷰 · 회귀 시험 |
+
+**커버리지** — REQ-NF-001 ~ 041 전건이 Test Case에 연결된다. 미연결 요구사항 0건.
 
 ### 5.2 Requirement → Module → Implementation Class
 
@@ -958,7 +1112,160 @@ erDiagram
     TAX_BUCKET_BREAKDOWN }o--|| TAX_RATE_CONFIG : "세율 참조"
 ```
 
-#### 6.2.4 마이데이터 제공 범위
+#### 6.2.4 도메인 클래스 모델
+
+Entity가 "무엇을 저장하는가"라면 클래스 모델은 "무엇이 계산하는가"다. 법정 산식을 담는 도메인 서비스와 값 객체를 분리한다.
+
+```mermaid
+classDiagram
+    class Transfer {
+        +String transferId
+        +TransferStatus status
+        +DateTime submittedAt
+        +DateTime settledAt
+        +List~Holding~ holdings
+        +LockWindow lockWindow
+        +TradingWindow tradingWindow
+        +submit(AuthResult) Result
+        +advanceTo(TransferStatus) Result
+        +markCompleted(DateTime) Result
+        +criticalPathHolding() Holding
+        +isCancellable() bool
+    }
+    class Holding {
+        +String code
+        +HoldingStatus status
+        +Money evalAmount
+        +Money realizedPl
+        +Integer settleDays
+        +bool isCriticalPath
+        +Layer layer
+        +hasSettleDays() bool
+    }
+    class LockWindow {
+        +DateTime startAt
+        +LocalDate endBandFrom
+        +LocalDate endBandTo
+        +Confidence confidence
+        +FallbackLevel fallbackLevel
+        +LocalDate cachedOn
+        +widthInBusinessDays() int
+        +enforceMinWidth() LockWindow
+    }
+    class TradingWindow {
+        +TradingWindowValue value
+        +Confidence confidence
+        +effectiveValue() TradingWindowValue
+        +allows(OrderType) bool
+    }
+    class Account {
+        +String accountId
+        +bool isOwnAccount
+        +Boolean joinDateInherited
+        +LocalDate pensionStartAppliedAt
+        +LocalDate firstReceiptAt
+        +limitPaymentYear() int
+        +reductionPaymentYear() int
+        +appliedJoinDate() LocalDate
+    }
+    class FundSourceBalance {
+        +Money taxFreeBucket1
+        +Money taxFreeBucket2
+        +Money taxFreeBucket3
+        +Money taxFreeBucket4
+        +Money deferredSeverance
+        +Money taxableIncome
+        +bool itemRaSeparated
+        +layer1Total(bool) Money
+        +canJudge15M() bool
+    }
+    class WithdrawalRequest {
+        +Money amount
+        +WithdrawalReason reason
+        +bool exceedsLimit
+        +bool isSimulationOnly
+        +List~TaxBucket~ breakdown
+    }
+    class TaxBucket {
+        +int layerNo
+        +int bucketNo
+        +Money amount
+        +Rate taxRate
+        +bool withinLimit
+        +Money lostReduction
+    }
+
+    Transfer "1" *-- "1..*" Holding
+    Transfer "1" *-- "1" LockWindow
+    Transfer "1" *-- "1" TradingWindow
+    Account "1" o-- "0..*" Transfer
+    Account "1" *-- "1" FundSourceBalance
+    Account "1" o-- "0..*" WithdrawalRequest
+    WithdrawalRequest "1" *-- "1..*" TaxBucket
+```
+
+**도메인 서비스와 정책**
+
+```mermaid
+classDiagram
+    class PensionLimitCalculator {
+        <<domain service>>
+        +calculate(Account) LimitResult
+        -applyFormula(Money, int) Money
+        -isNoLimitYear(int) bool
+        -adjustFor2013Rule(Account) int
+    }
+    class WithdrawalOrderCalculator {
+        <<domain service>>
+        +deduct(Money, FundSourceBalance, LimitResult) List~TaxBucket~
+        -deductLayer1(Money, FundSourceBalance) List~TaxBucket~
+        -splitByLimit(Money, LimitResult) Pair
+    }
+    class TaxCalculator {
+        <<domain service>>
+        +applyRates(List~TaxBucket~, Account) List~TaxBucket~
+        +lostReduction(List~TaxBucket~) Money
+        +judge15MillionRule(Account, List~TaxBucket~) JudgeResult
+    }
+    class BandCalculator {
+        <<domain service>>
+        +calculate(Transfer, List~Holding~) LockWindow
+        +recalculate(Transfer) LockWindow
+        -pickFallbackLevel(Transfer) FallbackLevel
+        -excludeUnknownProducts(List~Holding~) List~Holding~
+    }
+    class UnavoidableReasonPolicy {
+        <<domain policy>>
+        +isUnavoidable(WithdrawalReason) bool
+        +consumesLimit(WithdrawalReason) bool
+        +blocksIrpWithdrawal(WithdrawalReason, AccountType) bool
+    }
+    class TradingWindowResolver {
+        <<domain policy>>
+        +resolve(TransferStatus, Confidence) TradingWindowValue
+        -degradeIfLowConfidence(TradingWindowValue, Confidence) TradingWindowValue
+    }
+    class AuditLogger {
+        <<infrastructure>>
+        +recordSubmit(TransferId, DateTime, String, LockWindow) Result
+    }
+    class TaxRateProvider {
+        <<infrastructure>>
+        +rateFor(RateType, String) Rate
+        +isStale() bool
+    }
+
+    PensionLimitCalculator ..> WithdrawalOrderCalculator : LimitResult
+    WithdrawalOrderCalculator ..> TaxCalculator : List~TaxBucket~
+    UnavoidableReasonPolicy ..> PensionLimitCalculator : 한도 소진 여부
+    TaxCalculator ..> TaxRateProvider : 세율 조회
+```
+
+**계산 순서가 고정된 이유** — `PensionLimitCalculator → WithdrawalOrderCalculator → TaxCalculator`. 한도를 먼저 구해야 한도 내/초과를 가를 수 있고, 그래야 같은 재원에 다른 세율을 적용할 수 있다 (REQ-FUNC-089). 순서를 바꾸면 초과분에 5.5%를 매기는 사고가 난다.
+
+**`AuditLogger.recordSubmit()`이 `Result`를 반환하는 이유** — `void`가 아니다. 적재 실패 시 전송을 롤백해야 하므로(REQ-FUNC-029) 로그를 부수 효과로 둘 수 없다.
+
+#### 6.2.5 마이데이터 제공 범위
 
 | 필드군 | 제공 | 영향 |
 | --- | :---: | --- |
