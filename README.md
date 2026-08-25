@@ -63,7 +63,7 @@ KB증권 연금 통합 시연 프로토타입(V7)을 SRS(Software Requirements S
 ## 디렉터리 구조
 
 ```
-SRS-제작-프로젝트/
+SRS-authoring-project/
 ├── README.md
 └── source/
     └── 통합_프로토타입_최종_V7.html
