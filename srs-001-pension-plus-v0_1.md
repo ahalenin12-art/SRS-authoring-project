@@ -6,7 +6,7 @@ Date: 2026-08-25
 Standard: ISO/IEC/IEEE 29148:2018
 
 **System:** 연금플러스 — 연금계좌 이체 진행 조회 및 인출순서 시뮬레이터
-**Source of Truth:** [REF-01] `ai-place-prd-v1_0.md`
+**Source of Truth:** [REF-01] `ai-place-prd-v3_0.md`
 
 ---
 
@@ -111,7 +111,7 @@ In/Out이 같은 대상을 다르게 자르는 4지점이다.
 
 | ID | 문서 | 용도 |
 | --- | --- | --- |
-| **REF-01** | `ai-place-prd-v1_0.md` — 연금플러스 PRD v3.0 | **본 SRS의 유일한 비즈니스·기능 요구 원천** |
+| **REF-01** | `ai-place-prd-v3_0.md` — 연금플러스 PRD v3.0 | **본 SRS의 유일한 비즈니스·기능 요구 원천** |
 | REF-02 | `통합_프로토타입_최종_V7.html` — TO-BE 프로토타입 | 화면 구성·계산 검증값 |
 | REF-03 | AS-IS 화면 흐름 문서 (실캡처 10장) | 갭 분석 근거 |
 | REF-04 | 소득세법 §14③9호, §20조의3, §44②, §64조의4, §129①5호의3 | 세율·과세 구분 |
@@ -709,6 +709,11 @@ sequenceDiagram
 | REQ-NF-008 | 월 가용성 | Reliability | [REF-01 §10.2] | Must | **≥ 99.5%** (연간 다운타임 ≤ 43.8시간). 모니터링 `uptime_monthly` | A |
 | REQ-NF-009 | 영업시간 가용성 | Reliability | [REF-01 §10.2] | Must | 영업일 08~18시 **≥ 99.9%**. 5분 연속 헬스체크 실패 시 알람 | A |
 | REQ-NF-010 | 복구 목표 | Reliability | [REF-01 §10.2] | Should | **RPO ≤ 5분, RTO ≤ 30분**. 이관 상태·감사 로그는 RPO 0 (동기 복제) | T |
+| REQ-NF-042 | 전문 재처리 (Replay) | Reliability | [REF-01 §8.7 RC-2] | Must | 수신 전문 원문을 보존하고 **상태를 재생할 수 있다.** 처리 실패 전문도 폐기하지 않는다 | T |
+| REQ-NF-043 | 정합성 조정 (Reconciliation) | Reliability | [REF-01 §8.7 RC-3] | Must | 시간별 배치가 `TRANSFER` ↔ `TRADING_WINDOW` ↔ `STAGE_EVENT` 3자 일치를 검사한다. 불일치 시 **보수적 방향으로 보정**하고 이력을 남긴다 | T |
+| REQ-NF-044 | 계산 설정 롤백 | Reliability | [REF-01 ADR-008] | Must | 세율 설정을 **이전 버전으로 즉시 되돌릴 수 있다.** 롤백 시 영향받는 계산 결과를 식별할 수 있다 | T |
+| REQ-NF-045 | 전문 멱등 처리 | Reliability | [REF-01 §8.7 ID-2] | Must | 동일 멱등 키 전문은 **최초 1회만 처리**한다. 중복 수신 시 상태 변경 0건 | T |
+| REQ-NF-046 | 금지 전이 차단 | Reliability | [REF-01 §8.6.4] | Must | §6.6.2 매트릭스에 정의되지 않은 상태 전이는 **거부하고 알람**한다. 발생 시 데이터 정합성 오류로 분류 | T |
 | REQ-NF-011 | 마이데이터 장애 시 폴백 | Reliability | [REF-01 §8.5] | Must | 폴백 사다리 ③단계로 **자동 강등**. ④단계 진입 시 알람. 빈 화면·무한 로딩 금지 | T |
 | REQ-NF-012 | 세율표 노후화 차단 | Reliability | [REF-01 ADR-008] | Must | 시행일 **+21일 사전 경고, +30일 계산 결과 노출 차단**. 모니터링 `tax_table_age_days` | T |
 | REQ-NF-013 | 전송 중 상태 보존 | Reliability | [REF-01 F1-03] | Must | 서버 오류 시 `DRAFT` **보존율 100%**. 모니터링 `submit_orphan_count`, 중간 상태 1건이라도 발생 시 알람 | T |
@@ -747,13 +752,13 @@ sequenceDiagram
 | --- | :---: |
 | Performance | 6 |
 | Scalability | 1 |
-| Reliability | 7 |
+| Reliability | 12 |
 | Security | 7 |
 | Operational | 8 |
 | Cost | 3 |
 | Usability | 4 |
 | Maintainability | 5 |
-| **합계** | **41** |
+| **합계** | **46** |
 
 ---
 
@@ -761,7 +766,31 @@ sequenceDiagram
 
 Story ↔ Requirement ID ↔ Test Case ID의 3방향 추적이다. 모든 REQ-FUNC는 하나 이상의 Story에, 모든 Story는 하나 이상의 Test Case에 연결된다.
 
-### 5.1 Story → Requirement → Test Case
+### 5.1 Requirement Traceability Matrix (RTM)
+
+사업 목표에서 지표까지 한 줄로 추적한다. **왜 이 요구사항을 만드는가 → 무엇으로 검증하는가 → 어떤 데이터가 필요한가**를 하나의 행으로 연결한다.
+
+| # | Business Goal | User | Requirement | Acceptance Criteria | Data | NFR | Metric |
+| :---: | --- | --- | --- | --- | --- | --- | --- |
+| RTM-01 | 상태 확인 문의 감소 | 서동현 (US-01·04) | REQ-FUNC-001 ~ 007, 033 ~ 050 | §4.1 해당 행 G/W/T | `TRANSFER` · `STAGE_EVENT` | REQ-NF-001 ~ 003 | 상태 확인 문의율 ≤ 0.3건/건 |
+| RTM-02 | 완료일 신뢰 확보 | 서동현 (US-05) | REQ-FUNC-017, 018, 051 ~ 056 | §4.1 해당 행 G/W/T | `LOCK_WINDOW` · `SETTLE_DAYS_DICT` | REQ-NF-011, 039 | 밴드 적중률 ≥ 85% |
+| RTM-03 | 잠금 구간 통제감 제공 | 서동현 (US-03) | REQ-FUNC-020 ~ 032 | §4.1 해당 행 G/W/T | `TRANSFER.transfer_status` · `TRADING_WINDOW` | REQ-NF-013, 045 | 예약 → 전송 전환율 ≥ 60% |
+| RTM-04 | 매매 오표시 사고 차단 | 서동현 (US-03·04) | REQ-FUNC-025, 046 | §4.1 해당 행 G/W/T | `TRADING_WINDOW.confidence` | REQ-NF-021, 043 | 주문 거부율 ≤ 0.1% (가드레일) |
+| RTM-05 | 전송 의사표시 입증 | 서동현 (US-03) | REQ-FUNC-027 ~ 030 | §4.1 해당 행 G/W/T | `AUDIT_LOG` | REQ-NF-014 ~ 015 | 감사 로그 누락률 0% |
+| RTM-06 | 완료 오표시 방지 | 서동현 (US-06) | REQ-FUNC-057 ~ 062 | §4.1 해당 행 G/W/T | `TRANSFER.settled_at` | REQ-NF-043 | 완료 오표시 0건 |
+| RTM-07 | 인출 경로 발견성 | 오정숙 (US-07·08) | REQ-FUNC-065 ~ 071 | §4.1 해당 행 G/W/T | `ACCOUNT` | REQ-NF-004 | 사전 조회 → 신청 전환율 ≥ 35% |
+| RTM-08 | 세액 이해 및 시점 조정 | 오정숙 (US-09·10) | REQ-FUNC-072 ~ 101 | §4.1 해당 행 G/W/T | `FUND_SOURCE_BALANCE` · `TAX_BUCKET_BREAKDOWN` | REQ-NF-004 ~ 005, 038 | 한도 초과 인출률 미사용 대비 -30%p |
+| RTM-09 | 세율 오안내 차단 | 오정숙 (US-10) | REQ-FUNC-097, 098 | §4.1 해당 행 G/W/T | `TAX_RATE_CONFIG` | REQ-NF-012, 036, 044 | 세율표 경과일 ≤ 30일 |
+| RTM-10 | 서류 한 장의 절세 실현 | 오정숙 (US-11) | REQ-FUNC-087, 088, 102 ~ 106 | §4.1 해당 행 G/W/T | `DEDUCTION_CERT` | REQ-NF-038 | 공제확인서 제출 전환 ≥ 15% |
+| RTM-11 | 상속 절차 진입 지원 | 최은호 (US-12) | REQ-FUNC-107 ~ 110 | §4.1 해당 행 G/W/T | — (딥링크) | REQ-NF-020 | 외부 링크 클릭 후 이탈률 |
+| RTM-12 | 거절 사유 이해 가능화 | 강태섭 (US-04) | REQ-FUNC-042 ~ 043 | §4.1 해당 행 G/W/T | `TRANSFER.transfer_status` | REQ-NF-032 | 거절 건 재문의율 |
+| RTM-13 | 오해로 인한 진입 차단 해소 | 김상철 (US-01) | REQ-FUNC-006 | §4.1 해당 행 G/W/T | — (정적 문구) | REQ-NF-032 | 사전 조회 진입률 |
+| RTM-14 | 규제 지위 유지 | 전 사용자 | REQ-FUNC-045, 082, 086, 093 ~ 096, 099 ~ 100, 103, 106 | §4.1 해당 행 G/W/T | `WITHDRAWAL_REQUEST.is_simulation_only` | REQ-NF-032, 040 | 코드 리뷰 미통과 머지 0건 |
+| RTM-15 | 캐시백 없는 물량 방어 | 전 사용자 | 전 REQ-FUNC | 전 AC | 전 Entity | REQ-NF-031 | 건당 원가 PB 대비 ≤ 5% |
+
+> **RTM-15가 최종 판정이다.** 나머지 14개 목표가 모두 달성돼도 건당 원가가 PB 응대 대비 5%를 넘으면 사업 논리(ASM-05)가 성립하지 않는다. Phase 3까지 관측되지 않으므로 그 전까지는 선행 지표(RTM-01·02)로 방향을 읽는다.
+
+### 5.2 Story → Requirement → Test Case
 
 | Story | Story 요약 | Requirement ID | Test Case ID | 화면 |
 | --- | --- | --- | --- | --- |
@@ -803,7 +832,7 @@ Story ↔ Requirement ID ↔ Test Case ID의 3방향 추적이다. 모든 REQ-FU
 
 **커버리지** — REQ-NF-001 ~ 041 전건이 Test Case에 연결된다. 미연결 요구사항 0건.
 
-### 5.2 Requirement → Module → Implementation Class
+### 5.3 Requirement → Module → Implementation Class
 
 | Requirement 군 | Module | Implementation Class |
 | --- | --- | --- |
@@ -831,7 +860,7 @@ Story ↔ Requirement ID ↔ Test Case ID의 3방향 추적이다. 모든 REQ-FU
 | REQ-NF-032 ~ 035 | 공통 표기 컴포넌트 | `DisplayRuleEnforcer` · `AccessibilityChecker` |
 | REQ-NF-036 ~ 040 | 전 서비스 | `TaxRateProvider` · `CalculationVersionRegistry` |
 
-### 5.3 Constraint → Requirement
+### 5.4 Constraint → Requirement
 
 제약이 어느 요구사항으로 구현되는지의 역추적이다.
 
@@ -979,7 +1008,62 @@ Story ↔ Requirement ID ↔ Test Case ID의 3방향 추적이다. 모든 REQ-FU
 | `TAX_BUCKET_BREAKDOWN` | 재원별 차감 내역 | 한도 내/초과 분리 |
 | `TAX_RATE_CONFIG` | 세율 설정 | 시행일 메타. D+30 초과 시 계산 차단 |
 
-#### 6.2.2 주요 Entity 필드 정의
+#### 6.2.2 Data Contract — 핵심 필드 생애주기
+
+필드 목록을 넘어 **어디가 진실이고, 언제 갱신되고, 얼마나 보관하는지**를 명시한다. 금융·세액 데이터는 수집 → 처리 → 저장 → 사용 → 로그 → 보존 → 파기 전 구간이 정의되어야 한다.
+
+| Field | Type | Nullable | Source of Truth | Update Trigger | Retention | 파기 |
+| --- | --- | :---: | --- | --- | --- | --- |
+| `transfer_status` | enum | N | `TRANSFER` (자사) | 전문 수신 · 사용자 액션 | **10년** | 보존기간 경과 후 자동 삭제 |
+| `submitted_at` | timestamp | Y | `TRANSFER` | 전송 확정 1회 | **10년** | 상동 |
+| `settled_at` | timestamp | Y | **수관 원장** (EXT-01) | 잔고 반영 확인 배치 | **10년** | 상동 |
+| `critical_path_holding_id` | varchar | Y | Band Calculator (서버 산출) | 밴드 재계산 시 | 이관 완료 + 1년 | 자동 삭제 |
+| `end_band_from` / `end_band_to` | date | N | Band Calculator | 전문 수신 · 09:00 배치 | 이관 완료 + 1년 | 자동 삭제 |
+| `confidence` | decimal(4,3) | N | Band Calculator | 재계산 시 | **90일** | 자동 삭제 |
+| `fallback_level` | tinyint | N | Band Calculator | 재계산 시 | 이관 완료 + 1년 | 자동 삭제 |
+| `trading_window.value` | enum | N | `TRADING_WINDOW` | 상태 전이 · 정합성 배치 | 이관 완료 + 1년 | 자동 삭제 |
+| `settle_days` | int | Y | `SETTLE_DAYS_DICT` (실측) | 분기별 실측 갱신 | 상시 (마스터) | 상품 폐지 후 3년 |
+| `pension_start_applied_at` | date | Y | **연금 원장** (EXT-01) | 개시 신청 시 1회 | 계좌 유지 기간 | 계좌 해지 + 5년 |
+| `first_receipt_at` | date | Y | **연금 원장** (EXT-01) | 최초 실제 수령 시 1회 | 계좌 유지 기간 | 계좌 해지 + 5년 |
+| `tax_free_bucket1~4` | decimal(18,0) | N | **연금 원장** (EXT-01) | 납입 · 인출 · 확인서 등록 | 계좌 유지 기간 | 계좌 해지 + 5년 |
+| `deferred_severance` | decimal(18,0) | N | **연금 원장** (EXT-01) | 퇴직금 입금 · 인출 | 계좌 유지 기간 | 계좌 해지 + 5년 |
+| `item_ra_separated` | boolean | N | **연금 원장** (EXT-01) | 원장 구조 변경 시 | 계좌 유지 기간 | 계좌 해지 + 5년 |
+| `tax_rate` | decimal(6,4) | N | `TAX_RATE_CONFIG` | **세율 버전 변경 시** | 계산 로그와 동일 | 계산 로그 파기 시 |
+| `effective_from` | date | N | `TAX_RATE_CONFIG` | 세법 개정 반영 시 | 영구 (법령 이력) | 파기하지 않음 |
+| `withdrawal_amount` | decimal(18,0) | N | `WITHDRAWAL_REQUEST` | 시뮬레이션 실행 시 | **90일** | 자동 삭제 |
+| `tax_bucket_breakdown` | 복합 | N | Calculation Engine | 시뮬레이션 실행 시 | **90일** | 자동 삭제 |
+| `pressed_at` / `auth_method` | timestamp / varchar | N | `AUDIT_LOG` (WORM) | 전송 1회 | **10년** | 보존기간 경과 후 파기 |
+| `shown_band_from` / `shown_band_to` | date | N | `AUDIT_LOG` (WORM) | 전송 1회 (스냅샷) | **10년** | 상동 |
+
+**보존 정책 근거**
+
+| 구분 | 기간 | 근거 |
+| --- | :---: | --- |
+| 이관 거래 기록 · 감사 로그 | 10년 | 상법상 상사채권 소멸시효 5년 + 분쟁 대응 여유 |
+| 계좌 원장 파생 데이터 | 계좌 해지 + 5년 | 전자금융거래법 기록 보존 |
+| 시뮬레이션 결과 | 90일 | **실제 거래가 아니므로 장기 보존 불필요.** 최소 수집 원칙 |
+| 밴드 산출 중간값 (`confidence`) | 90일 | 지표 집계 후 가치 소멸 |
+| 세율 시행일 이력 | 영구 | 과거 계산의 근거를 복원할 수 있어야 함 |
+
+> **시뮬레이션 결과를 90일로 짧게 잡은 이유.** `WITHDRAWAL_REQUEST`는 실제 출금이 아니라 계산 기록이다(CON-15). 개인의 인출 계획은 민감 정보이므로 최소 수집·최소 보존 원칙을 적용한다. 다만 지표 집계에 필요한 **익명 집계값**은 별도 보관한다.
+
+**데이터 생애주기**
+
+```mermaid
+flowchart LR
+    C["수집<br/>원장 조회 · 마이데이터 · 전문 수신"] --> P["처리<br/>밴드 산출 · 세액 계산"]
+    P --> S["저장<br/>이관 상태 · 시뮬레이션 결과"]
+    S --> U["사용<br/>화면 렌더 · 주문 판정"]
+    U --> L["로그<br/>감사 로그 WORM · 지표 집계"]
+    L --> R["보존<br/>10년 / 5년 / 90일"]
+    R --> D["파기<br/>보존기간 경과 시 자동"]
+
+    P -.->|"타사 계좌: 세액 미산출"| S
+    S -.->|"정합성 배치"| S
+    L -.->|"익명 집계값만 유지"| R
+```
+
+#### 6.2.3 주요 Entity 필드 정의
 
 **`ACCOUNT`**
 
@@ -1091,7 +1175,7 @@ Story ↔ Requirement ID ↔ Test Case ID의 3방향 추적이다. 모든 REQ-FU
 | | `within_limit` | BOOLEAN | 한도 내 여부 |
 | | `lost_reduction` | DECIMAL(18,0) | 초과로 잃은 감면액 |
 
-#### 6.2.3 Entity 관계
+#### 6.2.4 Entity 관계
 
 ```mermaid
 erDiagram
@@ -1112,7 +1196,7 @@ erDiagram
     TAX_BUCKET_BREAKDOWN }o--|| TAX_RATE_CONFIG : "세율 참조"
 ```
 
-#### 6.2.4 도메인 클래스 모델
+#### 6.2.5 도메인 클래스 모델
 
 Entity가 "무엇을 저장하는가"라면 클래스 모델은 "무엇이 계산하는가"다. 법정 산식을 담는 도메인 서비스와 값 객체를 분리한다.
 
@@ -1265,7 +1349,7 @@ classDiagram
 
 **`AuditLogger.recordSubmit()`이 `Result`를 반환하는 이유** — `void`가 아니다. 적재 실패 시 전송을 롤백해야 하므로(REQ-FUNC-029) 로그를 부수 효과로 둘 수 없다.
 
-#### 6.2.5 마이데이터 제공 범위
+#### 6.2.6 마이데이터 제공 범위
 
 | 필드군 | 제공 | 영향 |
 | --- | :---: | --- |
@@ -1276,11 +1360,132 @@ classDiagram
 
 `가입자부담금`/`사용자부담금` 구분은 재원 구분의 대체물이 될 수 없다. 이연퇴직소득은 사용자부담금과 다른 개념이며, 세액공제 수령 여부는 어느 필드에도 담기지 않는다. [REF-13]
 
-### 6.3 Detailed Interaction Models
+### 6.3 State Transition & Exception Handling
+
+[REF-01 §8.6 · §8.7]의 명세를 요구사항 관점으로 옮긴다. 정상 흐름보다 **이상 흐름이 사고를 만든다.**
+
+#### 6.3.1 상태 전이 매트릭스
+
+**`ACTION_REQUIRED`의 성격** — `VERIFYING`을 **대체하는 독립 상태**다. sub-status가 아니다. 고객이 할 일이 있는 구간과 기다리는 구간은 화면이 완전히 다르고, sub-status로 두면 `transfer_status`만으로 알림 발송 여부를 판정할 수 없다. 반대로 **`delayed_flag`는 플래그**다 — 지연은 단계가 뒤로 가는 것이 아니라 같은 단계에 오래 머무는 것이다.
+
+| # | 현재 상태 | Event | 다음 상태 | 허용 | 실패 시 | Requirement |
+| :---: | --- | --- | --- | :---: | --- | --- |
+| T-01 | (없음) | 예약 저장 | `DRAFT` | O | 저장 실패 응답 | REQ-FUNC-020 |
+| T-02 | `DRAFT` | 전송 확정 (인증 + 감사 로그 성공) | `RECEIVED` | O | **`DRAFT` 유지** | REQ-FUNC-028 ~ 030 |
+| T-03 | `DRAFT` | 예약 폐기 | (삭제) | O | `DRAFT` 유지 | REQ-FUNC-021 |
+| T-04 | `RECEIVED` | 이체 요청 전문 송신 성공 | `REQUESTED` | O | 재시도 큐 | REQ-FUNC-030 |
+| T-05 | `REQUESTED` | ③ 전문 수신 | `VERIFYING` | O | 지연 감지 | REQ-FUNC-054 |
+| T-06 | `VERIFYING` | ④ 전문 수신 | `LIQUIDATING` | O | 지연 감지 | REQ-FUNC-054 |
+| T-07 | `LIQUIDATING` | ⑤ 전문 수신 | `REMITTING` | O | 현재 상태 유지 | REQ-FUNC-057 |
+| T-08 | `REMITTING` | 잔고 반영 확인 | `COMPLETED` | O | **`REMITTING` 유지** | REQ-FUNC-057 |
+| T-09 | `VERIFYING` | 본인 확인 미완 | `ACTION_REQUIRED` | O | `VERIFYING` 유지 | REQ-FUNC-038 ~ 039 |
+| T-10 | `ACTION_REQUIRED` | 통화 완료 · 현금화 미착수 | `VERIFYING` | O | 현재 상태 유지 | REQ-FUNC-040 |
+| T-11 | `ACTION_REQUIRED` | 통화 완료 + ④ 전문 동시 수신 | `LIQUIDATING` | **조건부** | ④ 유효성 확인 후 | REQ-FUNC-040 |
+| T-12 | `ACTION_REQUIRED` | 신청 후 5영업일 경과 | `CANCELED_NO_VERIFY` | O | 배치 재시도 (최대 3회) | REQ-FUNC-038 |
+| T-13 | `REQUESTED` · `VERIFYING` | 이관사 거절 | `REJECTED` | O | 수동 확인 큐 | REQ-FUNC-042 |
+| T-14 | `LIQUIDATING` | 일부 종목 이전 불가 | `PARTIAL_BLOCKED` | O | `LIQUIDATING` 유지 | REQ-FUNC-044 |
+| T-15 | `PARTIAL_BLOCKED` | 고객 선택 완료 | `LIQUIDATING` | O | 현재 상태 유지 | REQ-FUNC-044 |
+| T-16 | `RECEIVED` · `REQUESTED` | 당일 · 의사확인 전 취소 | `CANCELED_BY_USER` | **조건부** | 의사확인 완료 시 거부 | REQ-FUNC-021 |
+
+**금지 전이** — 아래는 어떤 이벤트로도 발생해서는 안 된다. 발생 시 정합성 오류로 알람한다 (REQ-NF-046).
+
+| 금지 전이 | 이유 |
+| --- | --- |
+| `COMPLETED` → 임의 상태 | 종결 상태 |
+| `REJECTED` → `VERIFYING` 이후 | 재신청은 신규 `transfer_id`로만 |
+| `CANCELED_*` → 임의 상태 | 종결 상태 |
+| `DRAFT` → `REQUESTED` 이상 | `RECEIVED` 건너뛰기 = 감사 로그 누락 |
+| 역방향 전이 (단계 번호 감소) | E-02로 처리 |
+
+```mermaid
+stateDiagram-v2
+    [*] --> DRAFT : T-01
+    DRAFT --> RECEIVED : T-02
+    DRAFT --> [*] : T-03
+    RECEIVED --> REQUESTED : T-04
+    REQUESTED --> VERIFYING : T-05 ③
+    VERIFYING --> LIQUIDATING : T-06 ④
+    LIQUIDATING --> REMITTING : T-07 ⑤
+    REMITTING --> COMPLETED : T-08 잔고 반영
+    COMPLETED --> [*]
+    VERIFYING --> ACTION_REQUIRED : T-09
+    ACTION_REQUIRED --> VERIFYING : T-10
+    ACTION_REQUIRED --> LIQUIDATING : T-11 조건부
+    ACTION_REQUIRED --> CANCELED_NO_VERIFY : T-12
+    REQUESTED --> REJECTED : T-13
+    VERIFYING --> REJECTED : T-13
+    LIQUIDATING --> PARTIAL_BLOCKED : T-14
+    PARTIAL_BLOCKED --> LIQUIDATING : T-15
+    RECEIVED --> CANCELED_BY_USER : T-16 조건부
+    REQUESTED --> CANCELED_BY_USER : T-16 조건부
+    REJECTED --> [*]
+    CANCELED_NO_VERIFY --> [*]
+    CANCELED_BY_USER --> [*]
+```
+
+#### 6.3.2 멱등성 원칙
+
+| # | 원칙 | Requirement |
+| :---: | --- | --- |
+| ID-1 | 수신 전문의 멱등 키는 `(transfer_id, stage_no, 이관사 전문 일련번호)` | REQ-NF-045 |
+| ID-2 | 동일 멱등 키는 **최초 1회만 처리.** 이후는 수신 로그만 적재 | REQ-NF-045 |
+| ID-3 | §6.3.1에 정의되지 않은 전이는 **거부 + 알람** | REQ-NF-046 |
+| ID-4 | 재시도는 지수 백오프 (1분 → 5분 → 15분, 최대 3회) | REQ-NF-042 |
+| ID-5 | 고객 요청 API는 **클라이언트 생성 요청 ID**를 멱등 키로 받는다 | REQ-FUNC-030 |
+
+#### 6.3.3 예외 처리 매트릭스
+
+| # | 케이스 | 감지 | 처리 | 고객 화면 |
+| :---: | --- | --- | --- | --- |
+| E-01 | 동일 전문 2회 수신 | 멱등 키 중복 | **무시.** 수신 로그만 적재 | 변화 없음 |
+| E-02 | 역순 전문 수신 (④ 후 ③) | `stage_no` < 현재 단계 | **무시.** 단계를 되돌리지 않음 | 변화 없음 |
+| E-03 | `COMPLETED` 후 이전 단계 전문 | 종결 상태 + 전문 도착 | **무시 + 알람** | 변화 없음 |
+| E-04 | 단계 전문 누락 (③ 없이 ④) | 단계 건너뜀 | ④ 처리 + ③을 `ESTIMATED`로 보정 | 정상 진행 |
+| E-05 | 전문 수신 후 DB 저장 실패 | 트랜잭션 롤백 | **미처리로 남기고 재시도 큐** (ID-4) | 이전 상태 유지 |
+| E-06 | DB 저장 성공 후 알림 실패 | 발송 API 오류 | 상태 유지. 알림만 재시도 → 인앱 대체 | 상태 정상 · 알림 지연 |
+| E-07 | 알림 성공 응답 후 미전달 | 전달 콜백 미수신 | 재발송하지 않음. **화면이 최종 진실** | 화면에서 확인 |
+| E-08 | 앱 오프라인 중 상태 변경 | — | 재접속 시 **전체 상태 재수신** | 최신 상태 |
+| E-09 | 계산 중 세율 설정 조회 실패 | 조회 타임아웃 | **계산 중단.** 캐시 사용 금지 | 갱신 중 안내 |
+| E-10 | `settle_days` 일부 누락 | 사전 조회 `null` | 해당 종목만 제외 후 산출 | "소요 기간 확인 중" |
+| E-11 | `TRANSFER` ↔ `TRADING_WINDOW` 불일치 | 시간별 정합성 배치 | **`LOCKED`로 강등 + 알람** | 매매 불가 |
+| E-12 | 전송 요청 중복 도착 | 요청 ID 중복 | 최초 1회만 처리, 최초 결과 반환 | 동일 결과 |
+
+> **보정은 항상 보수적 방향으로 한다** (REQ-NF-043). 매매가 막혔는데 열렸다고 표시하면 회복 불가능하고, 완료가 아닌데 완료로 표시하면 "돈이 없다"는 최악의 문의가 발생한다. **낙관적 방향이 더 나쁘다.**
+
+#### 6.3.4 영업일 · Cut-off · 시간대
+
+D+N 계산이 개발자마다 달라지지 않도록 기준을 고정한다. **완료일 밴드 적중률이 핵심 지표**이므로 해석 여지를 남기지 않는다.
+
+| # | 항목 | 정의 |
+| :---: | --- | --- |
+| BD-1 | 기준 시간대 | `Asia/Seoul` (KST, UTC+9). 서머타임 없음 |
+| BD-2 | 영업일 | 대한민국 증권시장 영업일. 토·일, 법정·임시공휴일, 거래소 휴장일 제외 |
+| BD-3 | 캘린더 원천 | 한국거래소 휴장일 Calendar Master. 연 1회 정기 + 임시공휴일 즉시 반영 |
+| BD-4 | 신청 Cut-off | **15:30 KST.** 이후 접수는 다음 영업일 D+0 |
+| BD-5 | D+0 | 접수 영업일. Cut-off 이전 = 당일, 이후 = 다음 영업일 |
+| BD-6 | D+N | D+0에서 영업일 N개. **비영업일 미카운트** |
+| BD-7 | 밴드 폭 | 영업일 수로 계산. 달력일 아님 |
+| BD-8 | 최소 폭 | 2영업일. 미달 시 종료일을 밀어 확보 |
+| BD-9 | 배치 기준 | 밴드 재계산은 영업일 09:00 KST. 비영업일 미실행 |
+| BD-10 | 자동취소 마감 | 신청 후 5영업일 (BD-6 기준) |
+| BD-11 | 의사확인 원칙 기한 | 신청일 +1영업일 |
+| BD-12 | 알림 발송 | 시간대 제약 없이 60초 이내 (야간·주말 무관) |
+
+**계산 예시** — 2026-08-18(화) 16:00 신청
+
+| 단계 | 계산 | 결과 |
+| --- | --- | --- |
+| Cut-off | 16:00 > 15:30 → 다음 영업일 | D+0 = 08-19(수) |
+| D+5 | 08-20·21·24·25·26 (08-22·23 주말 제외) | 08-26(수) |
+| 최소 폭 | 2영업일 확보 | 밴드 = 08-26 ~ 08-28 |
+
+> **Cut-off 15:30 근거** — 증권시장 정규장 마감 시각이다. 이후 접수 건은 당일 처리 여지가 없다. 이관사 접수 정책과 다를 수 있어 §6.5 OI-16으로 확인 항목에 포함한다.
+
+### 6.4 Detailed Interaction Models
 
 §3.4의 간결 버전에서 생략한 오류 분기와 대안 흐름을 포함한 확장 버전이다.
 
-#### 6.3.1 이체 예약 — 마이데이터 지연 및 결제 규정 결측
+#### 6.5.1 이체 예약 — 마이데이터 지연 및 결제 규정 결측
 
 ```mermaid
 sequenceDiagram
@@ -1331,7 +1536,7 @@ sequenceDiagram
 
 **대응 요구사항** — REQ-FUNC-016 ~ 019, 026, 031 · REQ-NF-006, 011
 
-#### 6.3.2 전송 확정 — 감사 로그 실패 시 롤백
+#### 6.5.2 전송 확정 — 감사 로그 실패 시 롤백
 
 ```mermaid
 sequenceDiagram
@@ -1384,7 +1589,7 @@ sequenceDiagram
 
 **대응 요구사항** — REQ-FUNC-027 ~ 030 · REQ-NF-013, 014
 
-#### 6.3.3 병목 정리 및 밴드 재계산
+#### 6.5.3 병목 정리 및 밴드 재계산
 
 ```mermaid
 sequenceDiagram
@@ -1423,7 +1628,7 @@ sequenceDiagram
 
 **대응 요구사항** — REQ-FUNC-019, 022 ~ 024, 037
 
-#### 6.3.4 진행 단계 갱신 및 지연 감지
+#### 6.4.4 진행 단계 갱신 및 지연 감지
 
 ```mermaid
 sequenceDiagram
@@ -1468,7 +1673,7 @@ sequenceDiagram
 
 **대응 요구사항** — REQ-FUNC-003 ~ 005, 034 ~ 035, 041, 054 · REQ-NF-039
 
-#### 6.3.5 인출순서·세액 계산 — 계산 전 가드
+#### 6.4.5 인출순서·세액 계산 — 계산 전 가드
 
 ```mermaid
 sequenceDiagram
@@ -1538,7 +1743,7 @@ sequenceDiagram
 
 **대응 요구사항** — REQ-FUNC-072 ~ 101 · REQ-NF-004, 005, 012
 
-#### 6.3.6 공제확인서 제출 및 버킷 이동
+#### 6.4.6 공제확인서 제출 및 버킷 이동
 
 ```mermaid
 sequenceDiagram
@@ -1583,7 +1788,7 @@ sequenceDiagram
 
 **대응 요구사항** — REQ-FUNC-087, 088, 102 ~ 104
 
-#### 6.3.7 이체 완료 판정
+#### 6.4.7 이체 완료 판정
 
 ```mermaid
 sequenceDiagram
@@ -1628,11 +1833,11 @@ sequenceDiagram
 
 **대응 요구사항** — REQ-FUNC-057 ~ 062 · REQ-NF-023
 
-### 6.4 Validation Plan
+### 6.5 Validation Plan
 
 [REF-01 §13.1]의 가설 검증 계획을 요구사항 검증 관점으로 정리한다.
 
-#### 6.4.1 계산 검증 데이터셋
+#### 6.5.1 계산 검증 데이터셋
 
 릴리스마다 전건 대조한다. **1원이라도 불일치 시 릴리스를 중단한다** (REQ-NF-038).
 
@@ -1656,7 +1861,7 @@ sequenceDiagram
 
 > **밴드 검증 기준값 미확정.** [REF-01]과 [REF-02]의 평가금액·손실액이 불일치한다(48,500,000원 vs 44,890,000원, 420,000원 vs 312,000원). **기준 확정 전까지 밴드 검증값을 인수 판정에 사용하지 않는다.** 계산 검증값 V-01 ~ V-06은 이 불일치와 무관하므로 그대로 사용한다.
 
-#### 6.4.2 가설 검증 단계
+#### 6.5.2 가설 검증 단계
 
 | 단계 | 범위 | 승격 조건 | 검증 가정 |
 | --- | --- | --- | --- |
@@ -1665,7 +1870,7 @@ sequenceDiagram
 | Phase 2 (확대) | 동일 조건 50% | 밴드 적중률 ≥ 85% · 예약 전환율 ≥ 40% · 문의율 감소 확인 | ASM-01, 03 |
 | Phase 3 (전체) | PB 미배정 전체 | 진행 단계 커버리지 유지 · 문의율 ≤ 0.3건/건 | ASM-05 |
 
-#### 6.4.3 검증 방법 정의
+#### 6.5.3 검증 방법 정의
 
 | 코드 | 방법 | 정의 | 적용 |
 | :---: | --- | --- | --- |
@@ -1674,7 +1879,7 @@ sequenceDiagram
 | D | Demonstration | 실제 조작으로 동작을 시연 | 화면 전이, 진입점, 접근 경로 |
 | A | Analysis | 모델·통계로 추론 | 밴드 산출 규격, 가용성, 운영 지표 |
 
-### 6.5 Open Issues
+### 6.6 Open Issues
 
 착수 전 확정이 필요한 항목이다. 전 항목에 대응책이 걸려 있어 회신이 늦어져도 축소형으로 인도된다.
 
@@ -1689,12 +1894,13 @@ sequenceDiagram
 | OI-07 | 이관사 × 자산구성 단위 전문 적재 가능 여부 | 연금시스템 | 축소 | 폴백 사다리 ②~③단계로 운영 |
 | OI-08 | 이관 중 매매 제한 정책 확정 | 연금시스템 | 축소 | 미확인 구간 `LOCKED` 보수 표시 |
 | OI-09 | 예약 저장 구조의 접수 규정 충돌 여부 | 법무 | 축소 | 예약을 저장 전용으로 축소 |
-| OI-10 | 투자자문업 해당 여부 판정 | 법무 | 축소 | CON-06 ~ 11을 코드 리뷰로 강제한 상태로 인도 |
+| **OI-10** | 개별 계좌 세액 계산의 **투자자문업 해당 여부** | 법무 | **게이트** | **기능2를 출시하지 않는다.** 기능1은 영향 없어 단독 출시 가능 |
 | OI-11 | 마이데이터 타사 조회 동의 범위 | 법무 | 축소 | 타사 계좌 기능을 Phase 2로 이연 |
 | OI-12 | 진행 알림의 광고성 정보 해당 여부 | 법무 | 축소 | 인앱 알림으로만 제공, 푸시 보류 |
 | OI-13 | 계산 오류 시 면책 범위 | 법무 | 축소 | 실효적 방어 4종 전부 적용 상태로 인도 |
 | OI-14 | 전자적 의사표시 로그 보존 범위 | 법무 | 축소 | 감사 로그 10년 보존을 상한으로 적용 |
 | OI-15 | 밴드 검증 기준값 확정 ([REF-01] vs [REF-02]) | 기획 | 축소 | 밴드 검증값을 인수 판정에서 제외 |
+| OI-16 | 신청 Cut-off 15:30이 이관사 접수 정책과 일치하는가 | 연금시스템 | 축소 | 15:30 기준으로 산출하되 밴드 폭을 1영업일 확대 |
 
 ---
 
