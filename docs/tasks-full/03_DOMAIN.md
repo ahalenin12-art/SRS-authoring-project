@@ -267,8 +267,9 @@
 - [ ] Prisma import 0건
 
 ### 🚧 Dependencies & Blockers
-- **Depends on:** FR-001 · FR-003 (enum 정의 필요)
+- **Depends on:** FR-001 · FR-003
 - **Blocks:** FR-022 · FR-024 · FR-028 · FR-029
+- 💡 FR-003 의존은 `TransferStatus` enum 정의 때문이다 — 전이표가 enum 값을 참조한다.
 
 ---
 
