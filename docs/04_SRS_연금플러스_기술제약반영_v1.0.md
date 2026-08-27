@@ -1053,14 +1053,14 @@ await prisma.lockWindow.updateMany({
 | --- | :---: | --- |
 | `TEC-ACT-*` | 5 | Server Action 규약 |
 | `TEC-TX-*` | 4 | 트랜잭션 경계 |
-| `TEC-DB-*` | 9 | 데이터 계층·물리 제약 |
+| `TEC-DB-*` | 10 | 데이터 계층·물리 제약 |
 | `TEC-DOM-*` | 4 | 도메인 모듈 격리 |
 | `TEC-UI-*` | 7 | UI 컴포넌트 규약 |
 | `TEC-AI-*` | 5 | AI 통합 (조건부) |
 | `TEC-OPS-*` | 6 | 배포·환경 변수 |
 | `TEC-BATCH-*` | 5 | Cron 실행 규약 |
 | `TEC-CALC-*` | 4 | 클라이언트 계산 동기화 |
-| **합계** | **49** | |
+| **합계** | **50** | |
 
 ---
 
@@ -1096,7 +1096,7 @@ await prisma.lockWindow.updateMany({
 | 항목 | 값 |
 | --- | ---: |
 | 반영한 기술 제약 (C-TEC) | 7 |
-| 신규 기술 규약 (TEC-*) | 49 |
+| 신규 기술 규약 (TEC-*) | 50 |
 | 확정된 App Router 경로 | 19 |
 | 확정된 Server Action | 7 |
 | 확정된 Route Handler | 7 |

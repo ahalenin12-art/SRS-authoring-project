@@ -39,6 +39,21 @@
 
 ---
 
+## 제약이 지켜지게 하는 장치
+
+SRS가 정한 기술 규약 **50건**은 문서에만 있으면 구현 단계에서 지켜지지 않는다. AI 코딩 도구가 코드를 쓰기 전에 읽는 규칙으로 옮겨 두었다.
+
+| 스킬 | 무엇을 막는가 | 근거 |
+| --- | --- | --- |
+| [`300-tech-constraints-guardrails`](.claude/skills/300-tech-constraints-guardrails/SKILL.md) | 확정 제약 우회 — 별도 서버·워커·캐시 서버 추가 등 | C-TEC-001~007 |
+| [`301-server-boundary-rules`](.claude/skills/301-server-boundary-rules/SKILL.md) | Server Action / Route Handler 오배치 · 트랜잭션 경계 위반 | SRS §4 |
+| [`302-data-access-rules`](.claude/skills/302-data-access-rules/SKILL.md) | 도메인 모듈 오염 · 부동소수 금액 · 물리 제약 제거 | SRS §5 |
+| [`303-display-rules`](.claude/skills/303-display-rules/SKILL.md) | 단일 날짜 표시 · enum 노출 · 규제 저촉 문구 | SRS §6 |
+
+진입점은 [CLAUDE.md](CLAUDE.md)다. **구현이 시작되기 전까지는 대기 상태**이며, 코드를 쓰는 순간부터 발동한다.
+
+---
+
 ## 계산 재현
 
 ```bash
@@ -57,6 +72,9 @@ node tools/linkcheck.mjs # 문서 링크 무결성 검사
 ## 구조
 
 ```
+CLAUDE.md             AI 에이전트 작업 지침 (하네스 진입점)
+.claude/skills/       기술 제약 가드레일 4종
+.github/ISSUE_TEMPLATE/  태스크 이슈 템플릿
 docs/                 문서 일체 — 01~10 최상위 + 3개 폴더
 ├── design/           설계 다이어그램 9
 ├── tasks-full/       풀버전 태스크 13
