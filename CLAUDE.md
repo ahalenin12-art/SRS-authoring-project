@@ -33,7 +33,7 @@ node tools/cmp.mjs        # 전체판 · 병합판 비교
 node tools/linkcheck.mjs  # 문서 링크 무결성 (깨진 링크 0 유지)
 ```
 
-**파일을 옮기거나 이름을 바꾸면 `linkcheck.mjs`를 반드시 통과시킨다.** 문서 159건 링크가 서로를 참조한다.
+**파일을 옮기거나 이름을 바꾸면 `linkcheck.mjs`를 반드시 통과시킨다.** 문서 612건 링크가 서로를 참조한다.
 
 ---
 
@@ -86,7 +86,7 @@ node tools/linkcheck.mjs  # 문서 링크 무결성 (깨진 링크 0 유지)
 | 09 | [개발 실행 계획](docs/09_%5B%EC%B4%9D%EA%B4%84%5D%20%EA%B0%9C%EB%B0%9C%20%EC%8B%A4%ED%96%89%20%EA%B3%84%ED%9A%8D%20%28%EC%97%B0%EA%B8%88%ED%94%8C%EB%9F%AC%EC%8A%A4%29.md) | 표준안 63일 · 임계 경로 45일 |
 | 10 | [압축 수행 일정](docs/10_%5B%EC%B4%9D%EA%B4%84%5D%20%EC%95%95%EC%B6%95%20%EC%88%98%ED%96%89%20%EC%9D%BC%EC%A0%95%20%28%EC%97%B0%EA%B8%88%ED%94%8C%EB%9F%AC%EC%8A%A4%29.md) | 압축안 45일 · dev7부터 효과 0 |
 
-착수 단위 태스크는 [docs/tasks-full/](docs/tasks-full/)에 72건이 이슈 템플릿 형식으로 있다.
+착수 단위 태스크는 [docs/tasks/](docs/tasks/)에 **1파일 = 1태스크**로 72건 있다. Epic 공통 제약은 같은 폴더의 `00_EPIC_*.md`에 있다.
 
 ---
 

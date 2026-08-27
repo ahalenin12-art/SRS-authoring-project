@@ -17,7 +17,7 @@
 | 설계 | [design/](docs/design/) | 다이어그램 9종 |
 | 태스크 | [05 전체판](docs/05_%5B%ED%83%9C%EC%8A%A4%ED%81%AC%20%EB%A6%AC%EC%8A%A4%ED%8A%B8%5D%20%EC%97%B0%EA%B8%88%ED%94%8C%EB%9F%AC%EC%8A%A4_%EC%A0%84%EC%B2%B4%ED%8C%90.md) | 102건 (추적용) |
 | | [06 병합판](docs/06_%5B%ED%83%9C%EC%8A%A4%ED%81%AC%20%EB%A6%AC%EC%8A%A4%ED%8A%B8%5D%20%EC%97%B0%EA%B8%88%ED%94%8C%EB%9F%AC%EC%8A%A4_%EB%B3%91%ED%95%A9%ED%8C%90.md) | **72건 (실행 기준)** |
-| | [tasks-full/](docs/tasks-full/) | 착수 가능한 단위 72건 |
+| | [tasks/](docs/tasks/) | **태스크 상세 — 1파일 = 1태스크** (72건 + Epic 개요 13) |
 | 분석 | [07 적합성 평가](docs/07_%5B%EB%B6%84%EC%84%9D%5D%20%ED%83%9C%EC%8A%A4%ED%81%AC%20%EC%B6%94%EC%B6%9C%20%EB%B0%A9%EB%B2%95%EB%A1%A0%20%EC%A0%81%ED%95%A9%EC%84%B1%20%ED%8F%89%EA%B0%80%20%28%EC%97%B0%EA%B8%88%ED%94%8C%EB%9F%AC%EC%8A%A4%29.md) | **조건부 적합** — 결함 3건 중 1건 보정 |
 | | [08 축약 검증](docs/08_%5B%EB%B6%84%EC%84%9D%5D%20%ED%83%9C%EC%8A%A4%ED%81%AC%20%EC%B6%95%EC%95%BD%20%EC%88%98%ED%96%89%20%EA%B2%B0%EA%B3%BC%20%EA%B2%80%EC%A6%9D%20%28%EC%97%B0%EA%B8%88%ED%94%8C%EB%9F%AC%EC%8A%A4%29.md) | 공수 −72일, **기간은 +3일** |
 | 계획 | [09 개발 실행 계획](docs/09_%5B%EC%B4%9D%EA%B4%84%5D%20%EA%B0%9C%EB%B0%9C%20%EC%8B%A4%ED%96%89%20%EA%B3%84%ED%9A%8D%20%28%EC%97%B0%EA%B8%88%ED%94%8C%EB%9F%AC%EC%8A%A4%29.md) | **표준안 dev4/des2 · 63일** |
@@ -77,7 +77,7 @@ CLAUDE.md             AI 에이전트 작업 지침 (하네스 진입점)
 .github/ISSUE_TEMPLATE/  태스크 이슈 템플릿
 docs/                 문서 일체 — 01~10 최상위 + 3개 폴더
 ├── design/           설계 다이어그램 9
-├── tasks-full/       풀버전 태스크 13
+├── tasks/            태스크 상세 86 (1파일 = 1태스크)
 └── guide/            학습 자료 2
 source/               원본 프로토타입 (변경하지 않음)
 tools/                계산·검사 스크립트 6

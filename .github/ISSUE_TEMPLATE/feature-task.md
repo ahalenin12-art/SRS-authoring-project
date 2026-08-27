@@ -8,7 +8,7 @@ assignees: ''
 
 <!--
 근거: docs/06_[태스크 리스트] 연금플러스_병합판.md
-풀버전: docs/tasks-full/ 해당 Epic 파일에서 아래 내용을 그대로 옮긴다.
+상세: docs/tasks/<태스크ID>.md 의 내용을 그대로 옮긴다 (1파일 = 1이슈).
 선행·후행은 손으로 유추하지 않는다 — `node tools/deps.mjs` 출력을 사용한다.
 -->
 
@@ -16,10 +16,10 @@ assignees: ''
 
 <!--
 관점   part:backend | part:frontend | part:infra | part:design
-도메인 epic:PLT | DAT | DOM | ADP | ACT | ITG | BAT | UIF | SF1 | SF2 | QLT | DSG
+도메인 epic:PLT | DAT | DOM | ADP | ACT | ITG | BAT | UIF | SF1 | SF2 | QLT | TST | DSG
 복잡도 complexity:H | M | L
 착수   wave:W1 ~ wave:W8
-특수   critical-path (8건만) | blocked (5건만)
+특수   critical-path (9건만) | blocked (5건만)
 -->
 
 ## 🎯 Summary
@@ -76,7 +76,7 @@ assignees: ''
 - **Blocks:**
 
 <!--
-⚠️ 임계 경로 8건 — FR-001 · FR-003 · FR-005 · FR-007 · FR-019 · FR-020 · FR-021 · FR-022
+⚠️ 임계 경로 9건 — FR-001 · FR-003 · FR-005 · FR-007 · FR-019 · FR-020 · FR-021 · FR-022 · FR-052
    이 중 하나면 `critical-path` 라벨을 붙이고 지연 시 즉시 에스컬레이션한다.
 
 ⛔ 차단 5건 — FR-018 · FR-022 · FR-028 · FR-032 · FR-033
