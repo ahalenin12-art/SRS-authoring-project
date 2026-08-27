@@ -34,7 +34,7 @@
 | [tasks-full/](./tasks-full/) | 풀버전 태스크 — 이슈 템플릿 형식, 착수 가능한 단위 | 13 |
 | [guide/](./guide/) | 학습 자료 — PM용 HTML 덱 | 2 |
 | [../source/](../source/) | 원본 프로토타입 (변경하지 않는다) | 2 |
-| [../tools/](../tools/) | 일정·의존성 계산 스크립트 | 5 |
+| [../tools/](../tools/) | 일정·의존성 계산 및 링크 검사 스크립트 | 6 |
 
 ---
 
@@ -107,6 +107,7 @@ node tools/sched.mjs    # 편성안별 기간 · 가동률 · 주차 배치
 node tools/blocked.mjs  # 차단 태스크 답변 기한
 node tools/deps.mjs     # 선행 · 후행 (tasks-full 대조용)
 node tools/cmp.mjs      # 전체판 · 병합판 비교
+node tools/linkcheck.mjs # 문서 링크 무결성 검사 (깨진 링크 0 확인)
 ```
 
 **소요 모델 `L=1일 · M=3일 · H=6일`은 가정이다.** 팀 실측 속도가 확보되면 각 스크립트의 `DUR` 상수를 교체하고 전 문서를 재계산해야 한다.

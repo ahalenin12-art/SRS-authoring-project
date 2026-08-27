@@ -47,7 +47,7 @@ SRS-002 §5.2가 명세한 16개 모델과 관계를 실체화한다. Server Act
 - [ ] 16개 모델 마이그레이션 성공
 - [ ] 금액 필드 전건 `Decimal` 확인
 - [ ] 단일 완료일 컬럼 부재 확인
-- [ ] ERD 문서([design/02-erd.md](../design/02_ERD.md))와 대조 일치
+- [ ] ERD 문서([설계 02 ERD](../design/02_ERD.md))와 대조 일치
 
 ### 🚧 Dependencies & Blockers
 - **Depends on:** FR-003

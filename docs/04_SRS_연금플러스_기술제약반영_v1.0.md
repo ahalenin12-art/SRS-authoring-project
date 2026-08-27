@@ -11,14 +11,14 @@
 | **Status** | **Conditional Ready for Implementation** |
 | **Date** | 2026-08-25 |
 | **Source PRD** | `source/ai-place-prd-v3_1.md` (PRD v3.1) |
-| **선행 SRS** | `ai-place-srs-v1_0.md` · `srs-001-pension-plus-v0_1.md` |
+| **선행 SRS** | `02_SRS_연금플러스_v1.0.md` · `03_SRS_연금플러스_ISO29148_v0.1.md` |
 | **문서 성격** | **기술 제약 확정판.** 선행 SRS가 구현 독립적으로 명세한 요구사항을 지정 기술 스택 위에서 구현 가능한 형태로 구체화한다 |
 
 ---
 
 ## 0. 이 문서가 선행 SRS와 다른 점
 
-| 구분 | 선행 SRS (`ai-place-srs-v1_0` · `srs-001`) | **이 문서 (SRS-002)** |
+| 구분 | 선행 SRS (`02_SRS_연금플러스_v1.0` · `srs-001`) | **이 문서 (SRS-002)** |
 | --- | --- | --- |
 | 기술 선택 | **금지.** "구현 기술을 선택하지 않는다"를 원칙으로 명시 | **확정.** C-TEC-001 ~ 007을 전제로 설계 |
 | 인터페이스 | 논리적 입출력만 정의. Endpoint·HTTP Method는 TBD | **App Router 경로·Server Action 시그니처 확정** |

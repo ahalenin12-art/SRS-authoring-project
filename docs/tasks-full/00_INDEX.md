@@ -4,7 +4,7 @@
 | --- | --- |
 | 문서 ID | TASK-FULL-001 |
 | 작성일 | 2026-08-25 |
-| 근거 | [tasks/task-breakdown-v2-merged.md](../06_%5B%ED%83%9C%EC%8A%A4%ED%81%AC%20%EB%A6%AC%EC%8A%A4%ED%8A%B8%5D%20%EC%97%B0%EA%B8%88%ED%94%8C%EB%9F%AC%EC%8A%A4_%EB%B3%91%ED%95%A9%ED%8C%90.md) — 67건. 본 폴더가 그 풀버전이다 |
+| 근거 | [06 태스크 리스트 병합판](../06_%5B%ED%83%9C%EC%8A%A4%ED%81%AC%20%EB%A6%AC%EC%8A%A4%ED%8A%B8%5D%20%EC%97%B0%EA%B8%88%ED%94%8C%EB%9F%AC%EC%8A%A4_%EB%B3%91%ED%95%A9%ED%8C%90.md) — 67건. 본 폴더가 그 풀버전이다 |
 | 형식 | GitHub 이슈 템플릿 구조 — Summary · References · Task Breakdown · Acceptance Criteria · Constraints · DoD · Dependencies |
 
 > **선행(Depends on)·후행(Blocks)은 손으로 유추하지 않았다.** 태스크 리스트의 의존 관계를 `tools/deps.mjs`가 파싱해 생성한 값이다. 값이 어긋나면 **태스크 리스트가 원천**이므로 그쪽을 먼저 고치고 이 폴더를 재동기화한다.

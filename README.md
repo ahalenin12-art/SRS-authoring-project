@@ -47,6 +47,7 @@ node tools/sched.mjs    # 편성안별 기간 · 가동률
 node tools/blocked.mjs  # 차단 태스크 답변 기한
 node tools/deps.mjs     # 선행 · 후행
 node tools/cmp.mjs      # 전체판 · 병합판 비교
+node tools/linkcheck.mjs # 문서 링크 무결성 검사
 ```
 
 소요 모델(`L=1 · M=3 · H=6` 영업일)은 **가정**이다. 실측 확보 시 `DUR` 상수를 교체하면 전 문서 수치가 재계산된다.
@@ -61,7 +62,7 @@ docs/                 문서 일체 — 01~10 최상위 + 3개 폴더
 ├── tasks-full/       풀버전 태스크 13
 └── guide/            학습 자료 2
 source/               원본 프로토타입 (변경하지 않음)
-tools/                계산 스크립트 5
+tools/                계산·검사 스크립트 6
 ```
 
 ---
