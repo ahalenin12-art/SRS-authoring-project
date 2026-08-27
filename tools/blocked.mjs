@@ -10,7 +10,7 @@ const BLOCK = { 'FR-018':'OPEN-TEC-004', 'FR-028':'OPEN-TEC-004', 'FR-022':'OPEN
 const PARTIAL = ['FR-038','FR-039','FR-040','FR-041','FR-042']
 
 console.log('[차단 태스크의 착수 예정일 = 답변 기한]')
-for (const key of ['3_1','4_2','5_2']) {
+for (const key of ['3_1','4_2','6_2']) {
   const r = S.detail[key], [dv,ds] = key.split('_')
   console.log(`\n dev${dv}/des${ds} (총 ${r.end}일)`)
   Object.entries(BLOCK).forEach(([t,o]) => console.log(`   ${t}  착수 D+${r.start[t]+1}  완료 D+${r.fin[t]}  ← ${o}`))

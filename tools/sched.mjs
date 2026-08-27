@@ -57,7 +57,7 @@ console.log(`\n개발 공수 ${devEff}일(${ids.filter(i=>kind(i)==='dev').lengt
 console.log(`무한자원 하한 ${D.project_days_infinite}일 (임계경로)`)
 
 // 대표 편성 3안 상세
-for (const [dv, ds, name] of [[3,1,'최소'],[4,2,'표준'],[5,2,'압축']]) {
+for (const [dv, ds, name] of [[3,1,'최소'],[4,2,'표준'],[6,2,'압축']]) {
   const r = run(dv, ds)
   console.log(`\n=== ${name} dev${dv}/des${ds} — ${r.end}일 ===`)
   const byWeek = {}
@@ -65,4 +65,4 @@ for (const [dv, ds, name] of [[3,1,'최소'],[4,2,'표준'],[5,2,'압축']]) {
   Object.keys(byWeek).sort((a,b)=>a-b).forEach(w => console.log(`  W${w}(${(w-1)*5+1}~${w*5}일): ${byWeek[w].sort().join(' ')}`))
 }
 fs.writeFileSync(J('sched.json'), JSON.stringify({ rows, devEff, desEff, floor: D.project_days_infinite,
-  detail: Object.fromEntries([[3,1],[4,2],[5,2]].map(([a,b]) => [`${a}_${b}`, run(a,b)])) }, null, 1))
+  detail: Object.fromEntries([[3,1],[4,2],[6,2]].map(([a,b]) => [`${a}_${b}`, run(a,b)])) }, null, 1))

@@ -268,7 +268,7 @@
 
 ### 🚧 Dependencies & Blockers
 - **Depends on:** FR-001 · FR-003
-- **Blocks:** FR-022 · FR-024 · FR-028 · FR-029
+- **Blocks:** FR-022 · FR-024 · FR-028 · FR-029 · FR-052
 - 💡 FR-003 의존은 `TransferStatus` enum 정의 때문이다 — 전이표가 enum 값을 참조한다.
 
 ---
@@ -401,5 +401,5 @@
 
 ### 🚧 Dependencies & Blockers
 - **Depends on:** FR-002 · FR-009 · FR-010 · FR-011
-- **Blocks:** None
+- **Blocks:** FR-051
 - 💡 **권고: 계획표의 W10을 기다리지 말고, 각 계산 모듈 완료 직후 부분 실행한다.** 계산 오류를 늦게 발견할수록 재작업 범위가 커진다 ([개발 실행 계획 §4.1 R2](../09_%5B%EC%B4%9D%EA%B4%84%5D%20%EA%B0%9C%EB%B0%9C%20%EC%8B%A4%ED%96%89%20%EA%B3%84%ED%9A%8D%20%28%EC%97%B0%EA%B8%88%ED%94%8C%EB%9F%AC%EC%8A%A4%29.md)).

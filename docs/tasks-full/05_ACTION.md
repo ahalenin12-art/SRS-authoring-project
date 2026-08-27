@@ -103,7 +103,7 @@
 
 ### 🚧 Dependencies & Blockers
 - **Depends on:** FR-005 · FR-019
-- **Blocks:** FR-021
+- **Blocks:** FR-021 · FR-053
 - ⚠️ **임계 경로.**
 
 ---
@@ -210,7 +210,7 @@
 
 ### 🚧 Dependencies & Blockers
 - **Depends on:** FR-006 · FR-013 · FR-021
-- **Blocks:** None
+- **Blocks:** FR-052
 - ⛔ **차단 태스크이자 임계 경로의 종점.** 답변 기한 — 표준안 D+34 / 압축안 D+34.
 
 ---

@@ -4,7 +4,7 @@
 | --- | --- |
 | 문서 ID | TASK-FULL-001 |
 | 작성일 | 2026-08-25 |
-| 근거 | [06 태스크 리스트 병합판](../06_%5B%ED%83%9C%EC%8A%A4%ED%81%AC%20%EB%A6%AC%EC%8A%A4%ED%8A%B8%5D%20%EC%97%B0%EA%B8%88%ED%94%8C%EB%9F%AC%EC%8A%A4_%EB%B3%91%ED%95%A9%ED%8C%90.md) — 67건. 본 폴더가 그 풀버전이다 |
+| 근거 | [06 태스크 리스트 병합판](../06_%5B%ED%83%9C%EC%8A%A4%ED%81%AC%20%EB%A6%AC%EC%8A%A4%ED%8A%B8%5D%20%EC%97%B0%EA%B8%88%ED%94%8C%EB%9F%AC%EC%8A%A4_%EB%B3%91%ED%95%A9%ED%8C%90.md) — 72건. 본 폴더가 그 풀버전이다 |
 | 형식 | GitHub 이슈 템플릿 구조 — Summary · References · Task Breakdown · Acceptance Criteria · Constraints · DoD · Dependencies |
 
 > **선행(Depends on)·후행(Blocks)은 손으로 유추하지 않았다.** 태스크 리스트의 의존 관계를 `tools/deps.mjs`가 파싱해 생성한 값이다. 값이 어긋나면 **태스크 리스트가 원천**이므로 그쪽을 먼저 고치고 이 폴더를 재동기화한다.
@@ -28,9 +28,10 @@
 | | [09_SCREEN_F1.md](09_SCREEN_F1.md) | SF1 | 5 | 이체 진행 조회 |
 | | [10_SCREEN_F2.md](10_SCREEN_F2.md) | SF2 | 7 | 인출순서 시뮬레이터. 기능1과 의존 없음 |
 | **P4 품질** | [11_QUALITY.md](11_QUALITY.md) | QLT | 1 | 성능 실측. 앞 단계가 있어야 잴 대상이 생긴다 |
+| | [13_VERIFICATION.md](13_VERIFICATION.md) | TST | 5 | **검증.** 요구사항 추적 · 전이 통합 · 예외 계열 · E2E · 접근성 |
 | **디자인** | [12_DESIGN.md](12_DESIGN.md) | DSG | 17 | 개발과 병행. UX-002·UX-003이 프론트를 막는다 |
 
-**총 67건.**
+**총 72건.**
 
 ---
 
@@ -49,8 +50,9 @@
 | 화면 F1 | SF1 | 5 | 5 | ✅ |
 | 화면 F2 | SF2 | 7 | 7 | ✅ |
 | Quality Gate | QLT | 1 | 1 | ✅ |
+| Verification | TST | 5 | 5 | ✅ |
 | 디자인 (전 Epic) | DSG | 17 | 17 | ✅ |
-| **합계** | | **67** | **67** | ✅ |
+| **합계** | | **72** | **72** | ✅ |
 
 ---
 
@@ -60,15 +62,15 @@
 유형   feature | chore | test
 관점   part:backend | part:frontend | part:infra | part:design
 도메인 epic:PLT | epic:DAT | epic:DOM | epic:ADP | epic:ACT | epic:ITG
-       epic:BAT | epic:UIF | epic:SF1 | epic:SF2 | epic:QLT | epic:DSG
+       epic:BAT | epic:UIF | epic:SF1 | epic:SF2 | epic:QLT | epic:DSG | epic:TST
 복잡도 complexity:H | complexity:M | complexity:L
 착수   wave:W1 ~ wave:W8
 특수   critical-path | blocked
 ```
 
-`critical-path` 라벨은 8건에만 붙는다 — **FR-001 · FR-003 · FR-005 · FR-007 · FR-019 · FR-020 · FR-021 · FR-022.** 이 8건의 지연은 곧 전체 지연이다.
+`critical-path` 라벨은 9건에만 붙는다 — **FR-001 · FR-003 · FR-005 · FR-007 · FR-019 · FR-020 · FR-021 · FR-022 · FR-052.** 이 8건의 지연은 곧 전체 지연이다.
 
-`blocked` 라벨은 5건에 붙는다 — **FR-018 · FR-022 · FR-028 · FR-032 · FR-033.**
+`blocked` 라벨은 5건에 붙는다 — **FR-018 · FR-022 · FR-028 · FR-032 · FR-033.** (후행 FR-052·FR-053도 영향권)
 
 ---
 
@@ -78,14 +80,14 @@
 
 | 순위 | 태스크 | 직접 후행 | 전이 후행 | 파일 |
 | :---: | --- | ---: | ---: | --- |
-| 1 | FR-001 | 14 | **46** | [01_PLATFORM](01_PLATFORM.md) |
-| 2 | FR-002 | 3 | 31 | [01_PLATFORM](01_PLATFORM.md) |
-| 3 | UX-001 | 2 | 30 | [12_DESIGN](12_DESIGN.md) |
-| 4 | UX-002 | 10 | 28 | [12_DESIGN](12_DESIGN.md) |
-| 5 | FR-003 | 3 | 24 | [01_PLATFORM](01_PLATFORM.md) |
-| 6 | UX-003 | 10 | 21 | [12_DESIGN](12_DESIGN.md) |
-| 7 | FR-005 | 6 | 19 | [02_DATA](02_DATA.md) |
-| 8 | FR-008 | 2 | 14 | [03_DOMAIN](03_DOMAIN.md) |
+| 1 | FR-001 | 14 | **52** | [01_PLATFORM](01_PLATFORM.md) |
+| 2 | FR-002 | 3 | 36 | [01_PLATFORM](01_PLATFORM.md) |
+| 3 | UX-001 | 2 | 32 | [12_DESIGN](12_DESIGN.md) |
+| 4 | UX-002 | 10 | 29 | [12_DESIGN](12_DESIGN.md) |
+| 5 | FR-003 | 3 | 27 | [01_PLATFORM](01_PLATFORM.md) |
+| 6 | UX-003 | 10 | 22 | [12_DESIGN](12_DESIGN.md) |
+| 7 | FR-005 | 6 | 22 | [02_DATA](02_DATA.md) |
+| 8 | FR-008 | 2 | 17 | [03_DOMAIN](03_DOMAIN.md) |
 
 ---
 

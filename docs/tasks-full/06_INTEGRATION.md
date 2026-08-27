@@ -143,7 +143,7 @@
 
 ### 🚧 Dependencies & Blockers
 - **Depends on:** FR-006 · FR-013 · FR-026
-- **Blocks:** None
+- **Blocks:** FR-053
 - ⛔ **차단 태스크.** 답변 기한 — 표준안 D+34 / 압축안 **D+22**.
 
 ---

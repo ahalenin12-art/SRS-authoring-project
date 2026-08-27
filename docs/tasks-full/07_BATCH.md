@@ -153,7 +153,7 @@
 
 ### 🚧 Dependencies & Blockers
 - **Depends on:** FR-017 · FR-030
-- **Blocks:** None
+- **Blocks:** FR-053
 - ⛔ **차단(주기 미확정).** 답변 기한 — 표준안 D+40 / 압축안 D+28. 잠정값으로 착수 가능.
 
 ---

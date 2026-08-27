@@ -140,7 +140,7 @@
 
 ### 🚧 Dependencies & Blockers
 - **Depends on:** FR-017 · FR-021 · FR-035 · UX-010
-- **Blocks:** None
+- **Blocks:** FR-054
 
 ---
 
@@ -197,7 +197,7 @@
 
 ### 🚧 Dependencies & Blockers
 - **Depends on:** FR-005 · FR-035 · UX-011
-- **Blocks:** FR-042
+- **Blocks:** FR-042 · FR-054
 
 ---
 
@@ -245,4 +245,4 @@
 
 ### 🚧 Dependencies & Blockers
 - **Depends on:** FR-012 · FR-041 · UX-012
-- **Blocks:** None
+- **Blocks:** FR-054
