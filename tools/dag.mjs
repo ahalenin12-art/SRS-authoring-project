@@ -3,7 +3,7 @@ import path from 'path'
 import { fileURLToPath } from 'url'
 const J2 = f => path.join(path.dirname(fileURLToPath(import.meta.url)), f)
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
-const SRC = path.join(ROOT,'docs','06_[태스크 리스트] 연금플러스 병합판.md')
+const SRC = path.join(ROOT,'docs','06_[태스크 리스트] 연금플러스_병합판.md')
 const DUR = { H: 6, M: 3, L: 1 }               // 개발자 1명 기준 영업일 (가정)
 const tasks = {}
 for (const line of fs.readFileSync(SRC, 'utf8').split('\n')) {
