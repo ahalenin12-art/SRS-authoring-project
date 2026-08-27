@@ -1,0 +1,1248 @@
+{
+ "total": 67,
+ "sum_effort": 287,
+ "project_days_infinite": 39,
+ "cp_days": 39,
+ "critical_path": [
+  {
+   "id": "FR-001",
+   "cx": "M",
+   "dur": 3,
+   "epic": "Platform",
+   "feat": "리포지토리 스캐폴딩 — App Router 5계층 디렉터리 · Tailwind/shadcn 설정 · 도메인 격리 규약(Decimal 포함)"
+  },
+  {
+   "id": "FR-003",
+   "cx": "M",
+   "dur": 3,
+   "epic": "Platform",
+   "feat": "Prisma 구성 — 풀러 경유 접속 · 전역 싱글턴 · enum 7종 · migrate deploy 파이프라인"
+  },
+  {
+   "id": "FR-005",
+   "cx": "H",
+   "dur": 6,
+   "epic": "Data Layer",
+   "feat": "Prisma 스키마 — 모델 16종 정의 및 관계 설정"
+  },
+  {
+   "id": "FR-007",
+   "cx": "H",
+   "dur": 6,
+   "epic": "Data Layer",
+   "feat": "Supabase RLS 정책 — 본인 계좌 한정 접근"
+  },
+  {
+   "id": "FR-019",
+   "cx": "M",
+   "dur": 3,
+   "epic": "Server Actions",
+   "feat": "Server Action 공통 기반 — `ActionResult<T>` · 소유권 검증 가드"
+  },
+  {
+   "id": "FR-020",
+   "cx": "H",
+   "dur": 6,
+   "epic": "Server Actions",
+   "feat": "`requestId` 멱등 처리 공통 모듈"
+  },
+  {
+   "id": "FR-021",
+   "cx": "H",
+   "dur": 6,
+   "epic": "Server Actions",
+   "feat": "`saveDraft` — 예약 저장 · 3그룹 판정 · 밴드 산출"
+  },
+  {
+   "id": "FR-022",
+   "cx": "H",
+   "dur": 6,
+   "epic": "Server Actions",
+   "feat": "`submitTransfer` — 전송 확정 + 감사 로그 원자 트랜잭션"
+  }
+ ],
+ "waves": {
+  "1": [
+   "FR-001",
+   "FR-002",
+   "UX-001"
+  ],
+  "2": [
+   "FR-003",
+   "FR-004",
+   "FR-008",
+   "FR-009",
+   "FR-010",
+   "FR-014",
+   "FR-017",
+   "FR-018",
+   "FR-026",
+   "FR-037",
+   "UX-002"
+  ],
+  "3": [
+   "FR-005",
+   "FR-011",
+   "FR-012",
+   "FR-013",
+   "FR-027",
+   "FR-030",
+   "FR-034",
+   "UX-003",
+   "UX-005",
+   "UX-013",
+   "UX-017"
+  ],
+  "4": [
+   "FR-006",
+   "FR-007",
+   "FR-015",
+   "FR-016",
+   "FR-029",
+   "FR-031",
+   "FR-032",
+   "FR-044",
+   "FR-050",
+   "FR-035",
+   "UX-004",
+   "UX-006",
+   "UX-007",
+   "UX-008",
+   "FR-043",
+   "UX-014",
+   "UX-016",
+   "FR-049"
+  ],
+  "5": [
+   "FR-019",
+   "FR-028",
+   "FR-033",
+   "FR-036",
+   "FR-038",
+   "UX-009",
+   "UX-010",
+   "UX-011",
+   "UX-015"
+  ],
+  "6": [
+   "FR-020",
+   "FR-023",
+   "FR-045",
+   "FR-039",
+   "FR-041",
+   "UX-012"
+  ],
+  "7": [
+   "FR-021",
+   "FR-025",
+   "FR-042",
+   "FR-047"
+  ],
+  "8": [
+   "FR-022",
+   "FR-024",
+   "FR-040",
+   "FR-046",
+   "FR-048"
+  ]
+ },
+ "wave_profile": {
+  "1": {
+   "count": 3,
+   "effort": 9,
+   "maxdur": 3
+  },
+  "2": {
+   "count": 11,
+   "effort": 45,
+   "maxdur": 6
+  },
+  "3": {
+   "count": 11,
+   "effort": 49,
+   "maxdur": 6
+  },
+  "4": {
+   "count": 18,
+   "effort": 73,
+   "maxdur": 6
+  },
+  "5": {
+   "count": 9,
+   "effort": 39,
+   "maxdur": 6
+  },
+  "6": {
+   "count": 6,
+   "effort": 30,
+   "maxdur": 6
+  },
+  "7": {
+   "count": 4,
+   "effort": 18,
+   "maxdur": 6
+  },
+  "8": {
+   "count": 5,
+   "effort": 24,
+   "maxdur": 6
+  }
+ },
+ "bottlenecks": [
+  {
+   "id": "FR-001",
+   "direct": 14,
+   "transitive": 47,
+   "cx": "M",
+   "epic": "Platform",
+   "feat": "리포지토리 스캐폴딩 — App Router 5계층 디렉터리 · Tailwind/shadcn 설정 · 도메인 격리 규약(Decimal 포함)"
+  },
+  {
+   "id": "FR-002",
+   "direct": 3,
+   "transitive": 32,
+   "cx": "M",
+   "epic": "Platform",
+   "feat": "클라우드 리소스 프로비저닝 — Supabase(Prod/Preview) · Vercel 연결 · 환경 변수 12종"
+  },
+  {
+   "id": "UX-001",
+   "direct": 2,
+   "transitive": 30,
+   "cx": "M",
+   "epic": "Design System",
+   "feat": "디자인 토큰 정의 — 색 · 타이포 · 간격 · 대비 검증 팔레트 · 어절 줄바꿈 규칙"
+  },
+  {
+   "id": "UX-002",
+   "direct": 10,
+   "transitive": 28,
+   "cx": "H",
+   "epic": "Design System",
+   "feat": "shadcn/ui 14종 시각 스타일 정의 (ARIA 속성 보존 전제)"
+  },
+  {
+   "id": "FR-003",
+   "direct": 3,
+   "transitive": 24,
+   "cx": "M",
+   "epic": "Platform",
+   "feat": "Prisma 구성 — 풀러 경유 접속 · 전역 싱글턴 · enum 7종 · migrate deploy 파이프라인"
+  },
+  {
+   "id": "UX-003",
+   "direct": 10,
+   "transitive": 21,
+   "cx": "M",
+   "epic": "표기 규칙 디자인",
+   "feat": "표기 규칙 시각 규격 7종 — 밴드 · 확정/추정 · 모의계산 라벨 · 상태 12종 · 금액 · 마스킹 · 대략치 병기"
+  },
+  {
+   "id": "FR-005",
+   "direct": 6,
+   "transitive": 19,
+   "cx": "H",
+   "epic": "Data Layer",
+   "feat": "Prisma 스키마 — 모델 16종 정의 및 관계 설정"
+  },
+  {
+   "id": "FR-008",
+   "direct": 2,
+   "transitive": 14,
+   "cx": "H",
+   "epic": "Domain Engine",
+   "feat": "`business-day.ts` 영업일 · Cut-off 엔진"
+  },
+  {
+   "id": "FR-007",
+   "direct": 1,
+   "transitive": 11,
+   "cx": "H",
+   "epic": "Data Layer",
+   "feat": "Supabase RLS 정책 — 본인 계좌 한정 접근"
+  },
+  {
+   "id": "FR-012",
+   "direct": 4,
+   "transitive": 11,
+   "cx": "H",
+   "epic": "Domain Engine",
+   "feat": "`band.ts` 완료일 밴드 산출"
+  },
+  {
+   "id": "FR-017",
+   "direct": 6,
+   "transitive": 11,
+   "cx": "M",
+   "epic": "Adapters",
+   "feat": "외부 연동 어댑터 3종 — 원장 · 마이데이터 · 알림"
+  },
+  {
+   "id": "FR-026",
+   "direct": 4,
+   "transitive": 11,
+   "cx": "M",
+   "epic": "System Integration",
+   "feat": "Route Handler 인증 공통 — 시스템 간(`INTERNAL_API_KEY`) · Cron(`CRON_SECRET`)"
+  }
+ ],
+ "no_dep": [
+  "FR-001",
+  "FR-002",
+  "UX-001"
+ ],
+ "by_epic": [
+  {
+   "epic": "Domain Engine",
+   "count": 9,
+   "effort": 45
+  },
+  {
+   "epic": "Server Actions",
+   "count": 7,
+   "effort": 33
+  },
+  {
+   "epic": "화면 F2",
+   "count": 7,
+   "effort": 31
+  },
+  {
+   "epic": "화면 F1",
+   "count": 5,
+   "effort": 21
+  },
+  {
+   "epic": "커스텀 시각화",
+   "count": 4,
+   "effort": 21
+  },
+  {
+   "epic": "화면 설계 F1",
+   "count": 5,
+   "effort": 21
+  },
+  {
+   "epic": "화면 설계 F2",
+   "count": 5,
+   "effort": 19
+  },
+  {
+   "epic": "System Integration",
+   "count": 4,
+   "effort": 18
+  },
+  {
+   "epic": "Batch",
+   "count": 4,
+   "effort": 18
+  },
+  {
+   "epic": "Data Layer",
+   "count": 3,
+   "effort": 15
+  },
+  {
+   "epic": "Platform",
+   "count": 4,
+   "effort": 12
+  },
+  {
+   "epic": "UI Foundation",
+   "count": 4,
+   "effort": 12
+  },
+  {
+   "epic": "Design System",
+   "count": 2,
+   "effort": 9
+  },
+  {
+   "epic": "Adapters",
+   "count": 2,
+   "effort": 6
+  },
+  {
+   "epic": "Quality Gate",
+   "count": 1,
+   "effort": 3
+  },
+  {
+   "epic": "표기 규칙 디자인",
+   "count": 1,
+   "effort": 3
+  }
+ ],
+ "tasks": {
+  "FR-001": {
+   "id": "FR-001",
+   "epic": "Platform",
+   "feat": "리포지토리 스캐폴딩 — App Router 5계층 디렉터리 · Tailwind/shadcn 설정 · 도메인 격리 규약(Decimal 포함)",
+   "srs": "2.2 / 2.3 / 6 · TEC-DOM-001~003",
+   "cx": "M",
+   "dur": 3,
+   "origin": "舊 001+006+016",
+   "deps": []
+  },
+  "FR-002": {
+   "id": "FR-002",
+   "epic": "Platform",
+   "feat": "클라우드 리소스 프로비저닝 — Supabase(Prod/Preview) · Vercel 연결 · 환경 변수 12종",
+   "srs": "5.1 / 8.1 / 8.2 · TEC-OPS-001,002,010",
+   "cx": "M",
+   "dur": 3,
+   "origin": "舊 002+004+005",
+   "deps": []
+  },
+  "FR-003": {
+   "id": "FR-003",
+   "epic": "Platform",
+   "feat": "Prisma 구성 — 풀러 경유 접속 · 전역 싱글턴 · enum 7종 · migrate deploy 파이프라인",
+   "srs": "5.1 / 5.2 / 9.4 · TEC-DB-002, TEC-OPS-004",
+   "cx": "M",
+   "dur": 3,
+   "origin": "舊 003+007+010",
+   "deps": [
+    "FR-001",
+    "FR-002"
+   ]
+  },
+  "FR-004": {
+   "id": "FR-004",
+   "epic": "Platform",
+   "feat": "매매창 판정 Edge Runtime 배포 + TTL 캐시 + 주기 워밍",
+   "srs": "9.1 CONFLICT-01 완화 ①②③",
+   "cx": "M",
+   "dur": 3,
+   "origin": "舊 009",
+   "deps": [
+    "FR-001"
+   ]
+  },
+  "FR-005": {
+   "id": "FR-005",
+   "epic": "Data Layer",
+   "feat": "Prisma 스키마 — 모델 16종 정의 및 관계 설정",
+   "srs": "5.2",
+   "cx": "H",
+   "dur": 6,
+   "origin": "舊 011",
+   "deps": [
+    "FR-003"
+   ]
+  },
+  "FR-006": {
+   "id": "FR-006",
+   "epic": "Data Layer",
+   "feat": "마이그레이션 SQL — 스키마 레벨 제약 (CHECK · WORM 트리거 · 멱등 unique)",
+   "srs": "5.3 · TEC-DB-010~014",
+   "cx": "M",
+   "dur": 3,
+   "origin": "舊 012+013+014",
+   "deps": [
+    "FR-005"
+   ]
+  },
+  "FR-007": {
+   "id": "FR-007",
+   "epic": "Data Layer",
+   "feat": "Supabase RLS 정책 — 본인 계좌 한정 접근",
+   "srs": "5.3 · TEC-DB-015",
+   "cx": "H",
+   "dur": 6,
+   "origin": "舊 015",
+   "deps": [
+    "FR-005"
+   ]
+  },
+  "FR-008": {
+   "id": "FR-008",
+   "epic": "Domain Engine",
+   "feat": "`business-day.ts` 영업일 · Cut-off 엔진",
+   "srs": "2.3 / 8.3",
+   "cx": "H",
+   "dur": 6,
+   "origin": "舊 017",
+   "deps": [
+    "FR-001"
+   ]
+  },
+  "FR-009": {
+   "id": "FR-009",
+   "epic": "Domain Engine",
+   "feat": "`pension-limit.ts` 연금수령한도 산출",
+   "srs": "5.4",
+   "cx": "H",
+   "dur": 6,
+   "origin": "舊 018",
+   "deps": [
+    "FR-001"
+   ]
+  },
+  "FR-010": {
+   "id": "FR-010",
+   "epic": "Domain Engine",
+   "feat": "`withdrawal-order.ts` 3층 재원 인출순서",
+   "srs": "2.3",
+   "cx": "H",
+   "dur": 6,
+   "origin": "舊 019",
+   "deps": [
+    "FR-001"
+   ]
+  },
+  "FR-011": {
+   "id": "FR-011",
+   "epic": "Domain Engine",
+   "feat": "`tax.ts` 세액 산출",
+   "srs": "2.3",
+   "cx": "H",
+   "dur": 6,
+   "origin": "舊 020",
+   "deps": [
+    "FR-001",
+    "FR-010"
+   ]
+  },
+  "FR-012": {
+   "id": "FR-012",
+   "epic": "Domain Engine",
+   "feat": "`band.ts` 완료일 밴드 산출",
+   "srs": "2.3 / 10",
+   "cx": "H",
+   "dur": 6,
+   "origin": "舊 021",
+   "deps": [
+    "FR-001",
+    "FR-008"
+   ]
+  },
+  "FR-013": {
+   "id": "FR-013",
+   "epic": "Domain Engine",
+   "feat": "`state-machine.ts` 허용/금지 전이 판정",
+   "srs": "2.3 / 4.4",
+   "cx": "H",
+   "dur": 6,
+   "origin": "舊 023",
+   "deps": [
+    "FR-001",
+    "FR-003"
+   ]
+  },
+  "FR-014": {
+   "id": "FR-014",
+   "epic": "Domain Engine",
+   "feat": "`trading-window.ts` 매매 가능 판정",
+   "srs": "2.3",
+   "cx": "M",
+   "dur": 3,
+   "origin": "舊 022",
+   "deps": [
+    "FR-001"
+   ]
+  },
+  "FR-015": {
+   "id": "FR-015",
+   "epic": "Domain Engine",
+   "feat": "폴백 사다리 단계 판정 · `approximate` 산출",
+   "srs": "6.2 / 13.3",
+   "cx": "M",
+   "dur": 3,
+   "origin": "舊 024",
+   "deps": [
+    "FR-012"
+   ]
+  },
+  "FR-016": {
+   "id": "FR-016",
+   "epic": "Domain Engine",
+   "feat": "검증 데이터셋 6건 단위 시험 및 배포 전 회귀 게이트",
+   "srs": "5.4 TEC-DOM-004 / 8.1 TEC-OPS-003",
+   "cx": "M",
+   "dur": 3,
+   "origin": "舊 025+008",
+   "deps": [
+    "FR-009",
+    "FR-010",
+    "FR-011",
+    "FR-002"
+   ]
+  },
+  "FR-017": {
+   "id": "FR-017",
+   "epic": "Adapters",
+   "feat": "외부 연동 어댑터 3종 — 원장 · 마이데이터 · 알림",
+   "srs": "2.3 / 8.2 / 4.4 TEC-TX-002",
+   "cx": "M",
+   "dur": 3,
+   "origin": "舊 026+027+029",
+   "deps": [
+    "FR-001"
+   ]
+  },
+  "FR-018": {
+   "id": "FR-018",
+   "epic": "Adapters",
+   "feat": "`ksd.ts` 예탁결제원 어댑터",
+   "srs": "2.3 / 9.6",
+   "cx": "M",
+   "dur": 3,
+   "origin": "舊 028",
+   "deps": [
+    "FR-001"
+   ]
+  },
+  "FR-019": {
+   "id": "FR-019",
+   "epic": "Server Actions",
+   "feat": "Server Action 공통 기반 — `ActionResult<T>` · 소유권 검증 가드",
+   "srs": "4.3 · TEC-ACT-001, 004",
+   "cx": "M",
+   "dur": 3,
+   "origin": "舊 030+031",
+   "deps": [
+    "FR-001",
+    "FR-007"
+   ]
+  },
+  "FR-020": {
+   "id": "FR-020",
+   "epic": "Server Actions",
+   "feat": "`requestId` 멱등 처리 공통 모듈",
+   "srs": "4.3 · TEC-ACT-002",
+   "cx": "H",
+   "dur": 6,
+   "origin": "舊 032",
+   "deps": [
+    "FR-019",
+    "FR-005"
+   ]
+  },
+  "FR-021": {
+   "id": "FR-021",
+   "epic": "Server Actions",
+   "feat": "`saveDraft` — 예약 저장 · 3그룹 판정 · 밴드 산출",
+   "srs": "4.2",
+   "cx": "H",
+   "dur": 6,
+   "origin": "舊 033",
+   "deps": [
+    "FR-019",
+    "FR-020",
+    "FR-012",
+    "FR-017"
+   ]
+  },
+  "FR-022": {
+   "id": "FR-022",
+   "epic": "Server Actions",
+   "feat": "`submitTransfer` — 전송 확정 + 감사 로그 원자 트랜잭션",
+   "srs": "4.2 / 4.4 · TEC-TX-001~003",
+   "cx": "H",
+   "dur": 6,
+   "origin": "舊 035",
+   "deps": [
+    "FR-021",
+    "FR-013",
+    "FR-006"
+   ]
+  },
+  "FR-023": {
+   "id": "FR-023",
+   "epic": "Server Actions",
+   "feat": "`simulateWithdrawal` — 층별 차감 · 세액 모의계산",
+   "srs": "4.2 · TEC-ACT-005",
+   "cx": "H",
+   "dur": 6,
+   "origin": "舊 038",
+   "deps": [
+    "FR-019",
+    "FR-010",
+    "FR-011"
+   ]
+  },
+  "FR-024": {
+   "id": "FR-024",
+   "epic": "Server Actions",
+   "feat": "예약 갱신 · 취소 액션 (`updateDraft` · `cancelTransfer`)",
+   "srs": "4.2",
+   "cx": "M",
+   "dur": 3,
+   "origin": "舊 034+036",
+   "deps": [
+    "FR-021",
+    "FR-013"
+   ]
+  },
+  "FR-025": {
+   "id": "FR-025",
+   "epic": "Server Actions",
+   "feat": "읽기 전용 조회 액션 (`getPensionLimit` · `compareWithCertificate`)",
+   "srs": "4.2 · TEC-ACT-005",
+   "cx": "M",
+   "dur": 3,
+   "origin": "舊 037+039",
+   "deps": [
+    "FR-019",
+    "FR-009",
+    "FR-023"
+   ]
+  },
+  "FR-026": {
+   "id": "FR-026",
+   "epic": "System Integration",
+   "feat": "Route Handler 인증 공통 — 시스템 간(`INTERNAL_API_KEY`) · Cron(`CRON_SECRET`)",
+   "srs": "3.2 / 8.2 / 8.3 · TEC-BATCH-001",
+   "cx": "M",
+   "dur": 3,
+   "origin": "舊 040+044",
+   "deps": [
+    "FR-002"
+   ]
+  },
+  "FR-027": {
+   "id": "FR-027",
+   "epic": "System Integration",
+   "feat": "`GET /api/internal/trading-window` 판정 응답",
+   "srs": "3.2 (`SRS-IF-006`) / 10",
+   "cx": "H",
+   "dur": 6,
+   "origin": "舊 041",
+   "deps": [
+    "FR-026",
+    "FR-014",
+    "FR-004"
+   ]
+  },
+  "FR-028": {
+   "id": "FR-028",
+   "epic": "System Integration",
+   "feat": "`POST /api/internal/stage-events` 전문 수신 + 서명 검증 + 중복 차단",
+   "srs": "3.2 (`SRS-IF-007`) / 9.6",
+   "cx": "H",
+   "dur": 6,
+   "origin": "舊 042",
+   "deps": [
+    "FR-026",
+    "FR-006",
+    "FR-013"
+   ]
+  },
+  "FR-029": {
+   "id": "FR-029",
+   "epic": "System Integration",
+   "feat": "`POST /api/internal/settlement` 잔고 반영 push 수신",
+   "srs": "3.2 (`SRS-IF-010`) / 9.2 완화 ③",
+   "cx": "M",
+   "dur": 3,
+   "origin": "舊 043",
+   "deps": [
+    "FR-026",
+    "FR-013"
+   ]
+  },
+  "FR-030": {
+   "id": "FR-030",
+   "epic": "Batch",
+   "feat": "배치 공통 가드 — 영업일 검증 · 페이지 분할 · 실행 로그",
+   "srs": "8.3 · TEC-BATCH-002, 004, 005",
+   "cx": "M",
+   "dur": 3,
+   "origin": "舊 045",
+   "deps": [
+    "FR-026",
+    "FR-008"
+   ]
+  },
+  "FR-031": {
+   "id": "FR-031",
+   "epic": "Batch",
+   "feat": "`/api/cron/band-recalc` 밴드 재계산 (조건부 UPDATE 멱등 갱신)",
+   "srs": "3.3 / 9.5 · TEC-BATCH-003",
+   "cx": "H",
+   "dur": 6,
+   "origin": "舊 046",
+   "deps": [
+    "FR-030",
+    "FR-012"
+   ]
+  },
+  "FR-032": {
+   "id": "FR-032",
+   "epic": "Batch",
+   "feat": "`/api/cron/reconcile` 3자 정합성 보정",
+   "srs": "3.3 (`SRS-REC-003`) / 9.2",
+   "cx": "H",
+   "dur": 6,
+   "origin": "舊 049",
+   "deps": [
+    "FR-030",
+    "FR-017"
+   ]
+  },
+  "FR-033": {
+   "id": "FR-033",
+   "epic": "Batch",
+   "feat": "정기 점검 배치 2종 (잔고 확인 · 세율 신선도) + `vercel.json` 스케줄 선언",
+   "srs": "3.3 / 8.2 · TEC-OPS-011",
+   "cx": "M",
+   "dur": 3,
+   "origin": "舊 047+048+050",
+   "deps": [
+    "FR-030",
+    "FR-017",
+    "FR-005",
+    "FR-031"
+   ]
+  },
+  "FR-034": {
+   "id": "FR-034",
+   "epic": "UI Foundation",
+   "feat": "shadcn/ui 컴포넌트 14종 도입 및 매핑 적용",
+   "srs": "6.1",
+   "cx": "M",
+   "dur": 3,
+   "origin": "舊 051",
+   "deps": [
+    "FR-001",
+    "UX-002"
+   ]
+  },
+  "FR-035": {
+   "id": "FR-035",
+   "epic": "UI Foundation",
+   "feat": "공통 표기 컴포넌트 6종 구현 (BandDisplay · LayerBadge · SimulationLabel · StatusLabel · MoneyText · MaskedAccount)",
+   "srs": "6.2 · TEC-UI-001~003",
+   "cx": "M",
+   "dur": 3,
+   "origin": "舊 052~057",
+   "deps": [
+    "FR-034",
+    "FR-003",
+    "UX-003"
+   ]
+  },
+  "FR-036": {
+   "id": "FR-036",
+   "epic": "UI Foundation",
+   "feat": "표기 규칙 위반 차단 ESLint 커스텀 룰",
+   "srs": "6.2 · TEC-UI-004",
+   "cx": "M",
+   "dur": 3,
+   "origin": "舊 058",
+   "deps": [
+    "FR-035"
+   ]
+  },
+  "FR-037": {
+   "id": "FR-037",
+   "epic": "UI Foundation",
+   "feat": "접근성 구현 — 대비 토큰 · `break-keep` 전역 · ARIA 보존",
+   "srs": "6.3 · TEC-UI-010~012",
+   "cx": "M",
+   "dur": 3,
+   "origin": "舊 059",
+   "deps": [
+    "FR-001",
+    "UX-001"
+   ]
+  },
+  "FR-038": {
+   "id": "FR-038",
+   "epic": "화면 F1",
+   "feat": "`/home` F1-01 홈 · 진행 알림",
+   "srs": "3.1 (`SRS-FR-001~007`)",
+   "cx": "M",
+   "dur": 3,
+   "origin": "舊 060",
+   "deps": [
+    "FR-005",
+    "FR-035",
+    "UX-008"
+   ]
+  },
+  "FR-039": {
+   "id": "FR-039",
+   "epic": "화면 F1",
+   "feat": "`/transfer/terms` F1-02 유의사항",
+   "srs": "3.1 (`SRS-FR-008~015`)",
+   "cx": "M",
+   "dur": 3,
+   "origin": "舊 061",
+   "deps": [
+    "FR-034",
+    "FR-017",
+    "UX-009"
+   ]
+  },
+  "FR-040": {
+   "id": "FR-040",
+   "epic": "화면 F1",
+   "feat": "`/transfer/draft` F1-03 예약 · 잠금 미리보기",
+   "srs": "3.1 (`SRS-FR-016~032`)",
+   "cx": "H",
+   "dur": 6,
+   "origin": "舊 062",
+   "deps": [
+    "FR-021",
+    "FR-035",
+    "FR-017",
+    "UX-010"
+   ]
+  },
+  "FR-041": {
+   "id": "FR-041",
+   "epic": "화면 F1",
+   "feat": "`/transfer/[transferId]` F1-04 현황판 (당일 캐시)",
+   "srs": "3.1 (`SRS-FR-033~050`)",
+   "cx": "H",
+   "dur": 6,
+   "origin": "舊 063",
+   "deps": [
+    "FR-005",
+    "FR-035",
+    "UX-011"
+   ]
+  },
+  "FR-042": {
+   "id": "FR-042",
+   "epic": "화면 F1",
+   "feat": "`/transfer/[transferId]/` 하위 — F1-05 완료일 근거 · F1-06 완료",
+   "srs": "3.1 (`SRS-FR-051~064`)",
+   "cx": "M",
+   "dur": 3,
+   "origin": "舊 064+065",
+   "deps": [
+    "FR-041",
+    "FR-012",
+    "UX-012"
+   ]
+  },
+  "FR-043": {
+   "id": "FR-043",
+   "epic": "화면 F2",
+   "feat": "`/withdrawal` F2-01 출금관리 · F2-02 수령 대상",
+   "srs": "3.1 (`SRS-FR-065~071`)",
+   "cx": "M",
+   "dur": 3,
+   "origin": "舊 066+067",
+   "deps": [
+    "FR-034",
+    "FR-017",
+    "UX-013"
+   ]
+  },
+  "FR-044": {
+   "id": "FR-044",
+   "epic": "화면 F2",
+   "feat": "도메인 계산 모듈 클라이언트 동시 실행 구성",
+   "srs": "9.3 · TEC-CALC-001",
+   "cx": "H",
+   "dur": 6,
+   "origin": "舊 068",
+   "deps": [
+    "FR-009",
+    "FR-010",
+    "FR-011"
+   ]
+  },
+  "FR-045": {
+   "id": "FR-045",
+   "epic": "화면 F2",
+   "feat": "세율표 버전 동기화 및 클라이언트 계산 무효화",
+   "srs": "9.3 · TEC-CALC-002~004",
+   "cx": "H",
+   "dur": 6,
+   "origin": "舊 069",
+   "deps": [
+    "FR-044",
+    "FR-033"
+   ]
+  },
+  "FR-046": {
+   "id": "FR-046",
+   "epic": "화면 F2",
+   "feat": "`/withdrawal/amount` F2-03 인출금액 (Client 주도)",
+   "srs": "3.1 (`SRS-FR-072~084`) / 9.3",
+   "cx": "H",
+   "dur": 6,
+   "origin": "舊 070",
+   "deps": [
+    "FR-044",
+    "FR-045",
+    "FR-025",
+    "FR-035",
+    "UX-014"
+   ]
+  },
+  "FR-047": {
+   "id": "FR-047",
+   "epic": "화면 F2",
+   "feat": "`/withdrawal/result` F2-04 인출순서 결과 (Client 주도)",
+   "srs": "3.1 (`SRS-FR-085~101`) / 9.3",
+   "cx": "H",
+   "dur": 6,
+   "origin": "舊 071",
+   "deps": [
+    "FR-044",
+    "FR-045",
+    "FR-023",
+    "UX-015"
+   ]
+  },
+  "FR-048": {
+   "id": "FR-048",
+   "epic": "화면 F2",
+   "feat": "`/withdrawal/tax-free` F2-05 비과세 관리",
+   "srs": "3.1 (`SRS-FR-102~106`)",
+   "cx": "M",
+   "dur": 3,
+   "origin": "舊 072",
+   "deps": [
+    "FR-025",
+    "FR-034",
+    "UX-016"
+   ]
+  },
+  "FR-049": {
+   "id": "FR-049",
+   "epic": "화면 F2",
+   "feat": "`/withdrawal/inheritance` F2-06 타명의 조회",
+   "srs": "3.1 (`SRS-FR-107~110`)",
+   "cx": "L",
+   "dur": 1,
+   "origin": "舊 073",
+   "deps": [
+    "FR-034",
+    "UX-017"
+   ]
+  },
+  "FR-050": {
+   "id": "FR-050",
+   "epic": "Quality Gate",
+   "feat": "성능 SLO 실측 — p95 5종 부하 시험 및 콜드 스타트 영향 측정",
+   "srs": "9.1 CONFLICT-01 / OPEN-TEC-003",
+   "cx": "M",
+   "dur": 3,
+   "origin": "**신규 (D-01 보정)**",
+   "deps": [
+    "FR-004",
+    "FR-027"
+   ]
+  },
+  "UX-001": {
+   "id": "UX-001",
+   "epic": "Design System",
+   "feat": "디자인 토큰 정의 — 색 · 타이포 · 간격 · 대비 검증 팔레트 · 어절 줄바꿈 규칙",
+   "srs": "6.1 / 6.3 · TEC-UI-010, 011",
+   "cx": "M",
+   "dur": 3,
+   "origin": "舊 001+002+003",
+   "deps": []
+  },
+  "UX-002": {
+   "id": "UX-002",
+   "epic": "Design System",
+   "feat": "shadcn/ui 14종 시각 스타일 정의 (ARIA 속성 보존 전제)",
+   "srs": "6.1 / 6.3 · TEC-UI-012",
+   "cx": "H",
+   "dur": 6,
+   "origin": "舊 004",
+   "deps": [
+    "UX-001"
+   ]
+  },
+  "UX-003": {
+   "id": "UX-003",
+   "epic": "표기 규칙 디자인",
+   "feat": "표기 규칙 시각 규격 7종 — 밴드 · 확정/추정 · 모의계산 라벨 · 상태 12종 · 금액 · 마스킹 · 대략치 병기",
+   "srs": "6.2",
+   "cx": "M",
+   "dur": 3,
+   "origin": "舊 005~011",
+   "deps": [
+    "UX-002"
+   ]
+  },
+  "UX-004": {
+   "id": "UX-004",
+   "epic": "커스텀 시각화",
+   "feat": "단계 타임라인 디자인 (`Progress` + 커스텀)",
+   "srs": "6.1 (`SRS-FR-033`)",
+   "cx": "H",
+   "dur": 6,
+   "origin": "舊 012",
+   "deps": [
+    "UX-002",
+    "UX-003"
+   ]
+  },
+  "UX-005": {
+   "id": "UX-005",
+   "epic": "커스텀 시각화",
+   "feat": "한도 게이지 3구간 커스텀 디자인",
+   "srs": "6.1 (`SRS-FR-072`)",
+   "cx": "H",
+   "dur": 6,
+   "origin": "舊 013",
+   "deps": [
+    "UX-002"
+   ]
+  },
+  "UX-006": {
+   "id": "UX-006",
+   "epic": "커스텀 시각화",
+   "feat": "3층 재원 소진 시각화 커스텀 디자인",
+   "srs": "6.1 (`SRS-FR-085`)",
+   "cx": "H",
+   "dur": 6,
+   "origin": "舊 014",
+   "deps": [
+    "UX-002",
+    "UX-003"
+   ]
+  },
+  "UX-007": {
+   "id": "UX-007",
+   "epic": "커스텀 시각화",
+   "feat": "shadcn variant 정의 3종 — 3그룹 판정 `Accordion` · 예외 배너 `Alert` · 고객센터 `Sheet`",
+   "srs": "6.1",
+   "cx": "M",
+   "dur": 3,
+   "origin": "舊 015+016+017",
+   "deps": [
+    "UX-002",
+    "UX-003"
+   ]
+  },
+  "UX-008": {
+   "id": "UX-008",
+   "epic": "화면 설계 F1",
+   "feat": "F1-01 홈 · 진행 알림 화면 설계",
+   "srs": "3.1",
+   "cx": "M",
+   "dur": 3,
+   "origin": "舊 018",
+   "deps": [
+    "UX-002",
+    "UX-003"
+   ]
+  },
+  "UX-009": {
+   "id": "UX-009",
+   "epic": "화면 설계 F1",
+   "feat": "F1-02 유의사항 화면 설계 (`ScrollArea` 약관 전문)",
+   "srs": "3.1 / 6.1",
+   "cx": "M",
+   "dur": 3,
+   "origin": "舊 019",
+   "deps": [
+    "UX-002",
+    "UX-007"
+   ]
+  },
+  "UX-010": {
+   "id": "UX-010",
+   "epic": "화면 설계 F1",
+   "feat": "F1-03 예약 · 잠금 미리보기 화면 설계",
+   "srs": "3.1",
+   "cx": "H",
+   "dur": 6,
+   "origin": "舊 020",
+   "deps": [
+    "UX-003",
+    "UX-007"
+   ]
+  },
+  "UX-011": {
+   "id": "UX-011",
+   "epic": "화면 설계 F1",
+   "feat": "F1-04 현황판 화면 설계 (상태 12종 · 예외 배너)",
+   "srs": "3.1",
+   "cx": "H",
+   "dur": 6,
+   "origin": "舊 021",
+   "deps": [
+    "UX-004",
+    "UX-007",
+    "UX-003"
+   ]
+  },
+  "UX-012": {
+   "id": "UX-012",
+   "epic": "화면 설계 F1",
+   "feat": "`/transfer/[id]/` 하위 — F1-05 완료일 근거 · F1-06 완료 화면 설계",
+   "srs": "3.1",
+   "cx": "M",
+   "dur": 3,
+   "origin": "舊 022+023",
+   "deps": [
+    "UX-011",
+    "UX-003"
+   ]
+  },
+  "UX-013": {
+   "id": "UX-013",
+   "epic": "화면 설계 F2",
+   "feat": "`/withdrawal` F2-01 출금관리 · F2-02 수령 대상 화면 설계",
+   "srs": "3.1",
+   "cx": "M",
+   "dur": 3,
+   "origin": "舊 024+025",
+   "deps": [
+    "UX-002"
+   ]
+  },
+  "UX-014": {
+   "id": "UX-014",
+   "epic": "화면 설계 F2",
+   "feat": "F2-03 인출금액 화면 설계 (`Input` + `Slider` · 계산 근거 `Collapsible`)",
+   "srs": "3.1 / 6.1",
+   "cx": "H",
+   "dur": 6,
+   "origin": "舊 026",
+   "deps": [
+    "UX-005",
+    "UX-003"
+   ]
+  },
+  "UX-015": {
+   "id": "UX-015",
+   "epic": "화면 설계 F2",
+   "feat": "F2-04 인출순서 결과 화면 설계 (경고·주의 `Alert`)",
+   "srs": "3.1 / 6.1",
+   "cx": "H",
+   "dur": 6,
+   "origin": "舊 027",
+   "deps": [
+    "UX-006",
+    "UX-007"
+   ]
+  },
+  "UX-016": {
+   "id": "UX-016",
+   "epic": "화면 설계 F2",
+   "feat": "F2-05 비과세 관리 화면 설계 (제출 전/후 비교)",
+   "srs": "3.1",
+   "cx": "M",
+   "dur": 3,
+   "origin": "舊 028",
+   "deps": [
+    "UX-003"
+   ]
+  },
+  "UX-017": {
+   "id": "UX-017",
+   "epic": "화면 설계 F2",
+   "feat": "F2-06 타명의 조회 화면 설계 (정적 + 딥링크)",
+   "srs": "3.1",
+   "cx": "L",
+   "dur": 1,
+   "origin": "舊 029",
+   "deps": [
+    "UX-002"
+   ]
+  }
+ }
+}
