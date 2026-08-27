@@ -1,6 +1,6 @@
 # Epic `SF1` — 화면 F1 이체 진행 조회 (풀버전)
 
-근거: [태스크 리스트 v2.0](../../tasks/task-breakdown-v2-merged.md) · [SRS-002](../../SRS/srs-002-pension-plus-nextjs-v1_0.md) §3.1 · §6.2
+근거: [태스크 리스트 v2.0](../06_%5B%ED%83%9C%EC%8A%A4%ED%81%AC%20%EB%A6%AC%EC%8A%A4%ED%8A%B8%5D%20%EC%97%B0%EA%B8%88%ED%94%8C%EB%9F%AC%EC%8A%A4_%EB%B3%91%ED%95%A9%ED%8C%90.md) · [SRS-002](../04_SRS_%EC%97%B0%EA%B8%88%ED%94%8C%EB%9F%AC%EC%8A%A4_%EA%B8%B0%EC%88%A0%EC%A0%9C%EC%95%BD%EB%B0%98%EC%98%81_v1.0.md) §3.1 · §6.2
 
 > **전부 Server Component다.** 밴드·세액 계산은 표현 계층에서 하지 않는다 (§2.2 계층 책임 · `SRS-FR-019`).
 >

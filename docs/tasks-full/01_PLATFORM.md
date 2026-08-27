@@ -1,6 +1,6 @@
 # Epic `PLT` — Platform & Infrastructure (풀버전)
 
-근거: [태스크 리스트 v2.0](../../tasks/task-breakdown-v2-merged.md) · [SRS-002](../../SRS/srs-002-pension-plus-nextjs-v1_0.md) §2 · §5.1 · §8 · §9.1 · §9.4
+근거: [태스크 리스트 v2.0](../06_%5B%ED%83%9C%EC%8A%A4%ED%81%AC%20%EB%A6%AC%EC%8A%A4%ED%8A%B8%5D%20%EC%97%B0%EA%B8%88%ED%94%8C%EB%9F%AC%EC%8A%A4_%EB%B3%91%ED%95%A9%ED%8C%90.md) · [SRS-002](../04_SRS_%EC%97%B0%EA%B8%88%ED%94%8C%EB%9F%AC%EC%8A%A4_%EA%B8%B0%EC%88%A0%EC%A0%9C%EC%95%BD%EB%B0%98%EC%98%81_v1.0.md) §2 · §5.1 · §8 · §9.1 · §9.4
 
 ---
 
@@ -190,4 +190,4 @@ Prisma Client를 커넥션 풀러 경유로 구성하고, enum 7종을 정의하
 ### 🚧 Dependencies & Blockers
 - **Depends on:** FR-001
 - **Blocks:** FR-027 · FR-050
-- ⚠️ 실측(FR-050) 결과가 나쁘면 **아키텍처 재검토**가 필요하다. [개발 실행 계획 §4.2](../%5B%EC%B4%9D%EA%B4%84%5D%20%EA%B0%9C%EB%B0%9C%20%EC%8B%A4%ED%96%89%20%EA%B3%84%ED%9A%8D%20%28%EC%97%B0%EA%B8%88%ED%94%8C%EB%9F%AC%EC%8A%A4%29.md)는 실측을 계획표보다 앞당길 것을 권고한다.
+- ⚠️ 실측(FR-050) 결과가 나쁘면 **아키텍처 재검토**가 필요하다. [개발 실행 계획 §4.2](../09_%5B%EC%B4%9D%EA%B4%84%5D%20%EA%B0%9C%EB%B0%9C%20%EC%8B%A4%ED%96%89%20%EA%B3%84%ED%9A%8D%20%28%EC%97%B0%EA%B8%88%ED%94%8C%EB%9F%AC%EC%8A%A4%29.md)는 실측을 계획표보다 앞당길 것을 권고한다.

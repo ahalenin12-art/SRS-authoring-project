@@ -4,7 +4,7 @@
 | --- | --- |
 | 문서 ID | TASK-FULL-001 |
 | 작성일 | 2026-08-25 |
-| 근거 | [tasks/task-breakdown-v2-merged.md](../../tasks/task-breakdown-v2-merged.md) — 67건. 본 폴더가 그 풀버전이다 |
+| 근거 | [tasks/task-breakdown-v2-merged.md](../06_%5B%ED%83%9C%EC%8A%A4%ED%81%AC%20%EB%A6%AC%EC%8A%A4%ED%8A%B8%5D%20%EC%97%B0%EA%B8%88%ED%94%8C%EB%9F%AC%EC%8A%A4_%EB%B3%91%ED%95%A9%ED%8C%90.md) — 67건. 본 폴더가 그 풀버전이다 |
 | 형식 | GitHub 이슈 템플릿 구조 — Summary · References · Task Breakdown · Acceptance Criteria · Constraints · DoD · Dependencies |
 
 > **선행(Depends on)·후행(Blocks)은 손으로 유추하지 않았다.** 태스크 리스트의 의존 관계를 `tools/deps.mjs`가 파싱해 생성한 값이다. 값이 어긋나면 **태스크 리스트가 원천**이므로 그쪽을 먼저 고치고 이 폴더를 재동기화한다.
@@ -74,7 +74,7 @@
 
 ## 착수 우선순위
 
-후행이 많은 순. [개발 실행 계획 §2.3](../%5B%EC%B4%9D%EA%B4%84%5D%20%EA%B0%9C%EB%B0%9C%20%EC%8B%A4%ED%96%89%20%EA%B3%84%ED%9A%8D%20%28%EC%97%B0%EA%B8%88%ED%94%8C%EB%9F%AC%EC%8A%A4%29.md) 참조.
+후행이 많은 순. [개발 실행 계획 §2.3](../09_%5B%EC%B4%9D%EA%B4%84%5D%20%EA%B0%9C%EB%B0%9C%20%EC%8B%A4%ED%96%89%20%EA%B3%84%ED%9A%8D%20%28%EC%97%B0%EA%B8%88%ED%94%8C%EB%9F%AC%EC%8A%A4%29.md) 참조.
 
 | 순위 | 태스크 | 직접 후행 | 전이 후행 | 파일 |
 | :---: | --- | ---: | ---: | --- |

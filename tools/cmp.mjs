@@ -34,8 +34,8 @@ function analyze(T,label){
   console.log(`   임계경로(${cp.length}): ${cp.join(' → ')}`)
   return {n:ids.length,eff,end,depth:Math.max(...Object.values(wave)),cp}
 }
-const v1=analyze(load(path.join(ROOT,'tasks','task-breakdown-v1-full.md'),6),'v1(102)')
-const v2=analyze(load(path.join(ROOT,'tasks','task-breakdown-v2-merged.md'),7),'v2(67) ')
+const v1=analyze(load(path.join(ROOT,'docs','05_[태스크 리스트] 연금플러스 전체판.md'),6),'v1(102)')
+const v2=analyze(load(path.join(ROOT,'docs','06_[태스크 리스트] 연금플러스 병합판.md'),7),'v2(67) ')
 console.log(`\n차이: 태스크 ${v1.n}→${v2.n} (${v2.n-v1.n}) · 공수 ${v1.eff}→${v2.eff}d (${v2.eff-v1.eff}) · 하한 ${v1.end}→${v2.end}d (${v2.end-v1.end}) · 깊이 ${v1.depth}→${v2.depth}`)
 // 주의: v2에는 감사 보정 신규 FR-050(M/3d)이 포함되어 있다.
 // 병합만의 효과는 FR-050을 제외한 66건 기준 — 공수 356→284d, 하한 36→39d.

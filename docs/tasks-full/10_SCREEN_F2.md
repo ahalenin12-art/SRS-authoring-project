@@ -1,6 +1,6 @@
 # Epic `SF2` — 화면 F2 인출순서 시뮬레이터 (풀버전)
 
-근거: [태스크 리스트 v2.0](../../tasks/task-breakdown-v2-merged.md) · [SRS-002](../../SRS/srs-002-pension-plus-nextjs-v1_0.md) §3.1 · §9.3
+근거: [태스크 리스트 v2.0](../06_%5B%ED%83%9C%EC%8A%A4%ED%81%AC%20%EB%A6%AC%EC%8A%A4%ED%8A%B8%5D%20%EC%97%B0%EA%B8%88%ED%94%8C%EB%9F%AC%EC%8A%A4_%EB%B3%91%ED%95%A9%ED%8C%90.md) · [SRS-002](../04_SRS_%EC%97%B0%EA%B8%88%ED%94%8C%EB%9F%AC%EC%8A%A4_%EA%B8%B0%EC%88%A0%EC%A0%9C%EC%95%BD%EB%B0%98%EC%98%81_v1.0.md) §3.1 · §9.3
 
 > **F2-03·F2-04만 Client Component가 주도한다.** `SRS-NFR-PERF-005`가 인출액 변경 시 **p95 ≤ 300ms 재계산**을 요구하는데, 서버 왕복으로는 이 임계를 안정적으로 지킬 수 없다 (§9.3 CONFLICT-03).
 >
@@ -323,4 +323,4 @@
 ### 🚧 Dependencies & Blockers
 - **Depends on:** FR-034 · UX-017
 - **Blocks:** None
-- 💡 축소 후보 — [압축 수행 일정 §5.3](../%5B%EC%B4%9D%EA%B4%84%5D%20%EC%95%95%EC%B6%95%20%EC%88%98%ED%96%89%20%EC%9D%BC%EC%A0%95%20%28%EC%97%B0%EA%B8%88%ED%94%8C%EB%9F%AC%EC%8A%A4%29.md)에서 제외 시 약 1일 단축 가능한 항목으로 식별
+- 💡 축소 후보 — [압축 수행 일정 §5.3](../10_%5B%EC%B4%9D%EA%B4%84%5D%20%EC%95%95%EC%B6%95%20%EC%88%98%ED%96%89%20%EC%9D%BC%EC%A0%95%20%28%EC%97%B0%EA%B8%88%ED%94%8C%EB%9F%AC%EC%8A%A4%29.md)에서 제외 시 약 1일 단축 가능한 항목으로 식별
