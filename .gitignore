@@ -1,2 +1,3 @@
 # tools/ 계산 산출물 — 스크립트로 언제든 재생성된다
 tools/*.json
+tools/gantt-*.json
